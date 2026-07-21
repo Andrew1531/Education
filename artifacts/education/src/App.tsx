@@ -413,9 +413,6 @@ function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
   return (
     <div className="space-y-16">
       <div className="text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-xs text-slate-300 mb-6 shadow-sm">
-          <span className="text-indigo-400 font-semibold">🔒 Private Secure Gateway:</span> Account required to access your credential intelligence portal.
-        </div>
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
           Navigate Your U.S. Education &amp; Professional{' '}
           <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">Journey With Confidence</span>
