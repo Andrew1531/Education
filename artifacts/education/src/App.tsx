@@ -436,6 +436,210 @@ function EvaluatorView() {
   );
 }
 
+// ─── Job Boards ───────────────────────────────────────────────────────────────
+
+const JOB_BOARDS = [
+  {
+    name: 'Indeed',
+    url: 'https://www.indeed.com',
+    desc: 'Search millions of U.S. jobs by title, location, and salary.',
+    color: 'from-blue-600 to-blue-500',
+    initials: 'In',
+  },
+  {
+    name: 'LinkedIn Jobs',
+    url: 'https://www.linkedin.com/jobs',
+    desc: 'Apply directly and connect with hiring managers.',
+    color: 'from-sky-700 to-sky-500',
+    initials: 'Li',
+  },
+  {
+    name: 'Glassdoor',
+    url: 'https://www.glassdoor.com/Job',
+    desc: 'Jobs with salary insights and company reviews.',
+    color: 'from-emerald-600 to-emerald-500',
+    initials: 'Gd',
+  },
+  {
+    name: 'ZipRecruiter',
+    url: 'https://www.ziprecruiter.com',
+    desc: 'AI-matched job recommendations sent to your inbox.',
+    color: 'from-orange-600 to-orange-500',
+    initials: 'Zr',
+  },
+  {
+    name: 'USAJobs',
+    url: 'https://www.usajobs.gov',
+    desc: 'Official portal for U.S. federal government positions.',
+    color: 'from-red-700 to-red-500',
+    initials: 'US',
+  },
+  {
+    name: 'Monster',
+    url: 'https://www.monster.com',
+    desc: 'Job postings across industries nationwide.',
+    color: 'from-violet-600 to-violet-500',
+    initials: 'Mo',
+  },
+];
+
+function JobBoardsSection() {
+  return (
+    <div className="mt-16">
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <span className="text-indigo-400 text-2xl">💼</span>
+          <h2 className="text-white font-extrabold text-2xl tracking-tight">Start Applying Now</h2>
+        </div>
+        <p className="text-slate-400 text-sm leading-relaxed max-w-2xl">
+          Once you have your credential evaluation, use these job boards to find U.S. positions in your field. Many employers accept international credentials — your roadmap gives you the documentation they need.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {JOB_BOARDS.map((board) => (
+          <a
+            key={board.name}
+            href={board.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid={`link-job-board-${board.name.toLowerCase().replace(/\s+/g, '-')}`}
+            className="glass-panel p-5 rounded-2xl flex items-start gap-4 hover:border-indigo-500/40 transition-all group"
+          >
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${board.color} flex items-center justify-center font-black text-white text-sm flex-shrink-0 shadow-lg`}>
+              {board.initials}
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-white font-bold text-sm group-hover:text-indigo-300 transition-colors">{board.name}</span>
+                <svg className="w-3 h-3 text-slate-500 group-hover:text-indigo-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">{board.desc}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Contact Section ──────────────────────────────────────────────────────────
+
+function ContactSection() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [sent, setSent] = useState(false);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    // Opens the user's mail client with pre-filled fields as a simple contact mechanism
+    const subject = encodeURIComponent('VerifED Global – Transfer Help Request');
+    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+    window.open(`mailto:support@verifedglobal.com?subject=${subject}&body=${body}`, '_blank');
+    setSent(true);
+    setTimeout(() => setSent(false), 5000);
+  }
+
+  return (
+    <div className="mt-12">
+      <div className="glass-panel p-8 rounded-3xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500" />
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          {/* Left — copy */}
+          <div>
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-indigo-400 text-2xl">🤝</span>
+              <h2 className="text-white font-extrabold text-2xl tracking-tight">Need Help Getting Started?</h2>
+            </div>
+            <p className="text-slate-400 text-sm leading-relaxed mb-6">
+              Not sure where to begin with your credential transfer? Our team can walk you through the NACES evaluation process, help you choose the right agency, and answer questions about your specific field and country.
+            </p>
+            <ul className="space-y-3">
+              {[
+                'Guidance on choosing WES, ECE, or other evaluators',
+                'Help gathering documents from your home country',
+                'Advice on field-specific U.S. licensing requirements',
+                'Support navigating USCIS credential recognition',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2.5 text-xs text-slate-300">
+                  <span className="text-indigo-400 mt-0.5 flex-shrink-0">✓</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Right — form */}
+          <div>
+            {sent ? (
+              <div className="flex flex-col items-center justify-center h-full text-center py-8">
+                <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl mb-4">✅</div>
+                <p className="text-white font-bold text-lg mb-1">Message Ready to Send</p>
+                <p className="text-slate-400 text-sm">Your email client should have opened. We'll get back to you within 24 hours.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4" data-testid="form-contact">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Your Name</label>
+                  <input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    data-testid="input-contact-name"
+                    required
+                    placeholder="Full name"
+                    className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Email Address</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    data-testid="input-contact-email"
+                    required
+                    placeholder="name@example.com"
+                    className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">How Can We Help?</label>
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    data-testid="input-contact-message"
+                    required
+                    rows={4}
+                    placeholder="Describe your credential, country, field, and what you're trying to achieve in the U.S. ..."
+                    className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  data-testid="button-contact-submit"
+                  className="w-full bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>Send Message</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <ContactSection />
+      <JobBoardsSection />
+    </div>
+  );
+}
+
 // ─── Root App ─────────────────────────────────────────────────────────────────
 
 export default function App() {
