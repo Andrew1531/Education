@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "Global Equivalency Hub"
+version = "1.0.0"
+id = "artifacts/education"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24387
+
+[services.development]
+run = "pnpm --filter @workspace/education run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/education", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/education/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24387"
+BASE_PATH = "/"
