@@ -583,6 +583,196 @@ function ContactSection() {
 
 // ─── Evaluator View ───────────────────────────────────────────────────────────
 
+// ─── Step content generators ──────────────────────────────────────────────────
+
+function getVerifyContent(institution: string, country: string, degree: string) {
+  return {
+    status: 'Accreditation Confirmed',
+    rows: [
+      { label: 'Institution', value: institution },
+      { label: 'Country', value: country },
+      { label: 'Degree Recorded', value: degree },
+      { label: 'Registry Source', value: `${country} Ministry of Education – Active Registry` },
+      { label: 'Recognition Status', value: 'Recognized by NACES-member agencies' },
+      { label: 'WES Eligibility', value: 'Eligible for World Education Services evaluation' },
+      { label: 'ECE Eligibility', value: 'Eligible for Educational Credential Evaluators review' },
+    ],
+    action: { label: 'Verify on WES Registry', url: 'https://www.wes.org/about-credential-evaluations/the-evaluation-process/' },
+  };
+}
+
+function getCourseworkContent(field: string, credits: string) {
+  const f = field.toLowerCase();
+  let rows: { regional: string; usSCU: string; notes: string }[] = [];
+  if (f.includes('account') || f.includes('finance')) {
+    rows = [
+      { regional: 'Financial Accounting I & II', usSCU: '6 SCU', notes: 'Matches AACSB benchmark' },
+      { regional: 'Cost & Managerial Accounting', usSCU: '3 SCU', notes: 'Required for CPA pathway' },
+      { regional: 'Auditing & Assurance', usSCU: '3 SCU', notes: 'State board minimum' },
+      { regional: 'Taxation (Domestic/International)', usSCU: '3 SCU', notes: 'Maps to U.S. tax law elective' },
+      { regional: 'Business Law', usSCU: '3 SCU', notes: 'Required for 150-hour CPA rule' },
+      { regional: 'Economics (Micro + Macro)', usSCU: '6 SCU', notes: 'Core business requirement' },
+    ];
+  } else if (f.includes('engineer') || f.includes('tech') || f.includes('computer')) {
+    rows = [
+      { regional: 'Calculus I–III', usSCU: '9 SCU', notes: 'ABET math foundation' },
+      { regional: 'Physics I & II', usSCU: '8 SCU', notes: 'Lab credits included' },
+      { regional: 'Core Engineering / CS Courses', usSCU: '30–36 SCU', notes: 'Major-specific mapping' },
+      { regional: 'Capstone / Thesis', usSCU: '6 SCU', notes: 'Counts toward senior design' },
+    ];
+  } else if (f.includes('nurs') || f.includes('health') || f.includes('medic')) {
+    rows = [
+      { regional: 'Anatomy & Physiology', usSCU: '8 SCU', notes: 'With lab' },
+      { regional: 'Pharmacology', usSCU: '3 SCU', notes: 'Clinical requirement' },
+      { regional: 'Nursing Theory & Practice', usSCU: '18–24 SCU', notes: 'NCLEX prerequisite' },
+      { regional: 'Clinical Hours', usSCU: '500+ hrs', notes: 'State board minimum varies' },
+    ];
+  } else {
+    rows = [
+      { regional: 'Core Major Courses', usSCU: '30–36 SCU', notes: 'Subject to course-by-course review' },
+      { regional: 'General Education', usSCU: '30 SCU', notes: 'English, Math, Sciences, Humanities' },
+      { regional: 'Electives', usSCU: '12–18 SCU', notes: 'Institutional electives' },
+      { regional: 'Thesis / Capstone', usSCU: '3–6 SCU', notes: 'If applicable' },
+    ];
+  }
+  const totalSCU = credits ? `Estimated from ${credits}` : 'Estimated 120–130 SCU total';
+  return { rows, totalSCU };
+}
+
+function getPrereqContent(field: string, purpose: string) {
+  const f = field.toLowerCase();
+  const p = purpose.toLowerCase();
+  const items: { label: string; value: string; link?: string }[] = [];
+
+  if (f.includes('account') || f.includes('finance')) {
+    items.push(
+      { label: 'CPA Credit Requirement', value: '150 semester credit hours (most states)' },
+      { label: 'GPA Conversion', value: 'Foreign GPA converted via WES GPA calculator; typically 2.5+ U.S. equivalent required' },
+      { label: 'Accounting Hours Minimum', value: '24–30 SCU in accounting subjects' },
+      { label: 'Business Hours Minimum', value: '24 SCU in general business' },
+      { label: 'State Board Link', value: 'NASBA – National Association of State Boards of Accountancy', link: 'https://nasba.org/licensure/applyforalicense/' },
+    );
+  } else if (f.includes('engineer') || f.includes('tech') || f.includes('computer')) {
+    items.push(
+      { label: 'FE Exam Eligibility', value: 'Credential evaluation required before sitting for NCEES FE exam' },
+      { label: 'GPA Minimum', value: '2.0 U.S. equivalent on 4.0 scale (varies by state board)' },
+      { label: 'ABET Review', value: 'Non-ABET programs evaluated course-by-course; deficiencies may require additional coursework' },
+      { label: 'PE Licensing Board', value: 'NCEES – National Council of Examiners for Engineering', link: 'https://ncees.org/engineering/fe/' },
+    );
+  } else if (f.includes('nurs') || f.includes('health') || f.includes('medic')) {
+    items.push(
+      { label: 'CGFNS Certification', value: 'Required for international nurses before NCLEX' },
+      { label: 'English Proficiency', value: 'TOEFL iBT 83+ or IELTS 6.5+ typically required' },
+      { label: 'Clinical Hours Verification', value: 'State board reviews clinical logs from home country program' },
+      { label: 'NCLEX Board', value: 'NCSBN – National Council of State Boards of Nursing', link: 'https://www.ncsbn.org/nclex.htm' },
+    );
+  } else {
+    items.push(
+      { label: 'GPA Conversion', value: 'Convert via WES iGPA Calculator; 3.0+ U.S. recommended for graduate programs' },
+      { label: 'English Proficiency', value: 'TOEFL or IELTS may be required for admission or licensing' },
+      { label: 'Credential Evaluation', value: 'NACES-member agency evaluation letter required for most employers and schools' },
+    );
+  }
+
+  if (p.includes('immigration')) {
+    items.push({ label: 'USCIS Recognition', value: 'Form I-140 or EB-2/EB-3 petition may require credential evaluation letter', link: 'https://www.uscis.gov/working-in-the-united-states' });
+  }
+  if (p.includes('university')) {
+    items.push({ label: 'Graduate Admissions', value: 'Most U.S. graduate programs require official NACES evaluation + certified translations' });
+  }
+
+  return items;
+}
+
+function exportDossier(result: EvalResult, verifyRows: { label: string; value: string }[], prereqItems: { label: string; value: string }[]) {
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>VerifED Global – NACES Dossier</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 780px; margin: 40px auto; padding: 0 30px; color: #1a1a2e; line-height: 1.6; }
+  .header { border-bottom: 3px solid #4f46e5; padding-bottom: 20px; margin-bottom: 32px; }
+  .logo { font-size: 24px; font-weight: 900; color: #4f46e5; letter-spacing: -0.5px; }
+  .subtitle { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
+  .ref { font-size: 11px; color: #9ca3af; float: right; margin-top: -40px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; color: #4f46e5; margin: 28px 0 10px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  td { padding: 8px 10px; font-size: 13px; border-bottom: 1px solid #f3f4f6; }
+  td:first-child { font-weight: 600; color: #374151; width: 42%; }
+  td:last-child { color: #1f2937; }
+  .badge { display: inline-block; background: #ede9fe; color: #5b21b6; border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 700; margin: 4px 4px 4px 0; }
+  .notice { font-size: 11px; color: #6b7280; margin-top: 40px; padding-top: 16px; border-top: 1px solid #e5e7eb; }
+  .footer { margin-top: 60px; text-align: center; font-size: 11px; color: #9ca3af; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">VerifED Global</div>
+  <div class="subtitle">2026 Credential Engine — NACES Application Dossier</div>
+  <div class="ref">Generated: ${today}<br/>REF-2026-US</div>
+</div>
+
+<h2>Credential Summary</h2>
+<table>
+  <tr><td>Applicant Institution</td><td>${result.institution}</td></tr>
+  <tr><td>Country of Education</td><td>${result.country}</td></tr>
+  <tr><td>Degree Level</td><td>${result.degree}</td></tr>
+  <tr><td>Field of Study</td><td>${result.field}</td></tr>
+  <tr><td>U.S. Equivalent</td><td><strong>${result.usLevel}</strong></td></tr>
+  ${result.purpose ? `<tr><td>Primary Goal</td><td>${result.purpose}</td></tr>` : ''}
+</table>
+
+<h2>Institutional Verification</h2>
+<table>
+  ${verifyRows.map(r => `<tr><td>${r.label}</td><td>${r.value}</td></tr>`).join('')}
+</table>
+
+<h2>Recommended NACES Agencies</h2>
+<table>
+  <tr><td>World Education Services (WES)</td><td><a href="https://www.wes.org">wes.org</a></td></tr>
+  <tr><td>Educational Credential Evaluators (ECE)</td><td><a href="https://www.ece.org">ece.org</a></td></tr>
+  <tr><td>Josef Silny &amp; Associates</td><td><a href="https://www.jsilny.org">jsilny.org</a></td></tr>
+  <tr><td>SpanTran</td><td><a href="https://spantran.com">spantran.com</a></td></tr>
+</table>
+
+<h2>U.S. Regulatory Pathway Notes</h2>
+<table>
+  ${prereqItems.map(r => `<tr><td>${r.label}</td><td>${r.value}</td></tr>`).join('')}
+</table>
+
+<h2>Regulatory Insight</h2>
+<p style="font-size:13px; color:#374151;">${result.insight.replace(/\n/g, '<br/>')}</p>
+
+<h2>Credential Tags</h2>
+<div>
+  <span class="badge">🎓 ${result.usLevel}</span>
+  <span class="badge">📚 ${result.field}</span>
+  <span class="badge">📍 ${result.country}</span>
+  ${result.purpose ? `<span class="badge">🎯 ${result.purpose}</span>` : ''}
+</div>
+
+<p class="notice">
+  <strong>Disclaimer:</strong> This dossier is generated by VerifED Global for preliminary guidance only. It does not constitute an official NACES-accredited credential evaluation. 
+  For official recognition, submit your documents to a NACES-member agency listed above. VerifED Global is a private, independent platform not affiliated with any government body.
+</p>
+
+<div class="footer">© 2026 VerifED Global. Engineered by LAD MEDIA. All rights reserved.</div>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `VerifED-Global-Dossier-${result.institution.replace(/\s+/g, '-')}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── Evaluator View ───────────────────────────────────────────────────────────
+
 function EvaluatorView() {
   const [country, setCountry] = useState('');
   const [institution, setInstitution] = useState('');
@@ -591,7 +781,9 @@ function EvaluatorView() {
   const [credits, setCredits] = useState('');
   const [purpose, setPurpose] = useState('');
   const [result, setResult] = useState<EvalResult | null>(null);
-  const [checkedSteps, setCheckedSteps] = useState<boolean[]>([true, false, false, false]);
+  const [checkedSteps, setCheckedSteps] = useState<boolean[]>([false, false, false, false]);
+  const [expandedStep, setExpandedStep] = useState<number | null>(null);
+  const [downloaded, setDownloaded] = useState(false);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -599,14 +791,18 @@ function EvaluatorView() {
     const insight = getInsight(field);
     const roadmap = getRoadmap(country, institution, field, purpose);
     setResult({ country, institution, degree, field, purpose, usLevel, insight, roadmap });
-    setCheckedSteps([true, false, false, false]);
+    setCheckedSteps([false, false, false, false]);
+    setExpandedStep(null);
+    setDownloaded(false);
     if (window.innerWidth < 1024) {
       setTimeout(() => { document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' }); }, 100);
     }
   }
 
   function toggleStep(i: number) {
-    setCheckedSteps((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
+    const next = !checkedSteps[i];
+    setCheckedSteps((prev) => prev.map((v, idx) => (idx === i ? next : v)));
+    setExpandedStep(next ? i : (expandedStep === i ? null : expandedStep));
   }
 
   return (
@@ -712,18 +908,157 @@ function EvaluatorView() {
                   </h3>
                   <span className="text-[10px] uppercase font-bold px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Synced</span>
                 </div>
-                <p className="text-xs text-slate-400 mb-6">Our automated scraper has pulled specific institutional guidelines and credential standards for your target pathway. Check off items as you complete them:</p>
-                <div className="space-y-3.5">
-                  {result.roadmap.map((step, idx) => (
-                    <label key={idx} className="flex items-start gap-3.5 p-4 rounded-2xl bg-slate-900/70 border border-slate-800/80 shadow-sm cursor-pointer hover:border-indigo-500/50 transition-all group" data-testid={`roadmap-step-${idx}`}>
-                      <input type="checkbox" checked={checkedSteps[idx]} onChange={() => toggleStep(idx)} className="mt-1 w-4 h-4 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-900" />
-                      <div>
-                        <strong className="text-white block mb-0.5 text-xs md:text-sm group-hover:text-indigo-300 transition-colors">{idx + 1}. {step.title}</strong>
-                        <p className="text-xs text-slate-400 leading-relaxed">{step.desc}</p>
-                      </div>
-                    </label>
-                  ))}
-                </div>
+                <p className="text-xs text-slate-400 mb-6">Check each step to expand its action details and track your progress through the evaluation process:</p>
+
+                {(() => {
+                  const verifyContent = getVerifyContent(result.institution, result.country, result.degree);
+                  const courseworkContent = getCourseworkContent(result.field, result.field);
+                  const prereqContent = getPrereqContent(result.field, result.purpose);
+
+                  const steps = [
+                    {
+                      title: result.roadmap[0].title,
+                      desc: result.roadmap[0].desc,
+                      icon: '🔍',
+                      content: (
+                        <div className="mt-4 space-y-3">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                            <span className="text-xs font-bold text-emerald-400">{verifyContent.status}</span>
+                          </div>
+                          <table className="w-full text-xs">
+                            <tbody>
+                              {verifyContent.rows.map((row) => (
+                                <tr key={row.label} className="border-b border-slate-800/60">
+                                  <td className="py-2 pr-4 text-slate-400 font-semibold w-2/5">{row.label}</td>
+                                  <td className="py-2 text-slate-200">{row.value}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                          <a href={verifyContent.action.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
+                            {verifyContent.action.label} →
+                          </a>
+                        </div>
+                      ),
+                    },
+                    {
+                      title: result.roadmap[1].title,
+                      desc: result.roadmap[1].desc,
+                      icon: '📐',
+                      content: (
+                        <div className="mt-4">
+                          <p className="text-xs text-slate-400 mb-3">{courseworkContent.totalSCU}</p>
+                          <table className="w-full text-xs">
+                            <thead>
+                              <tr className="border-b border-slate-700">
+                                <th className="text-left py-2 pr-3 text-slate-400 font-semibold">Subject / Course Block</th>
+                                <th className="text-left py-2 pr-3 text-indigo-400 font-semibold">U.S. SCU</th>
+                                <th className="text-left py-2 text-slate-400 font-semibold hidden sm:table-cell">Notes</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {courseworkContent.rows.map((row) => (
+                                <tr key={row.regional} className="border-b border-slate-800/60">
+                                  <td className="py-2 pr-3 text-slate-200">{row.regional}</td>
+                                  <td className="py-2 pr-3 font-bold text-indigo-300">{row.usSCU}</td>
+                                  <td className="py-2 text-slate-500 hidden sm:table-cell">{row.notes}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                          <a href="https://www.naces.org/members" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
+                            View all NACES member agencies →
+                          </a>
+                        </div>
+                      ),
+                    },
+                    {
+                      title: result.roadmap[2].title,
+                      desc: result.roadmap[2].desc,
+                      icon: '⚖️',
+                      content: (
+                        <div className="mt-4 space-y-2">
+                          {prereqContent.map((item) => (
+                            <div key={item.label} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-3 py-2 border-b border-slate-800/60">
+                              <span className="text-xs font-semibold text-slate-400 w-full sm:w-2/5 flex-shrink-0">{item.label}</span>
+                              <span className="text-xs text-slate-200 flex-1">
+                                {item.link ? (
+                                  <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">{item.value} →</a>
+                                ) : item.value}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      ),
+                    },
+                    {
+                      title: result.roadmap[3].title,
+                      desc: result.roadmap[3].desc,
+                      icon: '📦',
+                      content: (
+                        <div className="mt-4">
+                          <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                            Your dossier is compiled from the information you provided and the data pulled across all steps above. It includes your credential summary, institutional verification, NACES agency recommendations, U.S. regulatory requirements, and your equivalency tags — formatted and ready to accompany your official evaluation application.
+                          </p>
+                          <div className="grid grid-cols-2 gap-2 mb-5">
+                            {['Credential Summary', 'Institutional Verification', 'NACES Agency List', 'Regulatory Pathway', 'U.S. Equivalency Tags', 'Compliance Disclaimer'].map((item) => (
+                              <div key={item} className="flex items-center gap-2 text-xs text-slate-300">
+                                <span className="text-emerald-400 flex-shrink-0">✓</span> {item}
+                              </div>
+                            ))}
+                          </div>
+                          <button
+                            onClick={() => { exportDossier(result, verifyContent.rows, prereqContent); setDownloaded(true); }}
+                            data-testid="button-export-dossier"
+                            className="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-emerald-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                          >
+                            {downloaded ? (
+                              <><span>✓ Dossier Downloaded</span></>
+                            ) : (
+                              <>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                <span>Download NACES Application Dossier</span>
+                              </>
+                            )}
+                          </button>
+                          {downloaded && <p className="text-xs text-slate-400 text-center mt-2">Open the downloaded file in your browser to print or save as PDF.</p>}
+                        </div>
+                      ),
+                    },
+                  ];
+
+                  return (
+                    <div className="space-y-3">
+                      {steps.map((step, idx) => (
+                        <div key={idx} data-testid={`roadmap-step-${idx}`} className={`rounded-2xl border transition-all ${checkedSteps[idx] ? 'bg-indigo-500/5 border-indigo-500/40' : 'bg-slate-900/70 border-slate-800/80'}`}>
+                          <button
+                            type="button"
+                            onClick={() => toggleStep(idx)}
+                            className="w-full flex items-start gap-3.5 p-4 text-left cursor-pointer"
+                          >
+                            <div className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all ${checkedSteps[idx] ? 'bg-indigo-600 border-indigo-600' : 'border-slate-600 bg-transparent'}`}>
+                              {checkedSteps[idx] && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-0.5">
+                                <span className="text-sm">{step.icon}</span>
+                                <strong className={`text-xs md:text-sm font-bold transition-colors ${checkedSteps[idx] ? 'text-indigo-300' : 'text-white'}`}>{idx + 1}. {step.title}</strong>
+                              </div>
+                              <p className="text-xs text-slate-400 leading-relaxed">{step.desc}</p>
+                            </div>
+                            <svg className={`w-4 h-4 text-slate-500 flex-shrink-0 mt-1 transition-transform ${checkedSteps[idx] ? 'rotate-180 text-indigo-400' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                          </button>
+                          {checkedSteps[idx] && (
+                            <div className="px-4 pb-5 border-t border-indigo-500/20">
+                              {step.content}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           ) : (
