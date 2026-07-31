@@ -1,7 +1,26 @@
 import { useState, useEffect } from 'react';
 import { Link, Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 
-const STORAGE_KEY = 'ge_username';
+const STORAGE_KEY  = 'ge_username';
+const USERS_KEY    = 'ge_users';      // all registered accounts
+const ADMIN_KEY    = 'ge_admin_pass'; // admin password stored in localStorage
+
+interface StoredUser {
+  username:  string;
+  email:     string;
+  password:  string;
+  createdAt: string;
+}
+
+function getUsers(): StoredUser[] {
+  try { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); } catch { return []; }
+}
+function saveUsers(users: StoredUser[]) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+function getAdminPass(): string {
+  return localStorage.getItem(ADMIN_KEY) || 'verifed2026';
+}
 
 type AppView = 'auth' | 'app';
 
@@ -115,6 +134,7 @@ function Footer({ onPrivacy, onTerms }: { onPrivacy: () => void; onTerms: () => 
         <div className="flex items-center space-x-6 text-xs text-slate-400 font-medium">
           <button onClick={onPrivacy} data-testid="button-privacy-policy" className="hover:text-white transition-colors cursor-pointer bg-transparent border-none text-slate-400 text-xs font-medium">Privacy Policy</button>
           <button onClick={onTerms} data-testid="button-terms" className="hover:text-white transition-colors cursor-pointer bg-transparent border-none text-slate-400 text-xs font-medium">Terms of Service</button>
+          <Link href="/admin" className="hover:text-white transition-colors text-slate-600 text-xs font-medium" data-testid="link-admin">Admin</Link>
         </div>
         <div className="bg-slate-900/90 border border-slate-800 px-4 py-3 rounded-2xl flex items-center gap-2.5 shadow-inner">
           <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Powered and engineered by</span>
@@ -402,10 +422,43 @@ function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError('');
     if (!username || !password) return;
+
+    const users = getUsers();
+
+    if (isSignUp) {
+      if (users.find((u) => u.username.toLowerCase() === username.toLowerCase())) {
+        setError('Username already taken. Please choose another or sign in.');
+        return;
+      }
+      const newUser: StoredUser = {
+        username,
+        email: email || '',
+        password,
+        createdAt: new Date().toISOString(),
+      };
+      saveUsers([...users, newUser]);
+    } else {
+      const match = users.find(
+        (u) => u.username.toLowerCase() === username.toLowerCase() && u.password === password,
+      );
+      if (!match) {
+        // Graceful fallback: if no accounts exist yet, let legacy sessions in
+        if (users.length === 0) {
+          const newUser: StoredUser = { username, email: '', password, createdAt: new Date().toISOString() };
+          saveUsers([newUser]);
+        } else {
+          setError('Incorrect username or password.');
+          return;
+        }
+      }
+    }
+
     localStorage.setItem(STORAGE_KEY, username);
     onLogin(username);
   }
@@ -450,6 +503,11 @@ function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Correspondence Email</label>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="input-email" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder="name@example.com" required />
               </div>
+            )}
+            {error && (
+              <p className="text-red-400 text-xs font-medium bg-red-900/20 border border-red-500/30 rounded-lg px-3 py-2">
+                {error}
+              </p>
             )}
             <button type="submit" data-testid="button-auth-submit" className="w-full mt-4 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-4 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center space-x-2">
               <span>{isSignUp ? 'Create Account & Access Evaluator' : 'Sign In & Access Evaluator'}</span>
@@ -1077,6 +1135,278 @@ function EvaluatorView() {
   );
 }
 
+// ─── Admin Page ───────────────────────────────────────────────────────────────
+
+function AdminPage() {
+  const [authed, setAuthed]           = useState(false);
+  const [adminInput, setAdminInput]   = useState('');
+  const [adminError, setAdminError]   = useState('');
+  const [users, setUsers]             = useState<StoredUser[]>([]);
+  const [search, setSearch]           = useState('');
+  const [resetTarget, setResetTarget] = useState<StoredUser | null>(null);
+  const [newPass, setNewPass]         = useState('');
+  const [newPassConfirm, setNewPassConfirm] = useState('');
+  const [resetMsg, setResetMsg]       = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<StoredUser | null>(null);
+  const [showChangeAdmin, setShowChangeAdmin] = useState(false);
+  const [newAdminPass, setNewAdminPass]       = useState('');
+  const [newAdminPassConfirm, setNewAdminPassConfirm] = useState('');
+  const [adminChangeMsg, setAdminChangeMsg]   = useState('');
+
+  function login() {
+    if (adminInput === getAdminPass()) {
+      setAuthed(true);
+      setAdminError('');
+      setUsers(getUsers());
+    } else {
+      setAdminError('Incorrect admin password.');
+    }
+  }
+
+  function refresh() { setUsers(getUsers()); }
+
+  function handleResetPassword() {
+    setResetMsg('');
+    if (!newPass) { setResetMsg('Password cannot be empty.'); return; }
+    if (newPass !== newPassConfirm) { setResetMsg('Passwords do not match.'); return; }
+    if (!resetTarget) return;
+    const updated = getUsers().map((u) =>
+      u.username === resetTarget.username ? { ...u, password: newPass } : u,
+    );
+    saveUsers(updated);
+    setUsers(updated);
+    setResetMsg('✓ Password updated successfully.');
+    setNewPass(''); setNewPassConfirm('');
+    setTimeout(() => { setResetTarget(null); setResetMsg(''); }, 1500);
+  }
+
+  function handleDelete() {
+    if (!deleteTarget) return;
+    const updated = getUsers().filter((u) => u.username !== deleteTarget.username);
+    saveUsers(updated);
+    // Log out the deleted user if they're currently logged in
+    if (localStorage.getItem(STORAGE_KEY) === deleteTarget.username) {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+    setUsers(updated);
+    setDeleteTarget(null);
+  }
+
+  function handleChangeAdminPass() {
+    setAdminChangeMsg('');
+    if (!newAdminPass) { setAdminChangeMsg('Password cannot be empty.'); return; }
+    if (newAdminPass !== newAdminPassConfirm) { setAdminChangeMsg('Passwords do not match.'); return; }
+    localStorage.setItem(ADMIN_KEY, newAdminPass);
+    setAdminChangeMsg('✓ Admin password updated.');
+    setNewAdminPass(''); setNewAdminPassConfirm('');
+    setTimeout(() => { setShowChangeAdmin(false); setAdminChangeMsg(''); }, 1500);
+  }
+
+  function exportCSV() {
+    const rows = [['Username', 'Email', 'Joined']];
+    getUsers().forEach((u) => rows.push([u.username, u.email, new Date(u.createdAt).toLocaleDateString()]));
+    const csv  = rows.map((r) => r.map((c) => `"${c}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a'); a.href = url; a.download = 'verifed-users.csv'; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  const filtered = users.filter(
+    (u) =>
+      u.username.toLowerCase().includes(search.toLowerCase()) ||
+      u.email.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  const inputCls = 'w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all';
+
+  if (!authed) {
+    return (
+      <main className="relative z-10 max-w-md mx-auto px-6 pt-24 pb-24 flex-grow w-full">
+        <div className="glass-panel p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500" />
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-2xl bg-rose-900/60 border border-rose-700/50 flex items-center justify-center text-lg">🔐</div>
+            <div>
+              <h1 className="text-white font-bold text-lg">Admin Portal</h1>
+              <p className="text-slate-400 text-xs">VerifED Global — Staff Only</p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Admin Password</label>
+              <input
+                type="password"
+                value={adminInput}
+                onChange={(e) => setAdminInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && login()}
+                className={inputCls}
+                placeholder="Enter admin password"
+                autoFocus
+              />
+            </div>
+            {adminError && <p className="text-red-400 text-xs bg-red-900/20 border border-red-500/30 rounded-lg px-3 py-2">{adminError}</p>}
+            <button
+              onClick={login}
+              className="w-full bg-gradient-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white font-bold py-3.5 rounded-xl text-sm transition-all cursor-pointer shadow-lg shadow-rose-600/30"
+            >
+              Access Admin Dashboard
+            </button>
+          </div>
+          <p className="mt-6 text-[11px] text-slate-600 text-center">Default password: <code className="text-slate-500">verifed2026</code></p>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="relative z-10 max-w-6xl mx-auto px-6 pt-12 pb-24 flex-grow w-full">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-rose-900/60 border border-rose-700/50 flex items-center justify-center text-lg">🔐</div>
+          <div>
+            <h1 className="text-white font-extrabold text-2xl tracking-tight">Admin Dashboard</h1>
+            <p className="text-slate-400 text-xs">{users.length} registered account{users.length !== 1 ? 's' : ''}</p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={exportCSV} className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium">⬇ Export CSV</button>
+          <button onClick={() => { setShowChangeAdmin(!showChangeAdmin); setAdminChangeMsg(''); }} className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium">🔑 Change Admin Password</button>
+          <button onClick={() => setAuthed(false)} className="text-xs px-4 py-2 rounded-xl bg-rose-900/40 hover:bg-rose-900/60 border border-rose-700/50 text-rose-300 hover:text-white transition-all cursor-pointer font-medium">Sign Out</button>
+        </div>
+      </div>
+
+      {/* Change admin password panel */}
+      {showChangeAdmin && (
+        <div className="glass-panel p-6 rounded-2xl mb-6 border-amber-500/20">
+          <h3 className="text-white font-bold text-sm mb-4">Change Admin Password</h3>
+          <div className="grid sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">New Password</label>
+              <input type="password" value={newAdminPass} onChange={(e) => setNewAdminPass(e.target.value)} className={inputCls} placeholder="••••••••" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Confirm New Password</label>
+              <input type="password" value={newAdminPassConfirm} onChange={(e) => setNewAdminPassConfirm(e.target.value)} className={inputCls} placeholder="••••••••" />
+            </div>
+          </div>
+          {adminChangeMsg && <p className={`text-xs mb-3 ${adminChangeMsg.startsWith('✓') ? 'text-emerald-400' : 'text-red-400'}`}>{adminChangeMsg}</p>}
+          <button onClick={handleChangeAdminPass} className="text-xs px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold transition-all cursor-pointer">Update Admin Password</button>
+        </div>
+      )}
+
+      {/* Search bar */}
+      <div className="mb-6">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className={inputCls}
+          placeholder="Search by username or email…"
+        />
+      </div>
+
+      {/* User table */}
+      <div className="glass-panel rounded-2xl overflow-hidden">
+        {filtered.length === 0 ? (
+          <div className="p-16 text-center text-slate-500 text-sm">
+            {users.length === 0 ? 'No users have registered yet.' : 'No results match your search.'}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-800 bg-slate-900/60">
+                  <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-400">Username</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-400">Email</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-400">Joined</th>
+                  <th className="text-right px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-400">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((user, idx) => (
+                  <tr key={user.username} className={`border-b border-slate-800/60 ${idx % 2 === 0 ? 'bg-slate-900/20' : ''} hover:bg-slate-800/30 transition-colors`}>
+                    <td className="px-6 py-4">
+                      <span className="font-mono text-indigo-300 text-xs bg-indigo-500/10 border border-indigo-500/20 px-2 py-1 rounded-md">@{user.username}</span>
+                    </td>
+                    <td className="px-6 py-4 text-slate-300 text-xs">{user.email || <span className="text-slate-600 italic">not provided</span>}</td>
+                    <td className="px-6 py-4 text-slate-400 text-xs">{new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => { setResetTarget(user); setNewPass(''); setNewPassConfirm(''); setResetMsg(''); }}
+                          className="text-xs px-3 py-1.5 rounded-lg bg-indigo-900/40 hover:bg-indigo-800/60 border border-indigo-700/50 text-indigo-300 hover:text-white transition-all cursor-pointer font-medium"
+                        >
+                          Reset Password
+                        </button>
+                        <button
+                          onClick={() => setDeleteTarget(user)}
+                          className="text-xs px-3 py-1.5 rounded-lg bg-red-900/30 hover:bg-red-900/50 border border-red-700/40 text-red-400 hover:text-red-200 transition-all cursor-pointer font-medium"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <button onClick={refresh} className="mt-4 text-xs text-slate-500 hover:text-slate-300 transition-colors cursor-pointer bg-transparent border-none">↻ Refresh list</button>
+
+      {/* Reset Password Modal */}
+      {resetTarget && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+          <div className="glass-panel p-8 rounded-3xl w-full max-w-md shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-violet-500" />
+            <h3 className="text-white font-bold text-lg mb-1">Reset Password</h3>
+            <p className="text-slate-400 text-xs mb-6">Setting new password for <span className="text-indigo-300 font-mono">@{resetTarget.username}</span></p>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">New Password</label>
+                <input type="password" value={newPass} onChange={(e) => setNewPass(e.target.value)} className={inputCls} placeholder="Min. 6 characters" autoFocus />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Confirm New Password</label>
+                <input type="password" value={newPassConfirm} onChange={(e) => setNewPassConfirm(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleResetPassword()} className={inputCls} placeholder="Repeat password" />
+              </div>
+              {resetMsg && <p className={`text-xs ${resetMsg.startsWith('✓') ? 'text-emerald-400' : 'text-red-400'}`}>{resetMsg}</p>}
+              <div className="flex gap-3 pt-2">
+                <button onClick={handleResetPassword} className="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3 rounded-xl text-sm transition-all cursor-pointer">Update Password</button>
+                <button onClick={() => { setResetTarget(null); setResetMsg(''); }} className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-all cursor-pointer border border-slate-700">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirm Modal */}
+      {deleteTarget && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+          <div className="glass-panel p-8 rounded-3xl w-full max-w-sm shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-rose-500" />
+            <div className="text-center">
+              <div className="text-4xl mb-4">⚠️</div>
+              <h3 className="text-white font-bold text-lg mb-2">Delete Account?</h3>
+              <p className="text-slate-400 text-sm mb-6">
+                This will permanently delete <span className="text-red-400 font-mono">@{deleteTarget.username}</span> and all their data. This cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <button onClick={handleDelete} className="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl text-sm transition-all cursor-pointer">Yes, Delete</button>
+                <button onClick={() => setDeleteTarget(null)} className="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-all cursor-pointer border border-slate-700">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
+  );
+}
+
 // ─── Root App ─────────────────────────────────────────────────────────────────
 
 export default function App() {
@@ -1116,6 +1446,9 @@ export default function App() {
           </Route>
           <Route path="/how-it-works">
             <HowItWorksPage />
+          </Route>
+          <Route path="/admin">
+            <AdminPage />
           </Route>
           <Route>
             <main className="relative z-10 max-w-6xl mx-auto px-6 pt-16 pb-24 flex-grow w-full">
