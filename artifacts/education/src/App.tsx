@@ -1192,9 +1192,6 @@ function EvaluatorView() {
 // ─── Admin Page ───────────────────────────────────────────────────────────────
 
 function AdminPage() {
-  const [authed, setAuthed]           = useState(false);
-  const [adminInput, setAdminInput]   = useState('');
-  const [adminError, setAdminError]   = useState('');
   const [users, setUsers]             = useState<StoredUser[]>([]);
   const [search, setSearch]           = useState('');
   const [resetTarget, setResetTarget] = useState<StoredUser | null>(null);
@@ -1202,21 +1199,8 @@ function AdminPage() {
   const [newPassConfirm, setNewPassConfirm] = useState('');
   const [resetMsg, setResetMsg]       = useState('');
   const [deleteTarget, setDeleteTarget] = useState<StoredUser | null>(null);
-  const [showChangeAdmin, setShowChangeAdmin] = useState(false);
-  const [newAdminPass, setNewAdminPass]       = useState('');
-  const [newAdminPassConfirm, setNewAdminPassConfirm] = useState('');
-  const [adminChangeMsg, setAdminChangeMsg]   = useState('');
 
-  async function login() {
-    const ok = await verifyAdminPass(adminInput);
-    if (ok) {
-      setAuthed(true);
-      setAdminError('');
-      setUsers(getUsers());
-    } else {
-      setAdminError('Incorrect admin password.');
-    }
-  }
+  useEffect(() => { setUsers(getUsers()); }, []);
 
   function refresh() { setUsers(getUsers()); }
 
@@ -1248,16 +1232,6 @@ function AdminPage() {
     setDeleteTarget(null);
   }
 
-  async function handleChangeAdminPass() {
-    setAdminChangeMsg('');
-    if (!newAdminPass) { setAdminChangeMsg('Password cannot be empty.'); return; }
-    if (newAdminPass !== newAdminPassConfirm) { setAdminChangeMsg('Passwords do not match.'); return; }
-    await setAdminPassHash(newAdminPass);
-    setAdminChangeMsg('✓ Admin password updated.');
-    setNewAdminPass(''); setNewAdminPassConfirm('');
-    setTimeout(() => { setShowChangeAdmin(false); setAdminChangeMsg(''); }, 1500);
-  }
-
   function exportCSV() {
     const rows = [['Username', 'Email', 'Joined']];
     getUsers().forEach((u) => rows.push([u.username, u.email, new Date(u.createdAt).toLocaleDateString()]));
@@ -1276,44 +1250,6 @@ function AdminPage() {
 
   const inputCls = 'w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all';
 
-  if (!authed) {
-    return (
-      <main className="relative z-10 max-w-md mx-auto px-6 pt-24 pb-24 flex-grow w-full">
-        <div className="glass-panel p-8 rounded-3xl shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500" />
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-2xl bg-rose-900/60 border border-rose-700/50 flex items-center justify-center text-lg">🔐</div>
-            <div>
-              <h1 className="text-white font-bold text-lg">Admin Portal</h1>
-              <p className="text-slate-400 text-xs">VerifED Global — Staff Only</p>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Admin Password</label>
-              <input
-                type="password"
-                value={adminInput}
-                onChange={(e) => setAdminInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && login()}
-                className={inputCls}
-                placeholder="Enter admin password"
-                autoFocus
-              />
-            </div>
-            {adminError && <p className="text-red-400 text-xs bg-red-900/20 border border-red-500/30 rounded-lg px-3 py-2">{adminError}</p>}
-            <button
-              onClick={login}
-              className="w-full bg-gradient-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white font-bold py-3.5 rounded-xl text-sm transition-all cursor-pointer shadow-lg shadow-rose-600/30"
-            >
-              Access Admin Dashboard
-            </button>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
   return (
     <main className="relative z-10 max-w-6xl mx-auto px-6 pt-12 pb-24 flex-grow w-full">
       {/* Header */}
@@ -1327,29 +1263,9 @@ function AdminPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           <button onClick={exportCSV} className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium">⬇ Export CSV</button>
-          <button onClick={() => { setShowChangeAdmin(!showChangeAdmin); setAdminChangeMsg(''); }} className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium">🔑 Change Admin Password</button>
-          <button onClick={() => setAuthed(false)} className="text-xs px-4 py-2 rounded-xl bg-rose-900/40 hover:bg-rose-900/60 border border-rose-700/50 text-rose-300 hover:text-white transition-all cursor-pointer font-medium">Sign Out</button>
+          <button onClick={refresh} className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium">↻ Refresh</button>
         </div>
       </div>
-
-      {/* Change admin password panel */}
-      {showChangeAdmin && (
-        <div className="glass-panel p-6 rounded-2xl mb-6 border-amber-500/20">
-          <h3 className="text-white font-bold text-sm mb-4">Change Admin Password</h3>
-          <div className="grid sm:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">New Password</label>
-              <input type="password" value={newAdminPass} onChange={(e) => setNewAdminPass(e.target.value)} className={inputCls} placeholder="••••••••" />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Confirm New Password</label>
-              <input type="password" value={newAdminPassConfirm} onChange={(e) => setNewAdminPassConfirm(e.target.value)} className={inputCls} placeholder="••••••••" />
-            </div>
-          </div>
-          {adminChangeMsg && <p className={`text-xs mb-3 ${adminChangeMsg.startsWith('✓') ? 'text-emerald-400' : 'text-red-400'}`}>{adminChangeMsg}</p>}
-          <button onClick={handleChangeAdminPass} className="text-xs px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold transition-all cursor-pointer">Update Admin Password</button>
-        </div>
-      )}
 
       {/* Search bar */}
       <div className="mb-6">
