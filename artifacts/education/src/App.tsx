@@ -10,6 +10,7 @@ interface StoredUser {
   username:  string;
   email:     string;
   password:  string;
+  salt?:     string;  // PBKDF2 salt; absent on legacy SHA-256 or plain-text records
   createdAt: string;
 }
 
@@ -93,16 +94,33 @@ function saveUsers(users: StoredUser[]) {
 async function verifyAdminPass(input: string): Promise<boolean> {
   const stored = localStorage.getItem(ADMIN_KEY);
   if (!stored) {
-    const defaultHash = await hashPassword('verifed2026');
-    localStorage.setItem(ADMIN_KEY, defaultHash);
-    return (await hashPassword(input)) === defaultHash;
+    // First run: hash the default password with PBKDF2 and persist it.
+    const { hash, salt } = await hashPassword('verifed2026');
+    localStorage.setItem(ADMIN_KEY, JSON.stringify({ hash, salt }));
+    const check = await hashPassword(input, salt);
+    return check.hash === hash;
   }
-  const { valid } = await verifyAndMigratePassword(stored, input);
+
+  // New format: JSON { hash, salt }
+  try {
+    const parsed = JSON.parse(stored) as { hash: string; salt: string };
+    if (parsed.hash && parsed.salt) {
+      const { valid } = await verifyAndMigratePassword(parsed.hash, input, parsed.salt);
+      return valid;
+    }
+  } catch { /* not JSON — fall through to legacy path */ }
+
+  // Legacy string (SHA-256 hex or plain text): verify and silently migrate.
+  const { valid, newHash, newSalt } = await verifyAndMigratePassword(stored, input);
+  if (valid && newHash && newSalt) {
+    localStorage.setItem(ADMIN_KEY, JSON.stringify({ hash: newHash, salt: newSalt }));
+  }
   return valid;
 }
 
 async function setAdminPassHash(newPass: string): Promise<void> {
-  localStorage.setItem(ADMIN_KEY, await hashPassword(newPass));
+  const { hash, salt } = await hashPassword(newPass);
+  localStorage.setItem(ADMIN_KEY, JSON.stringify({ hash, salt }));
 }
 
 type AppView = 'auth' | 'app';
@@ -545,11 +563,12 @@ function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
         setError('Username already taken. Please choose another or sign in.');
         return;
       }
-      const hashed = await hashPassword(password);
+      const { hash, salt } = await hashPassword(password);
       const newUser: StoredUser = {
         username,
         email: email || '',
-        password: hashed,
+        password: hash,
+        salt,
         createdAt: new Date().toISOString(),
       };
       saveUsers([...users, newUser]);
@@ -557,17 +576,17 @@ function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
       const user = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
       if (!user) {
         if (users.length === 0) {
-          const hashed = await hashPassword(password);
-          saveUsers([{ username, email: '', password: hashed, createdAt: new Date().toISOString() }]);
+          const { hash, salt } = await hashPassword(password);
+          saveUsers([{ username, email: '', password: hash, salt, createdAt: new Date().toISOString() }]);
         } else {
           setError('Incorrect username or password.');
           return;
         }
       } else {
-        const { valid, newHash } = await verifyAndMigratePassword(user.password, password);
+        const { valid, newHash, newSalt } = await verifyAndMigratePassword(user.password, password, user.salt);
         if (!valid) { setError('Incorrect username or password.'); return; }
-        if (newHash) {
-          saveUsers(users.map((u) => u.username === user.username ? { ...u, password: newHash } : u));
+        if (newHash && newSalt) {
+          saveUsers(users.map((u) => u.username === user.username ? { ...u, password: newHash, salt: newSalt } : u));
         }
       }
     }
@@ -1323,9 +1342,9 @@ function AdminPage() {
     if (!newPass) { setResetMsg('Password cannot be empty.'); return; }
     if (newPass !== newPassConfirm) { setResetMsg('Passwords do not match.'); return; }
     if (!resetTarget) return;
-    const hashed = await hashPassword(newPass);
+    const { hash, salt } = await hashPassword(newPass);
     const updated = getUsers().map((u) =>
-      u.username === resetTarget.username ? { ...u, password: hashed } : u,
+      u.username === resetTarget.username ? { ...u, password: hash, salt } : u,
     );
     saveUsers(updated);
     setUsers(updated);
