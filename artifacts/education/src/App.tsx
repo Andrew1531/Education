@@ -18,8 +18,53 @@ function getUsers(): StoredUser[] {
 function saveUsers(users: StoredUser[]) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
-function getAdminPass(): string {
-  return localStorage.getItem(ADMIN_KEY) || 'verifed2026';
+/** SHA-256 hex digest via Web Crypto — runs in every modern browser. */
+async function hashPassword(password: string): Promise<string> {
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest('SHA-256', enc.encode(password));
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+/** True when a stored value looks like a SHA-256 hex (not a legacy plain-text entry). */
+function isHashed(s: string): boolean {
+  return /^[a-f0-9]{64}$/.test(s);
+}
+
+/**
+ * Compare a stored password against user input.
+ * If the stored value is still plain-text (legacy), verify by equality and
+ * return a new hash so the caller can upgrade the record.
+ */
+async function verifyAndMigratePassword(
+  stored: string,
+  input: string,
+): Promise<{ valid: boolean; newHash: string | null }> {
+  if (isHashed(stored)) {
+    return { valid: (await hashPassword(input)) === stored, newHash: null };
+  }
+  // Legacy plain-text: compare directly, then upgrade
+  if (stored === input) {
+    return { valid: true, newHash: await hashPassword(input) };
+  }
+  return { valid: false, newHash: null };
+}
+
+/** Verify the admin password; lazily initialises the hash on first use. */
+async function verifyAdminPass(input: string): Promise<boolean> {
+  const stored = localStorage.getItem(ADMIN_KEY);
+  if (!stored) {
+    const defaultHash = await hashPassword('verifed2026');
+    localStorage.setItem(ADMIN_KEY, defaultHash);
+    return (await hashPassword(input)) === defaultHash;
+  }
+  const { valid } = await verifyAndMigratePassword(stored, input);
+  return valid;
+}
+
+async function setAdminPassHash(newPass: string): Promise<void> {
+  localStorage.setItem(ADMIN_KEY, await hashPassword(newPass));
 }
 
 type AppView = 'auth' | 'app';
@@ -424,7 +469,7 @@ function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     if (!username || !password) return;
@@ -436,25 +481,34 @@ function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
         setError('Username already taken. Please choose another or sign in.');
         return;
       }
+      const hashed = await hashPassword(password);
       const newUser: StoredUser = {
         username,
         email: email || '',
-        password,
+        password: hashed,
         createdAt: new Date().toISOString(),
       };
       saveUsers([...users, newUser]);
     } else {
-      const match = users.find(
-        (u) => u.username.toLowerCase() === username.toLowerCase() && u.password === password,
-      );
-      if (!match) {
-        // Graceful fallback: if no accounts exist yet, let legacy sessions in
+      const user = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
+      if (!user) {
+        // Graceful fallback: if no accounts exist yet, bootstrap first user
         if (users.length === 0) {
-          const newUser: StoredUser = { username, email: '', password, createdAt: new Date().toISOString() };
-          saveUsers([newUser]);
+          const hashed = await hashPassword(password);
+          saveUsers([{ username, email: '', password: hashed, createdAt: new Date().toISOString() }]);
         } else {
           setError('Incorrect username or password.');
           return;
+        }
+      } else {
+        const { valid, newHash } = await verifyAndMigratePassword(user.password, password);
+        if (!valid) {
+          setError('Incorrect username or password.');
+          return;
+        }
+        // Silently upgrade any legacy plain-text record to a hash
+        if (newHash) {
+          saveUsers(users.map((u) => u.username === user.username ? { ...u, password: newHash } : u));
         }
       }
     }
@@ -1153,8 +1207,9 @@ function AdminPage() {
   const [newAdminPassConfirm, setNewAdminPassConfirm] = useState('');
   const [adminChangeMsg, setAdminChangeMsg]   = useState('');
 
-  function login() {
-    if (adminInput === getAdminPass()) {
+  async function login() {
+    const ok = await verifyAdminPass(adminInput);
+    if (ok) {
       setAuthed(true);
       setAdminError('');
       setUsers(getUsers());
@@ -1165,13 +1220,14 @@ function AdminPage() {
 
   function refresh() { setUsers(getUsers()); }
 
-  function handleResetPassword() {
+  async function handleResetPassword() {
     setResetMsg('');
     if (!newPass) { setResetMsg('Password cannot be empty.'); return; }
     if (newPass !== newPassConfirm) { setResetMsg('Passwords do not match.'); return; }
     if (!resetTarget) return;
+    const hashed = await hashPassword(newPass);
     const updated = getUsers().map((u) =>
-      u.username === resetTarget.username ? { ...u, password: newPass } : u,
+      u.username === resetTarget.username ? { ...u, password: hashed } : u,
     );
     saveUsers(updated);
     setUsers(updated);
@@ -1192,11 +1248,11 @@ function AdminPage() {
     setDeleteTarget(null);
   }
 
-  function handleChangeAdminPass() {
+  async function handleChangeAdminPass() {
     setAdminChangeMsg('');
     if (!newAdminPass) { setAdminChangeMsg('Password cannot be empty.'); return; }
     if (newAdminPass !== newAdminPassConfirm) { setAdminChangeMsg('Passwords do not match.'); return; }
-    localStorage.setItem(ADMIN_KEY, newAdminPass);
+    await setAdminPassHash(newAdminPass);
     setAdminChangeMsg('✓ Admin password updated.');
     setNewAdminPass(''); setNewAdminPassConfirm('');
     setTimeout(() => { setShowChangeAdmin(false); setAdminChangeMsg(''); }, 1500);
@@ -1253,7 +1309,6 @@ function AdminPage() {
               Access Admin Dashboard
             </button>
           </div>
-          <p className="mt-6 text-[11px] text-slate-600 text-center">Default password: <code className="text-slate-500">verifed2026</code></p>
         </div>
       </main>
     );
