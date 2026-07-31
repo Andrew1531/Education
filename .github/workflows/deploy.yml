@@ -38,7 +38,7 @@ jobs:
       - name: Build
         run: pnpm --filter @workspace/education run build
         env:
-          BASE_PATH: /Education/
+          BASE_PATH: /
           PORT: 3000
           NODE_ENV: production
 
