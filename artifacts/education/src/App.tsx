@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 import { Link, Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
+import { hashPassword, isHashed, verifyAndMigratePassword } from './auth';
 
 const STORAGE_KEY  = 'ge_username';
 const USERS_KEY    = 'ge_users';      // all registered accounts
@@ -86,38 +87,6 @@ function getUsers(): StoredUser[] {
 }
 function saveUsers(users: StoredUser[]) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
-}
-/** SHA-256 hex digest via Web Crypto — runs in every modern browser. */
-async function hashPassword(password: string): Promise<string> {
-  const enc = new TextEncoder();
-  const buf = await crypto.subtle.digest('SHA-256', enc.encode(password));
-  return Array.from(new Uint8Array(buf))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
-/** True when a stored value looks like a SHA-256 hex (not a legacy plain-text entry). */
-function isHashed(s: string): boolean {
-  return /^[a-f0-9]{64}$/.test(s);
-}
-
-/**
- * Compare a stored password against user input.
- * If the stored value is still plain-text (legacy), verify by equality and
- * return a new hash so the caller can upgrade the record.
- */
-async function verifyAndMigratePassword(
-  stored: string,
-  input: string,
-): Promise<{ valid: boolean; newHash: string | null }> {
-  if (isHashed(stored)) {
-    return { valid: (await hashPassword(input)) === stored, newHash: null };
-  }
-  // Legacy plain-text: compare directly, then upgrade
-  if (stored === input) {
-    return { valid: true, newHash: await hashPassword(input) };
-  }
-  return { valid: false, newHash: null };
 }
 
 /** Verify the admin password; lazily initialises the hash on first use. */
