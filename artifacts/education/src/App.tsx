@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
 import { Link, Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 
 const STORAGE_KEY  = 'ge_username';
@@ -11,6 +11,75 @@ interface StoredUser {
   password:  string;
   createdAt: string;
 }
+
+// ─── Language Context & Translations ─────────────────────────────────────────
+
+type Lang = 'en' | 'es';
+
+const TX = {
+  en: {
+    about: 'About', howItWorks: 'How It Works', signOut: 'Sign Out',
+    footerCopy: '© 2026 VerifED Global. All rights reserved.',
+    footerTag: 'Engineered for international academic and professional transparency.',
+    privacy: 'Privacy Policy', terms: 'Terms of Service', admin: 'Admin',
+    poweredBy: 'Powered and engineered by',
+    heroBadge: '2026 U.S. Credential Intelligence Platform',
+    heroLine1: 'Your Foreign Education,',
+    heroLine2: 'Understood in the U.S.',
+    heroSub: 'VerifED Global maps your foreign credentials to U.S. equivalency standards, accredited evaluation agencies, licensing boards, and employment frameworks — before you spend a dollar on official evaluations.',
+    stat1: '180+', stat1L: 'Countries Covered',
+    stat2: 'NACES', stat2L: 'Agency Aligned',
+    stat3: '< 2 min', stat3L: 'To Your Roadmap',
+    f1t: 'Credential Mapping', f1d: 'See exactly how your foreign degree maps to U.S. equivalency standards, institution types, and academic frameworks.',
+    f2t: 'NACES Agency Matching', f2d: 'Find the right accredited evaluation agency for your specific country, degree level, and end goal.',
+    f3t: 'Licensing Roadmap', f3d: 'Get field-specific licensing and regulatory requirements for your U.S. career path, state by state.',
+    f4t: 'Job Board Access', f4d: 'Direct links to U.S. job boards actively seeking internationally educated professionals in your field.',
+    createAcc: 'Create Your Account', signInAcc: 'Sign In to Your Account',
+    alreadyReg: 'Already registered? Sign In', needAcc: 'Need an account? Sign Up',
+    formNote: 'Your information is kept strictly private and never shared with government agencies or third parties.',
+    lUser: 'Username', lPass: 'Password', lEmail: 'Correspondence Email',
+    pUser: 'e.g., alex_global26', pEmail: 'name@example.com',
+    btnCreate: 'Create Account & Access Evaluator', btnSignIn: 'Sign In & Access Evaluator',
+    backHome: 'Back to Home', goEval: 'Go to the Evaluator',
+    howTitle: 'How VerifED Global Works',
+    howSub: 'From your first question to your first U.S. job application — here is the complete process.',
+    privTitle: 'Privacy Policy', termsTitle: 'Terms of Service',
+  },
+  es: {
+    about: 'Acerca de', howItWorks: 'Cómo Funciona', signOut: 'Cerrar Sesión',
+    footerCopy: '© 2026 VerifED Global. Todos los derechos reservados.',
+    footerTag: 'Diseñado para la transparencia académica y profesional internacional.',
+    privacy: 'Política de Privacidad', terms: 'Términos de Servicio', admin: 'Administrador',
+    poweredBy: 'Desarrollado e impulsado por',
+    heroBadge: 'Plataforma de Inteligencia de Credenciales EE.UU. 2026',
+    heroLine1: 'Tu Educación Extranjera,',
+    heroLine2: 'Reconocida en EE.UU.',
+    heroSub: 'VerifED Global mapea tus credenciales extranjeras a los estándares de equivalencia de EE.UU., agencias evaluadoras acreditadas, juntas de licencias y marcos de empleo — antes de que gastes un centavo en evaluaciones oficiales.',
+    stat1: '180+', stat1L: 'Países Cubiertos',
+    stat2: 'NACES', stat2L: 'Agencias Acreditadas',
+    stat3: '< 2 min', stat3L: 'Para Tu Hoja de Ruta',
+    f1t: 'Mapeo de Credenciales', f1d: 'Ve exactamente cómo tu título extranjero se equipara con los estándares de equivalencia de EE.UU., tipos de instituciones y marcos académicos.',
+    f2t: 'Agencias NACES', f2d: 'Encuentra la agencia evaluadora acreditada correcta para tu país, nivel de título y objetivo final.',
+    f3t: 'Hoja de Ruta de Licencias', f3d: 'Obtén los requisitos de licencias específicos por campo para tu carrera en EE.UU., estado por estado.',
+    f4t: 'Bolsas de Trabajo', f4d: 'Links directos a bolsas de trabajo de EE.UU. que buscan activamente profesionales educados internacionalmente en tu campo.',
+    createAcc: 'Crear Tu Cuenta', signInAcc: 'Iniciar Sesión',
+    alreadyReg: '¿Ya tienes cuenta? Inicia Sesión', needAcc: '¿Necesitas una cuenta? Regístrate',
+    formNote: 'Tu información se mantiene estrictamente privada y nunca se comparte con agencias gubernamentales ni terceros.',
+    lUser: 'Usuario', lPass: 'Contraseña', lEmail: 'Correo de Correspondencia',
+    pUser: 'ej., alex_global26', pEmail: 'nombre@ejemplo.com',
+    btnCreate: 'Crear Cuenta y Acceder al Evaluador', btnSignIn: 'Iniciar Sesión y Acceder al Evaluador',
+    backHome: 'Volver al Inicio', goEval: 'Ir al Evaluador',
+    howTitle: 'Cómo Funciona VerifED Global',
+    howSub: 'Desde tu primera pregunta hasta tu primera solicitud de empleo en EE.UU. — aquí está el proceso completo.',
+    privTitle: 'Política de Privacidad', termsTitle: 'Términos de Servicio',
+  },
+} as const;
+
+type TKey = keyof typeof TX.en;
+const LangCtx = createContext<{ lang: Lang; toggleLang: () => void; t: (k: TKey) => string }>({
+  lang: 'en', toggleLang: () => {}, t: (k) => TX.en[k],
+});
+function useLang() { return useContext(LangCtx); }
 
 function getUsers(): StoredUser[] {
   try { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); } catch { return []; }
@@ -125,7 +194,24 @@ function getRoadmap(country: string, institution: string, field: string, purpose
 
 // ─── Shared Shell ─────────────────────────────────────────────────────────────
 
+function LangToggle() {
+  const { lang, toggleLang } = useLang();
+  return (
+    <button
+      onClick={toggleLang}
+      className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:border-slate-500 transition-all cursor-pointer select-none"
+      aria-label="Toggle language"
+    >
+      <span>{lang === 'en' ? '🇺🇸' : '🇲🇽'}</span>
+      <span>{lang === 'en' ? 'EN' : 'ES'}</span>
+      <span className="text-slate-600 font-normal">/</span>
+      <span className="text-slate-500 font-normal">{lang === 'en' ? 'ES' : 'EN'}</span>
+    </button>
+  );
+}
+
 function Navbar({ appView, username, onLogout }: { appView: AppView; username: string; onLogout: () => void }) {
+  const { t } = useLang();
   const [, setLocation] = useLocation();
   return (
     <nav className="relative z-50 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl sticky top-0">
@@ -144,45 +230,52 @@ function Navbar({ appView, username, onLogout }: { appView: AppView; username: s
           </div>
         </button>
 
-        <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-400">
-          <Link href="/about" className="hover:text-white transition-colors" data-testid="link-about">About</Link>
-          <Link href="/how-it-works" className="hover:text-white transition-colors" data-testid="link-how-it-works">How It Works</Link>
+        <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-400">
+          <Link href="/about" className="hover:text-white transition-colors" data-testid="link-about">{t('about')}</Link>
+          <Link href="/how-it-works" className="hover:text-white transition-colors" data-testid="link-how-it-works">{t('howItWorks')}</Link>
+          <LangToggle />
         </div>
 
-        {appView === 'app' && (
-          <div className="flex items-center space-x-4" data-testid="nav-user-badge">
-            <span className="text-xs text-indigo-300 font-mono bg-indigo-500/10 px-3 py-1.5 rounded-full border border-indigo-500/30" data-testid="text-nav-username">
-              👤 @{username}
-            </span>
-            <button
-              onClick={onLogout}
-              data-testid="button-signout"
-              className="text-xs text-slate-400 hover:text-white transition-colors bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full cursor-pointer"
-            >
-              Sign Out
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {/* Mobile lang toggle */}
+          <div className="md:hidden"><LangToggle /></div>
+
+          {appView === 'app' && (
+            <div className="flex items-center space-x-3" data-testid="nav-user-badge">
+              <span className="hidden sm:inline text-xs text-indigo-300 font-mono bg-indigo-500/10 px-3 py-1.5 rounded-full border border-indigo-500/30" data-testid="text-nav-username">
+                👤 @{username}
+              </span>
+              <button
+                onClick={onLogout}
+                data-testid="button-signout"
+                className="text-xs text-slate-400 hover:text-white transition-colors bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full cursor-pointer"
+              >
+                {t('signOut')}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );
 }
 
 function Footer({ onPrivacy, onTerms }: { onPrivacy: () => void; onTerms: () => void }) {
+  const { t } = useLang();
   return (
     <footer className="border-t border-slate-800/80 bg-slate-950 py-12 px-6 relative z-10 mt-20">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
         <div>
-          <p className="text-xs text-slate-400 font-medium">&copy; 2026 VerifED Global. All rights reserved.</p>
-          <p className="text-[11px] text-slate-500 mt-1">Engineered for international academic and professional transparency.</p>
+          <p className="text-xs text-slate-400 font-medium">{t('footerCopy')}</p>
+          <p className="text-[11px] text-slate-500 mt-1">{t('footerTag')}</p>
         </div>
         <div className="flex items-center space-x-6 text-xs text-slate-400 font-medium">
-          <button onClick={onPrivacy} data-testid="button-privacy-policy" className="hover:text-white transition-colors cursor-pointer bg-transparent border-none text-slate-400 text-xs font-medium">Privacy Policy</button>
-          <button onClick={onTerms} data-testid="button-terms" className="hover:text-white transition-colors cursor-pointer bg-transparent border-none text-slate-400 text-xs font-medium">Terms of Service</button>
-          <Link href="/admin" className="hover:text-white transition-colors text-slate-600 text-xs font-medium" data-testid="link-admin">Admin</Link>
+          <button onClick={onPrivacy} data-testid="button-privacy-policy" className="hover:text-white transition-colors cursor-pointer bg-transparent border-none text-slate-400 text-xs font-medium">{t('privacy')}</button>
+          <button onClick={onTerms} data-testid="button-terms" className="hover:text-white transition-colors cursor-pointer bg-transparent border-none text-slate-400 text-xs font-medium">{t('terms')}</button>
+          <Link href="/admin" className="hover:text-white transition-colors text-slate-600 text-xs font-medium" data-testid="link-admin">{t('admin')}</Link>
         </div>
         <div className="bg-slate-900/90 border border-slate-800 px-4 py-3 rounded-2xl flex items-center gap-2.5 shadow-inner">
-          <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Powered and engineered by</span>
+          <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">{t('poweredBy')}</span>
           <a href="https://ladmedia.co" target="_blank" rel="noopener noreferrer" data-testid="link-lad-media" className="text-xs font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent hover:underline">LAD MEDIA</a>
         </div>
       </div>
@@ -207,13 +300,14 @@ function Modal({ id, title, children, onClose }: { id: string; title: string; ch
 // ─── About Page ───────────────────────────────────────────────────────────────
 
 function AboutPage() {
+  const { t } = useLang();
   const [, setLocation] = useLocation();
   return (
     <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full">
       {/* Back */}
       <button onClick={() => setLocation('/')} data-testid="button-back-about" className="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors mb-10 bg-transparent border-none cursor-pointer">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-        Back to Home
+        {t('backHome')}
       </button>
 
       {/* Hero */}
@@ -302,7 +396,7 @@ function AboutPage() {
             data-testid="button-go-to-evaluator"
             className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 px-8 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer"
           >
-            Go to the Evaluator
+            {t('goEval')}
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
           </button>
         </div>
@@ -371,13 +465,14 @@ const HOW_STEPS = [
 ];
 
 function HowItWorksPage() {
+  const { t } = useLang();
   const [, setLocation] = useLocation();
   return (
     <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full">
       {/* Back */}
       <button onClick={() => setLocation('/')} data-testid="button-back-how" className="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors mb-10 bg-transparent border-none cursor-pointer">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-        Back to Home
+        {t('backHome')}
       </button>
 
       {/* Hero */}
@@ -386,13 +481,12 @@ function HowItWorksPage() {
           <span className="text-indigo-400 font-semibold">⚡ Simple, Step-by-Step</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
-          How VerifED Global{' '}
           <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">
-            Works for You
+            {t('howTitle')}
           </span>
         </h1>
         <p className="text-slate-400 text-lg leading-relaxed max-w-2xl">
-          You bring your credentials. We provide the tools, analysis, and guidance. Together, we build the clearest possible path to your U.S. goals.
+          {t('howSub')}
         </p>
       </div>
 
@@ -463,6 +557,7 @@ function HowItWorksPage() {
 // ─── Auth View ────────────────────────────────────────────────────────────────
 
 function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
+  const { t } = useLang();
   const [isSignUp, setIsSignUp] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -492,7 +587,6 @@ function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
     } else {
       const user = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
       if (!user) {
-        // Graceful fallback: if no accounts exist yet, bootstrap first user
         if (users.length === 0) {
           const hashed = await hashPassword(password);
           saveUsers([{ username, email: '', password: hashed, createdAt: new Date().toISOString() }]);
@@ -502,11 +596,7 @@ function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
         }
       } else {
         const { valid, newHash } = await verifyAndMigratePassword(user.password, password);
-        if (!valid) {
-          setError('Incorrect username or password.');
-          return;
-        }
-        // Silently upgrade any legacy plain-text record to a hash
+        if (!valid) { setError('Incorrect username or password.'); return; }
         if (newHash) {
           saveUsers(users.map((u) => u.username === user.username ? { ...u, password: newHash } : u));
         }
@@ -517,59 +607,114 @@ function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
     onLogin(username);
   }
 
+  const iCls = 'w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all';
+
   return (
-    <div className="space-y-16">
-      <div className="text-center max-w-3xl mx-auto">
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
-          Navigate Your U.S. Education &amp; Professional{' '}
-          <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">Journey With Confidence</span>
+    <div className="space-y-24">
+
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      <div className="text-center max-w-4xl mx-auto pt-6">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs text-indigo-300 font-semibold mb-8">
+          <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse flex-shrink-0" />
+          🛰️ {t('heroBadge')}
+        </div>
+
+        {/* Headline */}
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-[1.05]">
+          {t('heroLine1')}<br />
+          <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">
+            {t('heroLine2')}
+          </span>
         </h1>
-        <p className="text-slate-400 text-lg md:text-xl font-normal leading-relaxed">
-          VerifED Global is an independent commercial intelligence platform designed to help international individuals understand how their foreign credentials map to U.S. standards, licensing boards, and employment frameworks before investing in official evaluations.
+
+        {/* Subtitle */}
+        <p className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-14">
+          {t('heroSub')}
         </p>
+
+        {/* Stats strip */}
+        <div className="inline-flex flex-col sm:flex-row items-center divide-y sm:divide-y-0 sm:divide-x divide-slate-800 rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden backdrop-blur-sm">
+          {([
+            [t('stat1'), t('stat1L')],
+            [t('stat2'), t('stat2L')],
+            [t('stat3'), t('stat3L')],
+          ] as [string, string][]).map(([val, label]) => (
+            <div key={label} className="px-8 py-4 text-center">
+              <div className="text-2xl font-black bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">{val}</div>
+              <div className="text-[11px] text-slate-500 uppercase tracking-wider font-medium mt-0.5">{label}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
+      {/* ── Features ─────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
+        {([
+          ['🗺️', t('f1t'), t('f1d'), 'border-indigo-500/20 hover:border-indigo-500/40'],
+          ['🏛️', t('f2t'), t('f2d'), 'border-violet-500/20 hover:border-violet-500/40'],
+          ['📋', t('f3t'), t('f3d'), 'border-cyan-500/20 hover:border-cyan-500/40'],
+          ['💼', t('f4t'), t('f4d'), 'border-emerald-500/20 hover:border-emerald-500/40'],
+        ] as [string, string, string, string][]).map(([icon, title, desc, border]) => (
+          <div key={title} className={`group bg-slate-900/60 border ${border} rounded-2xl p-6 backdrop-blur-sm transition-all duration-200 hover:bg-slate-800/60`}>
+            <span className="text-2xl mb-3 block">{icon}</span>
+            <h3 className="text-white font-bold text-sm mb-1.5">{title}</h3>
+            <p className="text-slate-400 text-xs leading-relaxed">{desc}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Auth Form ────────────────────────────────────────────────────── */}
       <div className="max-w-md mx-auto">
+        {/* Section label */}
+        <div className="flex items-center gap-4 mb-8">
+          <div className="flex-1 h-px bg-slate-800" />
+          <span className="text-xs text-slate-500 font-semibold uppercase tracking-widest">
+            {isSignUp ? t('createAcc') : t('signInAcc')}
+          </span>
+          <div className="flex-1 h-px bg-slate-800" />
+        </div>
+
         <div className="glass-panel p-8 rounded-3xl relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500" />
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-white font-bold text-lg tracking-tight" data-testid="text-auth-heading">
-              {isSignUp ? 'Create Your Account' : 'Sign In to Your Account'}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-500" />
+
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-white font-bold text-base tracking-tight" data-testid="text-auth-heading">
+              {isSignUp ? t('createAcc') : t('signInAcc')}
             </h2>
-            <button type="button" onClick={() => setIsSignUp(!isSignUp)} data-testid="button-toggle-auth" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium underline bg-transparent border-none cursor-pointer">
-              {isSignUp ? 'Already registered? Sign In' : 'Need an account? Sign Up'}
+            <button type="button" onClick={() => { setIsSignUp(!isSignUp); setError(''); }} data-testid="button-toggle-auth" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium underline bg-transparent border-none cursor-pointer whitespace-nowrap ml-3">
+              {isSignUp ? t('alreadyReg') : t('needAcc')}
             </button>
           </div>
-          <p className="text-xs text-slate-400 mb-6 leading-relaxed">
-            Please provide your basic information so we can maintain your personal equivalency records and correspond with you regarding platform updates.
-          </p>
+
+          <p className="text-xs text-slate-500 mb-5 leading-relaxed">{t('formNote')}</p>
+
           <form onSubmit={handleSubmit} className="space-y-4" data-testid="form-auth">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Username</label>
-              <input value={username} onChange={(e) => setUsername(e.target.value)} data-testid="input-username" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder="e.g., alex_global26" required />
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('lUser')}</label>
+              <input value={username} onChange={(e) => setUsername(e.target.value)} data-testid="input-username" className={iCls} placeholder={t('pUser')} required />
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Password</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} data-testid="input-password" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder="••••••••••••" required />
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('lPass')}</label>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} data-testid="input-password" className={iCls} placeholder="••••••••••••" required />
             </div>
             {isSignUp && (
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Correspondence Email</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="input-email" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder="name@example.com" required />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('lEmail')}</label>
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="input-email" className={iCls} placeholder={t('pEmail')} required />
               </div>
             )}
             {error && (
-              <p className="text-red-400 text-xs font-medium bg-red-900/20 border border-red-500/30 rounded-lg px-3 py-2">
-                {error}
-              </p>
+              <p className="text-red-400 text-xs font-medium bg-red-900/20 border border-red-500/30 rounded-lg px-3 py-2">{error}</p>
             )}
-            <button type="submit" data-testid="button-auth-submit" className="w-full mt-4 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-4 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center space-x-2">
-              <span>{isSignUp ? 'Create Account & Access Evaluator' : 'Sign In & Access Evaluator'}</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            <button type="submit" data-testid="button-auth-submit" className="w-full mt-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-4 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
+              <span>{isSignUp ? t('btnCreate') : t('btnSignIn')}</span>
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </button>
           </form>
         </div>
       </div>
+
     </div>
   );
 }
@@ -1384,6 +1529,10 @@ export default function App() {
   const [appView, setAppView] = useState<AppView>('auth');
   const [username, setUsername] = useState('');
   const [modal, setModal] = useState<'privacy' | 'terms' | null>(null);
+  const [lang, setLang] = useState<Lang>('en');
+
+  const toggleLang = () => setLang((l) => (l === 'en' ? 'es' : 'en'));
+  const t = (k: TKey) => TX[lang][k];
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -1404,6 +1553,7 @@ export default function App() {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   return (
+    <LangCtx.Provider value={{ lang, toggleLang, t }}>
     <WouterRouter base={base}>
       <div className="bg-slate-950 text-slate-100 min-h-screen font-sans relative overflow-x-hidden flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
         <div className="glow-effect -top-40 -left-40 rounded-full" />
@@ -1447,5 +1597,6 @@ export default function App() {
         )}
       </div>
     </WouterRouter>
+    </LangCtx.Provider>
   );
 }
