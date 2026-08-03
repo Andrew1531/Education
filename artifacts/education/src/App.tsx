@@ -285,16 +285,14 @@ function Navbar({ appView, username, onLogout }: { appView: AppView; username: s
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <button
           onClick={() => setLocation('/')}
-          className="flex items-center space-x-3 cursor-pointer bg-transparent border-none p-0"
+          className="flex items-center cursor-pointer bg-transparent border-none p-0"
           data-testid="link-home"
         >
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-500 flex items-center justify-center font-black text-white text-lg shadow-lg shadow-indigo-500/30">
-            VG
-          </div>
-          <div className="text-left">
-            <span className="font-extrabold text-white text-lg tracking-tight block">VerifED Global</span>
-            <span className="text-[10px] font-bold text-indigo-400 tracking-widest uppercase">2026 Credential Engine</span>
-          </div>
+          <img
+            src={`${import.meta.env.BASE_URL}logo.png`.replace(/\/+/g, '/')}
+            alt="VerifED Global"
+            className="h-10 w-auto object-contain"
+          />
         </button>
 
         <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-400">
