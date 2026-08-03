@@ -1,20 +1,15 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 import { Link, Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { hashPassword, verifyAndMigratePassword } from './auth';
+import {
+  type StoredUser,
+  UserStoreCorruptError,
+  getUsers,
+  saveUsers,
+} from './userStore';
+import { StorageCorruptBanner } from './StorageCorruptBanner';
 
-const STORAGE_KEY  = 'ge_username';
-const USERS_KEY    = 'ge_users';      // all registered accounts
-
-interface StoredUser {
-  username:  string;
-  email:     string;
-  password:  string;
-  salt?:     string;  // PBKDF2 salt; absent on legacy SHA-256 or plain-text records
-  createdAt: string;
-}
-
-// ─── Language Context & Translations ─────────────────────────────────────────
-
+const STORAGE_KEY = 'ge_username';
 type Lang = 'en' | 'es';
 
 const TX = {
@@ -81,83 +76,6 @@ const LangCtx = createContext<{ lang: Lang; toggleLang: () => void; t: (k: TKey)
   lang: 'en', toggleLang: () => {}, t: (k) => TX.en[k],
 });
 function useLang() { return useContext(LangCtx); }
-
-/** Thrown when the `ge_users` localStorage entry exists but cannot be parsed. */
-class UserStoreCorruptError extends Error {
-  constructor(cause: unknown) {
-    super(
-      `User store (${USERS_KEY}) is corrupt and could not be read: ` +
-        (cause instanceof Error ? cause.message : String(cause)),
-    );
-    this.name = 'UserStoreCorruptError';
-  }
-}
-
-/** True when `v` has every required field of a StoredUser at the right type. */
-function isValidStoredUser(v: unknown): v is StoredUser {
-  if (!v || typeof v !== 'object') return false;
-  const u = v as Record<string, unknown>;
-  return (
-    typeof u.username  === 'string' && u.username.length > 0 &&
-    typeof u.email     === 'string' &&
-    typeof u.password  === 'string' && u.password.length > 0 &&
-    typeof u.createdAt === 'string'
-  );
-}
-
-/**
- * Read all stored users.
- *
- * Returns `[]` only when the key is absent (genuine first-run state).
- * An empty string, non-array JSON, or any record that fails schema
- * validation all throw `UserStoreCorruptError` — callers must handle this
- * explicitly rather than treating it as "no users".
- */
-function getUsers(): StoredUser[] {
-  const raw = localStorage.getItem(USERS_KEY);
-  if (raw === null) return [];               // key absent → first-run, no data yet
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    if (!Array.isArray(parsed)) {
-      throw new UserStoreCorruptError('parsed value is not an array');
-    }
-    // Validate every record — a partially-written entry is still corrupt.
-    const invalid = parsed.findIndex((item) => !isValidStoredUser(item));
-    if (invalid !== -1) {
-      throw new UserStoreCorruptError(
-        `record at index ${invalid} is missing required fields (username, password, createdAt)`,
-      );
-    }
-    return parsed as StoredUser[];
-  } catch (e) {
-    if (e instanceof UserStoreCorruptError) throw e;
-    throw new UserStoreCorruptError(e);
-  }
-}
-
-/**
- * Persist the user list.
- *
- * Performs a JSON round-trip check before writing so that a serialisation
- * failure is caught before it overwrites good data with a truncated value.
- */
-function saveUsers(users: StoredUser[]) {
-  let serialized: string;
-  try {
-    serialized = JSON.stringify(users);
-    // Round-trip validation: confirm we can parse what we are about to write.
-    const roundTripped: unknown = JSON.parse(serialized);
-    if (!Array.isArray(roundTripped)) throw new Error('round-trip produced non-array');
-  } catch (e) {
-    throw new Error(
-      `saveUsers: data failed round-trip validation and was NOT written. ` +
-        (e instanceof Error ? e.message : String(e)),
-    );
-  }
-  localStorage.setItem(USERS_KEY, serialized);
-}
-
-
 type AppView = 'auth' | 'app';
 
 interface EvalResult {
@@ -213,54 +131,6 @@ function getRoadmap(country: string, institution: string, field: string, purpose
     },
   ];
 }
-
-// ─── Storage Corrupt Banner ───────────────────────────────────────────────────
-
-/**
- * Prominent warning shown when `ge_users` exists but cannot be parsed.
- * Gives the admin a clear path to recover (clear the key) or dismiss and
- * continue without user data.
- */
-function StorageCorruptBanner({ message, onDismiss }: { message: string; onDismiss?: () => void }) {
-  return (
-    <div
-      role="alert"
-      data-testid="banner-storage-corrupt"
-      className="relative z-50 mx-4 mt-4 rounded-2xl border border-red-500/50 bg-red-950/80 backdrop-blur-sm px-5 py-4 shadow-xl shadow-red-900/30"
-    >
-      <div className="flex items-start gap-3">
-        <span className="text-red-400 text-xl flex-shrink-0 mt-0.5">⚠️</span>
-        <div className="flex-1 min-w-0">
-          <p className="text-red-300 font-bold text-sm mb-1">User store is unreadable — accounts may be inaccessible</p>
-          <p className="text-red-400 text-xs leading-relaxed mb-3">
-            The saved account data appears to be corrupted or malformed. Sign-in and registration are unavailable until this is resolved.
-            An administrator can clear the corrupted data from the browser&apos;s Application → Local Storage tab
-            (<code className="font-mono bg-red-900/40 px-1 rounded">ge_users</code>) to restore access.
-          </p>
-          <details className="group">
-            <summary className="text-red-500 text-[11px] font-mono cursor-pointer hover:text-red-300 transition-colors select-none">
-              Technical detail
-            </summary>
-            <p className="text-red-500 text-[11px] font-mono mt-1 break-all leading-relaxed">{message}</p>
-          </details>
-        </div>
-        {onDismiss && (
-          <button
-            onClick={onDismiss}
-            data-testid="button-dismiss-storage-corrupt"
-            aria-label="Dismiss warning"
-            className="text-red-600 hover:text-red-400 transition-colors flex-shrink-0 bg-transparent border-none cursor-pointer text-lg leading-none"
-          >
-            ×
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ─── Shared Shell ─────────────────────────────────────────────────────────────
-
 function LangToggle() {
   const { lang, toggleLang } = useLang();
   return (
