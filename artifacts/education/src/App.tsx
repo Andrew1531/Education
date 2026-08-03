@@ -1,10 +1,9 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 import { Link, Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
-import { hashPassword, isHashed, verifyAndMigratePassword } from './auth';
+import { hashPassword, verifyAndMigratePassword } from './auth';
 
 const STORAGE_KEY  = 'ge_username';
 const USERS_KEY    = 'ge_users';      // all registered accounts
-const ADMIN_KEY    = 'ge_admin_pass'; // admin password stored in localStorage
 
 interface StoredUser {
   username:  string;
@@ -158,38 +157,6 @@ function saveUsers(users: StoredUser[]) {
   localStorage.setItem(USERS_KEY, serialized);
 }
 
-/** Verify the admin password; lazily initialises the hash on first use. */
-async function verifyAdminPass(input: string): Promise<boolean> {
-  const stored = localStorage.getItem(ADMIN_KEY);
-  if (!stored) {
-    // First run: hash the default password with PBKDF2 and persist it.
-    const { hash, salt } = await hashPassword('verifed2026');
-    localStorage.setItem(ADMIN_KEY, JSON.stringify({ hash, salt }));
-    const check = await hashPassword(input, salt);
-    return check.hash === hash;
-  }
-
-  // New format: JSON { hash, salt }
-  try {
-    const parsed = JSON.parse(stored) as { hash: string; salt: string };
-    if (parsed.hash && parsed.salt) {
-      const { valid } = await verifyAndMigratePassword(parsed.hash, input, parsed.salt);
-      return valid;
-    }
-  } catch { /* not JSON — fall through to legacy path */ }
-
-  // Legacy string (SHA-256 hex or plain text): verify and silently migrate.
-  const { valid, newHash, newSalt } = await verifyAndMigratePassword(stored, input);
-  if (valid && newHash && newSalt) {
-    localStorage.setItem(ADMIN_KEY, JSON.stringify({ hash: newHash, salt: newSalt }));
-  }
-  return valid;
-}
-
-async function setAdminPassHash(newPass: string): Promise<void> {
-  const { hash, salt } = await hashPassword(newPass);
-  localStorage.setItem(ADMIN_KEY, JSON.stringify({ hash, salt }));
-}
 
 type AppView = 'auth' | 'app';
 
