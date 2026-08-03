@@ -341,7 +341,7 @@ function Footer({ onPrivacy, onTerms }: { onPrivacy: () => void; onTerms: () => 
         </div>
         <div className="bg-slate-900/90 border border-slate-800 px-4 py-3 rounded-2xl flex items-center gap-2.5 shadow-inner">
           <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">{t('poweredBy')}</span>
-          <a href="https://ladmedia.co" target="_blank" rel="noopener noreferrer" data-testid="link-lad-media" className="text-xs font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent hover:underline">LAD MEDIA</a>
+          <a href="https://ladmedia.co" target="_blank" rel="noopener noreferrer" data-testid="link-lad-media" className="text-xs font-bold bg-gradient-to-r from-blue-400 to-fuchsia-500 bg-clip-text text-transparent hover:underline">LAD MEDIA</a>
         </div>
       </div>
     </footer>
@@ -382,7 +382,7 @@ function AboutPage() {
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
           Starting Over in a New Country{' '}
-          <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
             Is One of the Hardest Things a Person Can Do.
           </span>
         </h1>
@@ -546,7 +546,7 @@ function HowItWorksPage() {
           <span className="text-indigo-400 font-semibold">⚡ Simple, Step-by-Step</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
-          <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
             {t('howTitle')}
           </span>
         </h1>
@@ -699,7 +699,7 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
         {/* Headline */}
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-[1.05]">
           {t('heroLine1')}<br />
-          <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
             {t('heroLine2')}
           </span>
         </h1>
@@ -717,7 +717,7 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
             [t('stat3'), t('stat3L')],
           ] as [string, string][]).map(([val, label]) => (
             <div key={label} className="px-8 py-4 text-center">
-              <div className="text-2xl font-black bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">{val}</div>
+              <div className="text-2xl font-black bg-gradient-to-r from-blue-400 to-fuchsia-500 bg-clip-text text-transparent">{val}</div>
               <div className="text-[11px] text-slate-500 uppercase tracking-wider font-medium mt-0.5">{label}</div>
             </div>
           ))}
@@ -759,7 +759,7 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
         </div>
 
         <div className="glass-panel p-8 rounded-3xl relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-500" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-violet-500 to-fuchsia-500" />
 
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-white font-bold text-base tracking-tight" data-testid="text-auth-heading">
@@ -1153,7 +1153,7 @@ function EvaluatorView() {
         </div>
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
           Transform Your Foreign Education Into{' '}
-          <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">U.S. Equivalency</span>
+          <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">U.S. Equivalency</span>
         </h1>
         <p className="text-slate-400 text-lg md:text-xl font-normal leading-relaxed">
           Instantly crawl academic databases, map international coursework to U.S. standards, and generate a dynamic verification roadmap.
@@ -1164,7 +1164,7 @@ function EvaluatorView() {
         {/* Input Card */}
         <section className="lg:col-span-5">
           <div className="glass-panel p-8 rounded-3xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-violet-500 to-fuchsia-500" />
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-white font-bold text-lg tracking-tight">Credential Parameters</h2>
               <span className="text-xs text-indigo-400 font-mono bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-indigo-500/20">STEP 1 OF 2</span>
