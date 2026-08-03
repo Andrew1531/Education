@@ -504,53 +504,63 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
     setError('');
     if (!username || !password) return;
 
-    let users: StoredUser[];
     try {
-      users = getUsers();
-    } catch (err) {
-      setError(
-        err instanceof UserStoreCorruptError
-          ? 'Account data is corrupted and cannot be read. Please contact the administrator.'
-          : 'Unable to load accounts. Please refresh and try again.',
-      );
-      return;
-    }
-
-    if (isSignUp) {
-      if (users.find((u) => u.username.toLowerCase() === username.toLowerCase())) {
-        setError('Username already taken. Please choose another or sign in.');
+      let users: StoredUser[];
+      try {
+        users = getUsers();
+      } catch (err) {
+        setError(
+          err instanceof UserStoreCorruptError
+            ? 'Account data is corrupted and cannot be read. Please contact the administrator.'
+            : 'Unable to load accounts. Please refresh and try again.',
+        );
         return;
       }
-      const { hash, salt } = await hashPassword(password);
-      const newUser: StoredUser = {
-        username,
-        email: email || '',
-        password: hash,
-        salt,
-        createdAt: new Date().toISOString(),
-      };
-      saveUsers([...users, newUser]);
-    } else {
-      const user = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
-      if (!user) {
-        if (users.length === 0) {
-          const { hash, salt } = await hashPassword(password);
-          saveUsers([{ username, email: '', password: hash, salt, createdAt: new Date().toISOString() }]);
-        } else {
-          setError('Incorrect username or password.');
+
+      if (isSignUp) {
+        if (users.find((u) => u.username.toLowerCase() === username.toLowerCase())) {
+          // Account already exists — switch to sign-in so the user can log in immediately
+          setIsSignUp(false);
+          setError('An account with that username already exists. Enter your password to sign in.');
           return;
         }
+        const { hash, salt } = await hashPassword(password);
+        const newUser: StoredUser = {
+          username,
+          email: email || '',
+          password: hash,
+          salt,
+          createdAt: new Date().toISOString(),
+        };
+        saveUsers([...users, newUser]);
       } else {
-        const { valid, newHash, newSalt } = await verifyAndMigratePassword(user.password, password, user.salt);
-        if (!valid) { setError('Incorrect username or password.'); return; }
-        if (newHash && newSalt) {
-          saveUsers(users.map((u) => u.username === user.username ? { ...u, password: newHash, salt: newSalt } : u));
+        const user = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
+        if (!user) {
+          if (users.length === 0) {
+            const { hash, salt } = await hashPassword(password);
+            saveUsers([{ username, email: '', password: hash, salt, createdAt: new Date().toISOString() }]);
+          } else {
+            setError('Incorrect username or password.');
+            return;
+          }
+        } else {
+          const { valid, newHash, newSalt } = await verifyAndMigratePassword(user.password, password, user.salt);
+          if (!valid) { setError('Incorrect username or password.'); return; }
+          if (newHash && newSalt) {
+            saveUsers(users.map((u) => u.username === user.username ? { ...u, password: newHash, salt: newSalt } : u));
+          }
         }
       }
-    }
 
-    localStorage.setItem(STORAGE_KEY, username);
-    onLogin(username);
+      localStorage.setItem(STORAGE_KEY, username);
+      onLogin(username);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? `Something went wrong: ${err.message}`
+          : 'An unexpected error occurred. Please refresh and try again.',
+      );
+    }
   }
 
   const iCls = 'w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all';

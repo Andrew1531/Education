@@ -32,7 +32,7 @@ export function isValidStoredUser(v: unknown): v is StoredUser {
   const u = v as Record<string, unknown>;
   return (
     typeof u.username  === 'string' && u.username.length > 0 &&
-    typeof u.email     === 'string' &&
+    (u.email === undefined || u.email === null || typeof u.email === 'string') &&
     typeof u.password  === 'string' && u.password.length > 0 &&
     typeof u.createdAt === 'string'
   );
