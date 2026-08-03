@@ -83,11 +83,79 @@ const LangCtx = createContext<{ lang: Lang; toggleLang: () => void; t: (k: TKey)
 });
 function useLang() { return useContext(LangCtx); }
 
-function getUsers(): StoredUser[] {
-  try { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); } catch { return []; }
+/** Thrown when the `ge_users` localStorage entry exists but cannot be parsed. */
+class UserStoreCorruptError extends Error {
+  constructor(cause: unknown) {
+    super(
+      `User store (${USERS_KEY}) is corrupt and could not be read: ` +
+        (cause instanceof Error ? cause.message : String(cause)),
+    );
+    this.name = 'UserStoreCorruptError';
+  }
 }
+
+/** True when `v` has every required field of a StoredUser at the right type. */
+function isValidStoredUser(v: unknown): v is StoredUser {
+  if (!v || typeof v !== 'object') return false;
+  const u = v as Record<string, unknown>;
+  return (
+    typeof u.username  === 'string' && u.username.length > 0 &&
+    typeof u.email     === 'string' &&
+    typeof u.password  === 'string' && u.password.length > 0 &&
+    typeof u.createdAt === 'string'
+  );
+}
+
+/**
+ * Read all stored users.
+ *
+ * Returns `[]` only when the key is absent (genuine first-run state).
+ * An empty string, non-array JSON, or any record that fails schema
+ * validation all throw `UserStoreCorruptError` — callers must handle this
+ * explicitly rather than treating it as "no users".
+ */
+function getUsers(): StoredUser[] {
+  const raw = localStorage.getItem(USERS_KEY);
+  if (raw === null) return [];               // key absent → first-run, no data yet
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      throw new UserStoreCorruptError('parsed value is not an array');
+    }
+    // Validate every record — a partially-written entry is still corrupt.
+    const invalid = parsed.findIndex((item) => !isValidStoredUser(item));
+    if (invalid !== -1) {
+      throw new UserStoreCorruptError(
+        `record at index ${invalid} is missing required fields (username, password, createdAt)`,
+      );
+    }
+    return parsed as StoredUser[];
+  } catch (e) {
+    if (e instanceof UserStoreCorruptError) throw e;
+    throw new UserStoreCorruptError(e);
+  }
+}
+
+/**
+ * Persist the user list.
+ *
+ * Performs a JSON round-trip check before writing so that a serialisation
+ * failure is caught before it overwrites good data with a truncated value.
+ */
 function saveUsers(users: StoredUser[]) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  let serialized: string;
+  try {
+    serialized = JSON.stringify(users);
+    // Round-trip validation: confirm we can parse what we are about to write.
+    const roundTripped: unknown = JSON.parse(serialized);
+    if (!Array.isArray(roundTripped)) throw new Error('round-trip produced non-array');
+  } catch (e) {
+    throw new Error(
+      `saveUsers: data failed round-trip validation and was NOT written. ` +
+        (e instanceof Error ? e.message : String(e)),
+    );
+  }
+  localStorage.setItem(USERS_KEY, serialized);
 }
 
 /** Verify the admin password; lazily initialises the hash on first use. */
@@ -177,6 +245,51 @@ function getRoadmap(country: string, institution: string, field: string, purpose
       desc: `Compile your scraped data packet into a standardized format ready for direct submission to WES, ECE, or Josef Silny & Associates.`,
     },
   ];
+}
+
+// ─── Storage Corrupt Banner ───────────────────────────────────────────────────
+
+/**
+ * Prominent warning shown when `ge_users` exists but cannot be parsed.
+ * Gives the admin a clear path to recover (clear the key) or dismiss and
+ * continue without user data.
+ */
+function StorageCorruptBanner({ message, onDismiss }: { message: string; onDismiss?: () => void }) {
+  return (
+    <div
+      role="alert"
+      data-testid="banner-storage-corrupt"
+      className="relative z-50 mx-4 mt-4 rounded-2xl border border-red-500/50 bg-red-950/80 backdrop-blur-sm px-5 py-4 shadow-xl shadow-red-900/30"
+    >
+      <div className="flex items-start gap-3">
+        <span className="text-red-400 text-xl flex-shrink-0 mt-0.5">⚠️</span>
+        <div className="flex-1 min-w-0">
+          <p className="text-red-300 font-bold text-sm mb-1">User store is unreadable — accounts may be inaccessible</p>
+          <p className="text-red-400 text-xs leading-relaxed mb-3">
+            The saved account data appears to be corrupted or malformed. Sign-in and registration are unavailable until this is resolved.
+            An administrator can clear the corrupted data from the browser&apos;s Application → Local Storage tab
+            (<code className="font-mono bg-red-900/40 px-1 rounded">ge_users</code>) to restore access.
+          </p>
+          <details className="group">
+            <summary className="text-red-500 text-[11px] font-mono cursor-pointer hover:text-red-300 transition-colors select-none">
+              Technical detail
+            </summary>
+            <p className="text-red-500 text-[11px] font-mono mt-1 break-all leading-relaxed">{message}</p>
+          </details>
+        </div>
+        {onDismiss && (
+          <button
+            onClick={onDismiss}
+            data-testid="button-dismiss-storage-corrupt"
+            aria-label="Dismiss warning"
+            className="text-red-600 hover:text-red-400 transition-colors flex-shrink-0 bg-transparent border-none cursor-pointer text-lg leading-none"
+          >
+            ×
+          </button>
+        )}
+      </div>
+    </div>
+  );
 }
 
 // ─── Shared Shell ─────────────────────────────────────────────────────────────
@@ -543,7 +656,7 @@ function HowItWorksPage() {
 
 // ─── Auth View ────────────────────────────────────────────────────────────────
 
-function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
+function AuthView({ onLogin, storageError }: { onLogin: (username: string) => void; storageError?: string }) {
   const { t } = useLang();
   const [isSignUp, setIsSignUp] = useState(true);
   const [username, setUsername] = useState('');
@@ -556,7 +669,17 @@ function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
     setError('');
     if (!username || !password) return;
 
-    const users = getUsers();
+    let users: StoredUser[];
+    try {
+      users = getUsers();
+    } catch (err) {
+      setError(
+        err instanceof UserStoreCorruptError
+          ? 'Account data is corrupted and cannot be read. Please contact the administrator.'
+          : 'Unable to load accounts. Please refresh and try again.',
+      );
+      return;
+    }
 
     if (isSignUp) {
       if (users.find((u) => u.username.toLowerCase() === username.toLowerCase())) {
@@ -651,6 +774,13 @@ function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
           </div>
         ))}
       </div>
+
+      {/* ── Storage corruption warning ────────────────────────────────── */}
+      {storageError && (
+        <div className="max-w-md mx-auto">
+          <StorageCorruptBanner message={storageError} />
+        </div>
+      )}
 
       {/* ── Auth Form ────────────────────────────────────────────────────── */}
       <div className="max-w-md mx-auto">
@@ -1326,6 +1456,7 @@ function EvaluatorView() {
 
 function AdminPage() {
   const [users, setUsers]             = useState<StoredUser[]>([]);
+  const [storageErr, setStorageErr]   = useState<string>('');
   const [search, setSearch]           = useState('');
   const [resetTarget, setResetTarget] = useState<StoredUser | null>(null);
   const [newPass, setNewPass]         = useState('');
@@ -1333,9 +1464,15 @@ function AdminPage() {
   const [resetMsg, setResetMsg]       = useState('');
   const [deleteTarget, setDeleteTarget] = useState<StoredUser | null>(null);
 
-  useEffect(() => { setUsers(getUsers()); }, []);
+  useEffect(() => {
+    try { setUsers(getUsers()); }
+    catch (e) { setStorageErr(e instanceof Error ? e.message : String(e)); }
+  }, []);
 
-  function refresh() { setUsers(getUsers()); }
+  function refresh() {
+    try { setUsers(getUsers()); setStorageErr(''); }
+    catch (e) { setStorageErr(e instanceof Error ? e.message : String(e)); }
+  }
 
   async function handleResetPassword() {
     setResetMsg('');
@@ -1343,7 +1480,10 @@ function AdminPage() {
     if (newPass !== newPassConfirm) { setResetMsg('Passwords do not match.'); return; }
     if (!resetTarget) return;
     const { hash, salt } = await hashPassword(newPass);
-    const updated = getUsers().map((u) =>
+    let current: StoredUser[];
+    try { current = getUsers(); }
+    catch (e) { setResetMsg(e instanceof Error ? e.message : String(e)); return; }
+    const updated = current.map((u) =>
       u.username === resetTarget.username ? { ...u, password: hash, salt } : u,
     );
     saveUsers(updated);
@@ -1355,7 +1495,14 @@ function AdminPage() {
 
   function handleDelete() {
     if (!deleteTarget) return;
-    const updated = getUsers().filter((u) => u.username !== deleteTarget.username);
+    let current: StoredUser[];
+    try { current = getUsers(); }
+    catch (e) {
+      setStorageErr(e instanceof Error ? e.message : String(e));
+      setDeleteTarget(null);
+      return;
+    }
+    const updated = current.filter((u) => u.username !== deleteTarget.username);
     saveUsers(updated);
     // Log out the deleted user if they're currently logged in
     if (localStorage.getItem(STORAGE_KEY) === deleteTarget.username) {
@@ -1367,7 +1514,8 @@ function AdminPage() {
 
   function exportCSV() {
     const rows = [['Username', 'Email', 'Joined']];
-    getUsers().forEach((u) => rows.push([u.username, u.email, new Date(u.createdAt).toLocaleDateString()]));
+    try { getUsers().forEach((u) => rows.push([u.username, u.email, new Date(u.createdAt).toLocaleDateString()])); }
+    catch { /* corrupt — export whatever we already loaded into state */ users.forEach((u) => rows.push([u.username, u.email, new Date(u.createdAt).toLocaleDateString()])); }
     const csv  = rows.map((r) => r.map((c) => `"${c}"`).join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url  = URL.createObjectURL(blob);
@@ -1385,6 +1533,9 @@ function AdminPage() {
 
   return (
     <main className="relative z-10 max-w-6xl mx-auto px-6 pt-12 pb-24 flex-grow w-full">
+      {/* Storage corruption warning */}
+      {storageErr && <StorageCorruptBanner message={storageErr} onDismiss={() => setStorageErr('')} />}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
         <div className="flex items-center gap-3">
@@ -1518,6 +1669,8 @@ export default function App() {
   const [username, setUsername] = useState('');
   const [modal, setModal] = useState<'privacy' | 'terms' | null>(null);
   const [lang, setLang] = useState<Lang>('en');
+  /** Non-empty when `ge_users` exists but cannot be parsed. */
+  const [userStoreError, setUserStoreError] = useState<string>('');
 
   const toggleLang = () => setLang((l) => (l === 'en' ? 'es' : 'en'));
   const t = (k: TKey) => TX[lang][k];
@@ -1525,6 +1678,11 @@ export default function App() {
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) { setUsername(saved); setAppView('app'); }
+
+    // Eagerly detect a corrupted user store so we can surface a warning
+    // before the user tries (and fails) to sign in.
+    try { getUsers(); }
+    catch (e) { setUserStoreError(e instanceof Error ? e.message : String(e)); }
   }, []);
 
   function handleLogin(user: string) {
@@ -1549,6 +1707,14 @@ export default function App() {
 
         <Navbar appView={appView} username={username} onLogout={handleLogout} />
 
+        {/* Global storage-corruption banner — shown above all routes */}
+        {userStoreError && (
+          <StorageCorruptBanner
+            message={userStoreError}
+            onDismiss={() => setUserStoreError('')}
+          />
+        )}
+
         <Switch>
           <Route path="/about">
             <AboutPage />
@@ -1561,7 +1727,7 @@ export default function App() {
           </Route>
           <Route>
             <main className="relative z-10 max-w-6xl mx-auto px-6 pt-16 pb-24 flex-grow w-full">
-              {appView === 'auth' ? <AuthView onLogin={handleLogin} /> : <EvaluatorView />}
+              {appView === 'auth' ? <AuthView onLogin={handleLogin} storageError={userStoreError} /> : <EvaluatorView />}
             </main>
           </Route>
         </Switch>
