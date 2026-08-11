@@ -285,6 +285,8 @@ const TX = {
     agencyCopied: '✓ Copied',
     agencySite: 'Site ↗',
     agencyMemberSince: 'Member since',
+    agencyMark: 'Mark contacted',
+    agencyContacted: '✓ Contacted',
     agencyTip: 'Tip: you do not need to contact every agency — pick 2–3 whose fees and turnaround fit your goal. Each agency\'s exact contact email or inquiry form is on its website.',
     // U.S. degree level labels
     usLevelMaster: "U.S. Master's Degree",
@@ -642,6 +644,8 @@ const TX = {
     agencyCopied: '✓ Copiado',
     agencySite: 'Sitio ↗',
     agencyMemberSince: 'Miembro desde',
+    agencyMark: 'Marcar contactada',
+    agencyContacted: '✓ Contactada',
     agencyTip: 'Consejo: no necesitas contactar a todas las agencias — elige 2–3 cuyas tarifas y tiempos de entrega se adapten a tu objetivo. El correo o formulario de contacto de cada agencia está en su sitio web.',
     // U.S. degree level labels
     usLevelMaster: 'Maestría en EE.UU.',
@@ -1749,10 +1753,43 @@ function buildAgencyDraft(agency: string, result: EvalResult, user: { username: 
   return { subject, body };
 }
 
+function contactedStorageKey(username: string): string {
+  return `ge_agencies_contacted_${username.toLowerCase() || 'anon'}`;
+}
+
+function loadContacted(username: string): Record<string, string> {
+  try {
+    const raw = localStorage.getItem(contactedStorageKey(username));
+    const parsed = raw ? JSON.parse(raw) : null;
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed as Record<string, string>;
+  } catch { /* corrupted entry — start fresh */ }
+  return {};
+}
+
 function AgencyOutreach({ result }: { result: EvalResult }) {
-  const { t } = useLang();
+  const { lang, t } = useLang();
   const [copied, setCopied] = useState<string | null>(null);
   const user = getSignedInUser();
+  const [contacted, setContacted] = useState<Record<string, string>>(() => loadContacted(user.username));
+
+  function toggleContacted(agencyName: string) {
+    setContacted((prev) => {
+      const next = { ...prev };
+      if (next[agencyName]) {
+        delete next[agencyName];
+      } else {
+        next[agencyName] = new Date().toISOString().slice(0, 10);
+      }
+      try { localStorage.setItem(contactedStorageKey(user.username), JSON.stringify(next)); } catch { /* storage full/unavailable */ }
+      return next;
+    });
+  }
+
+  function formatContactedDate(iso: string): string {
+    const d = new Date(`${iso}T00:00:00`);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString(lang === 'es' ? 'es' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
 
   async function copyDraft(agencyName: string) {
     const { subject, body } = buildAgencyDraft(agencyName, result, user);
@@ -1790,13 +1827,28 @@ function AgencyOutreach({ result }: { result: EvalResult }) {
         {NACES_AGENCIES.map((agency) => {
           const { subject, body } = buildAgencyDraft(agency.name, result, user);
           const mailto = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+          const contactedDate = contacted[agency.name];
+          const slug = agency.name.slice(0, 12).toLowerCase().replace(/[^a-z]+/g, '-');
           return (
-            <div key={agency.name} className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/70 border border-slate-800/70" data-testid={`agency-${agency.name.slice(0, 12).toLowerCase().replace(/[^a-z]+/g, '-')}`}>
+            <div key={agency.name} className={`flex items-center gap-3 p-3 rounded-xl border ${contactedDate ? 'bg-emerald-950/40 border-emerald-700/40' : 'bg-slate-900/70 border-slate-800/70'}`} data-testid={`agency-${slug}`}>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-white font-semibold truncate">{agency.name}</p>
                 <p className="text-[10px] text-slate-500">{t('agencyMemberSince')} {agency.since}</p>
+                {contactedDate && (
+                  <p className="text-[10px] text-emerald-400 font-semibold" data-testid={`agency-contacted-date-${slug}`}>{t('agencyContacted')} · {formatContactedDate(contactedDate)}</p>
+                )}
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => toggleContacted(agency.name)}
+                  title={contactedDate ? t('agencyContacted') : t('agencyMark')}
+                  aria-pressed={!!contactedDate}
+                  data-testid={`agency-toggle-contacted-${slug}`}
+                  className={`text-[10px] font-bold px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer ${contactedDate ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30' : 'bg-slate-800 text-slate-300 border-slate-700 hover:text-white'}`}
+                >
+                  {contactedDate ? t('agencyContacted') : t('agencyMark')}
+                </button>
                 <a href={mailto} title="Open pre-written email draft" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 hover:bg-indigo-500/25 transition-colors">{t('agencyDraft')}</a>
                 <button type="button" onClick={() => copyDraft(agency.name)} title="Copy email draft" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:text-white transition-colors cursor-pointer">
                   {copied === agency.name ? t('agencyCopied') : t('agencyCopy')}
