@@ -52,11 +52,26 @@ function throwIfAdminRejected(res: Response): void {
   if (res.status === 401 || res.status === 503) throw new AdminKeyRequiredError();
 }
 
+/**
+ * True when a response means "there is no backend here" rather than a real
+ * API answer. On GitHub Pages without a configured backend, `/api/...`
+ * returns the SPA's 404 page (HTML, status 404) — that must trigger the
+ * device-local fallback, not be mistaken for an auth failure.
+ */
+export function isUnavailableResponse(res: { status: number; headers: { get(name: string): string | null } }): boolean {
+  if ([404, 502, 503, 504].includes(res.status)) {
+    const ct = res.headers.get('content-type') || '';
+    return !ct.includes('application/json');
+  }
+  return false;
+}
+
 async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 5000);
+  let res: Response;
   try {
-    return await fetch(`${API_BASE}${path}`, {
+    res = await fetch(`${API_BASE}${path}`, {
       ...init,
       headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) },
       signal: controller.signal,
@@ -66,6 +81,8 @@ async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
   } finally {
     clearTimeout(timer);
   }
+  if (isUnavailableResponse(res)) throw new ApiUnavailableError();
+  return res;
 }
 
 export async function apiSignup(username: string, email: string, password: string): Promise<{ ok: true } | { ok: false; error: string }> {
