@@ -155,6 +155,99 @@ describe('saveUsers — round-trip validation', () => {
   });
 });
 
+// ─── Duplicate-username prevention — store-level contract ─────────────────────
+//
+// The sign-up guard in App.tsx calls getUsers() and checks for a matching
+// username before calling saveUsers(). These tests verify the store-level
+// contract that makes that guard reliable.
+
+describe('duplicate-username prevention — store-level contract', () => {
+  beforeEach(() => localStorageMock.clear());
+
+  it('getUsers reflects a seeded user so a caller can detect duplicates', () => {
+    saveUsers([validUser]);
+    const users = getUsers();
+    const found = users.find(
+      (u) => u.username.toLowerCase() === validUser.username.toLowerCase(),
+    );
+    expect(found).toBeDefined();
+  });
+
+  it('saveUsers does NOT deduplicate — the caller must check before writing', () => {
+    // Confirm the store itself is not responsible for deduplication; the app
+    // code must perform the guard before calling saveUsers().
+    const dup: StoredUser = { ...validUser, email: 'other@example.com' };
+    saveUsers([validUser, dup]);
+    expect(getUsers()).toHaveLength(2);
+  });
+
+  it('a sign-up guard using getUsers() correctly blocks a duplicate entry', () => {
+    // Simulate what App.tsx handleSubmit does:
+    //   users = getUsers()
+    //   if (users.find(u => u.username.toLowerCase() === newUsername.toLowerCase())) → reject
+    saveUsers([validUser]);
+
+    const attemptedUsername = validUser.username; // exact same username
+    const users = getUsers();
+    const isDuplicate = users.some(
+      (u) => u.username.toLowerCase() === attemptedUsername.toLowerCase(),
+    );
+
+    expect(isDuplicate).toBe(true); // guard fires → sign-up is rejected
+    // Store must remain unchanged — guard prevented a second save
+    expect(getUsers()).toHaveLength(1);
+  });
+
+  it('case-insensitive duplicate check catches mixed-case repetition', () => {
+    saveUsers([validUser]); // username: 'alice'
+    const users = getUsers();
+    const isDuplicate = users.some(
+      (u) => u.username.toLowerCase() === 'ALICE'.toLowerCase(),
+    );
+    expect(isDuplicate).toBe(true);
+  });
+
+  it('a genuinely new username passes the duplicate check', () => {
+    saveUsers([validUser]); // username: 'alice'
+    const users = getUsers();
+    const isDuplicate = users.some(
+      (u) => u.username.toLowerCase() === 'bob'.toLowerCase(),
+    );
+    expect(isDuplicate).toBe(false);
+
+    // Simulate the successful save path
+    const newUser: StoredUser = {
+      username:  'bob',
+      email:     'bob@example.com',
+      password:  'b'.repeat(64),
+      createdAt: '2026-06-01T00:00:00.000Z',
+    };
+    saveUsers([...users, newUser]);
+    expect(getUsers()).toHaveLength(2);
+    expect(getUsers().map((u) => u.username)).toContain('bob');
+  });
+
+  it('getUsers always returns the latest written state (no stale read)', () => {
+    saveUsers([validUser]);
+    expect(getUsers()).toHaveLength(1);
+
+    const second: StoredUser = {
+      username:  'carol',
+      email:     'carol@example.com',
+      password:  'c'.repeat(64),
+      createdAt: '2026-07-01T00:00:00.000Z',
+    };
+    saveUsers([...getUsers(), second]);
+    expect(getUsers()).toHaveLength(2);
+
+    // A third call with the same username as 'validUser' must still find it
+    const stillPresent = getUsers().some(
+      (u) => u.username.toLowerCase() === validUser.username.toLowerCase(),
+    );
+    expect(stillPresent).toBe(true);
+  });
+});
+
 // ─── StorageCorruptBanner — component rendering ───────────────────────────────
 
 describe('StorageCorruptBanner', () => {
