@@ -1,0 +1,1 @@
+- [Hybrid backend/local account sync](hybrid-backend-sync.md) — static Pages frontend + optional Replit API; non-JSON 404 = backend unavailable; pre-backend visitor data is unrecoverable.
