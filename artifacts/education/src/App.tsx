@@ -40,6 +40,81 @@ const TX = {
     howTitle: 'How VerifED Global Works',
     howSub: 'From your first question to your first U.S. job application — here is the complete process.',
     privTitle: 'Privacy Policy', termsTitle: 'Terms of Service',
+    // About page
+    aboutBadge: '🌍 Our Mission',
+    aboutH1: 'Starting Over in a New Country',
+    aboutH2: 'Is One of the Hardest Things a Person Can Do.',
+    aboutIntro: 'We know this — because the people who built VerifED Global have lived it, or watched someone they love go through it.',
+    about01T: 'The Journey Is Real — and It Is Hard',
+    about01P1: 'You spent years earning your education. You worked hard, you sacrificed, and you built something real. Then you arrived in the United States and were told it might not count here — or worse, you were given a dozen different answers from a dozen different people, none of them quite right.',
+    about01P2: 'Moving to a new country means rebuilding everything. Your professional identity, your credentials, your career — sometimes even your confidence. The system is not designed to make that easy. And too many talented, qualified people lose years of their lives trying to navigate it alone.',
+    about02T: 'The Advice Is Not Always Correct',
+    about02P1: 'One of the most painful parts of this process is that people will give you advice — friends, neighbors, even professionals — with complete confidence, and still be wrong. They will tell you your degree does not transfer when it does. They will point you to the wrong evaluation agency. They will underestimate what your credentials are worth, or send you down a path that costs you time and money you cannot afford to lose.',
+    about02P2: 'This is not because people are malicious. It is because this system is genuinely complex, and the correct answer depends on your specific country, degree, field, and goal. Generic advice fails people every day.',
+    about03T: 'We Are Here to Help Guide You in the Right Direction',
+    about03P1: 'VerifED Global was built for one purpose: to give international individuals access to the kind of clear, specific, honest information that can actually move their situation forward. We do not claim to do everything. But we will do our absolute best to point you in the right direction.',
+    about03P2: 'We map your credentials to U.S. equivalency standards, help you understand which evaluation agencies apply to your situation, surface the field-specific licensing and employment requirements you need to know, and connect you with the job boards where real opportunities are waiting.',
+    about03P3: 'We cannot promise the road ahead will be short. But we can promise you will not be walking it without a map.',
+    val1T: 'Honest Guidance', val1D: 'We tell you what we know — and what we do not know. No false promises, no shortcuts.',
+    val2T: 'Specific Answers', val2D: 'Your country. Your degree. Your field. The right answer depends on all three.',
+    val3T: 'Built for the Journey', val3D: 'We are with you from your first question to your first U.S. job application.',
+    aboutCtaText: 'Ready to find out how your credentials translate? Start with the evaluator — it takes less than two minutes and gives you a real picture of where you stand.',
+    // How It Works page
+    howBadge: '⚡ Simple, Step-by-Step',
+    stepLabel: 'Step',
+    whatNeedTitle: '📦 What You Will Need to Get Started',
+    howCtaText: 'Ready to get started? The evaluator takes less than two minutes. Enter your details and we will generate your equivalency report and action roadmap instantly.',
+    step01T: 'Create Your Account',
+    step01D: 'Sign up with a username and email. Your information stays private and secure — it is used only to save your progress and correspond with you about your evaluation.',
+    step01Det: 'We keep your data strictly confidential. It is never shared with government agencies, employers, or third parties.',
+    step02T: 'Enter Your Credential Details',
+    step02D: 'Tell us your country of education, institution name, degree level, and field of study. The more detail you provide, the more specific your results will be.',
+    step02Det: 'You can also note your primary goal — university admission, employment, professional licensing, or immigration — so we can tailor the roadmap to your path.',
+    step03T: 'We Analyze Your Credentials',
+    step03D: 'Our platform maps your degree to its U.S. equivalent, identifies the relevant NACES evaluation agencies, and surfaces field-specific licensing and regulatory requirements.',
+    step03Det: 'Results are generated instantly based on your inputs, giving you a clear starting point before you spend time or money on official evaluations.',
+    step04T: 'Follow Your Personalized Roadmap',
+    step04D: "You receive a step-by-step action plan: verify your institution, map your coursework, align with your goal's requirements, and prepare your NACES application dossier.",
+    step04Det: 'Each step is checkable so you can track your progress as you move through the process.',
+    step05T: 'Reach Out If You Need Help',
+    step05D: 'Stuck? Not sure which evaluation agency fits your situation? Our team is available to answer questions, review your specific case, and help you take the next step.',
+    step05Det: 'Use the contact form on the main platform to send us a message. We respond within 24 hours.',
+    step06T: 'Start Applying for U.S. Jobs',
+    step06D: 'Once your credentials are evaluated, use our integrated job board links to search for positions in your field across Indeed, LinkedIn, Glassdoor, USAJobs, and more.',
+    step06Det: 'Many U.S. employers actively recruit internationally educated professionals — your credential evaluation is the documentation that opens those doors.',
+    need01L: 'Official transcripts or diploma', need01N: 'Originals or certified copies from your institution',
+    need02L: 'Institution name & country', need02N: 'Exactly as it appears on your documents',
+    need03L: 'Degree title & field of study', need03N: 'Your specific major or specialization',
+    need04L: 'Your U.S. goal', need04N: 'Employment, licensing, grad school, or immigration',
+    need05L: 'Correspondence email', need05N: 'So we can follow up with additional guidance',
+    need06L: 'Patience — and confidence', need06N: 'The process takes time, but it works',
+    // Contact section
+    contactTitle: 'Need Help Getting Started?',
+    contactDesc: 'Not sure where to begin with your credential transfer? Our team can walk you through the NACES evaluation process, help you choose the right agency, and answer questions about your specific field and country.',
+    contactC1: 'Guidance on choosing WES, ECE, or other evaluators',
+    contactC2: 'Help gathering documents from your home country',
+    contactC3: 'Advice on field-specific U.S. licensing requirements',
+    contactC4: 'Support navigating USCIS credential recognition',
+    contactSent: 'Message Ready to Send',
+    contactSentSub: "Your email client should have opened. We'll get back to you within 24 hours.",
+    contactLName: 'Your Name', contactLEmail: 'Email Address', contactLMsg: 'How Can We Help?',
+    contactPName: 'Full name', contactPMsg: "Describe your credential, country, field, and what you're trying to achieve in the U.S. ...",
+    contactBtn: 'Send Message',
+    // Job boards
+    jobTitle: 'Start Applying Now',
+    jobDesc: 'Once you have your credential evaluation, use these job boards to find U.S. positions in your field. Many employers accept international credentials — your roadmap gives you the documentation they need.',
+    jobIndeed: 'Search millions of U.S. jobs by title, location, and salary.',
+    jobLinkedIn: 'Apply directly and connect with hiring managers.',
+    jobGlassdoor: 'Jobs with salary insights and company reviews.',
+    jobZip: 'AI-matched job recommendations sent to your inbox.',
+    jobUSA: 'Official portal for U.S. federal government positions.',
+    jobMonster: 'Job postings across industries nationwide.',
+    // Auth errors
+    errCorrupt: 'Account data is corrupted and cannot be read. Please contact the administrator.',
+    errLoad: 'Unable to load accounts. Please refresh and try again.',
+    errTaken: 'An account with that username already exists. Enter your password to sign in.',
+    errCredentials: 'Incorrect username or password.',
+    errUnexpected: 'An unexpected error occurred. Please refresh and try again.',
   },
   es: {
     about: 'Acerca de', howItWorks: 'Cómo Funciona', signOut: 'Cerrar Sesión',
@@ -68,6 +143,81 @@ const TX = {
     howTitle: 'Cómo Funciona VerifED Global',
     howSub: 'Desde tu primera pregunta hasta tu primera solicitud de empleo en EE.UU. — aquí está el proceso completo.',
     privTitle: 'Política de Privacidad', termsTitle: 'Términos de Servicio',
+    // About page
+    aboutBadge: '🌍 Nuestra Misión',
+    aboutH1: 'Empezar de Nuevo en un País Extranjero',
+    aboutH2: 'Es Una de las Cosas Más Difíciles que una Persona Puede Hacer.',
+    aboutIntro: 'Lo sabemos — porque las personas que construyeron VerifED Global lo han vivido, o han visto a alguien que aman pasar por ello.',
+    about01T: 'El Camino Es Real — y Es Difícil',
+    about01P1: 'Pasaste años ganando tu educación. Trabajaste duro, te sacrificaste y construiste algo real. Luego llegaste a los Estados Unidos y te dijeron que quizás no cuenta aquí — o peor, te dieron docenas de respuestas diferentes de docenas de personas diferentes, ninguna del todo correcta.',
+    about01P2: 'Mudarse a un nuevo país significa reconstruir todo. Tu identidad profesional, tus credenciales, tu carrera — a veces hasta tu confianza. El sistema no está diseñado para hacer eso fácil. Y demasiadas personas talentosas y calificadas pierden años de su vida intentando navegarlo solos.',
+    about02T: 'El Consejo No Siempre Es Correcto',
+    about02P1: 'Una de las partes más dolorosas de este proceso es que la gente te dará consejos — amigos, vecinos, incluso profesionales — con total confianza, y aun así estar equivocados. Te dirán que tu título no aplica cuando sí aplica. Te dirigirán a la agencia evaluadora incorrecta. Subestimarán el valor de tus credenciales, o te enviarán por un camino que te cuesta tiempo y dinero que no puedes permitirte perder.',
+    about02P2: 'Esto no es porque la gente sea maliciosa. Es porque este sistema es genuinamente complejo, y la respuesta correcta depende de tu país, título, campo y objetivo específicos. El consejo genérico falla a las personas todos los días.',
+    about03T: 'Estamos Aquí Para Guiarte en la Dirección Correcta',
+    about03P1: 'VerifED Global fue construido con un propósito: darle a las personas internacionales acceso al tipo de información clara, específica y honesta que realmente puede mover su situación hacia adelante. No pretendemos hacerlo todo. Pero haremos nuestro mejor esfuerzo para señalarte en la dirección correcta.',
+    about03P2: 'Mapeamos tus credenciales a los estándares de equivalencia de EE.UU., te ayudamos a entender qué agencias evaluadoras aplican a tu situación, mostramos los requisitos de licencia y empleo específicos del campo que necesitas saber, y te conectamos con las bolsas de trabajo donde esperan oportunidades reales.',
+    about03P3: 'No podemos prometer que el camino por delante será corto. Pero sí podemos prometerte que no lo caminarás sin un mapa.',
+    val1T: 'Orientación Honesta', val1D: 'Te decimos lo que sabemos — y lo que no sabemos. Sin promesas falsas, sin atajos.',
+    val2T: 'Respuestas Específicas', val2D: 'Tu país. Tu título. Tu campo. La respuesta correcta depende de los tres.',
+    val3T: 'Construido Para el Camino', val3D: 'Estamos contigo desde tu primera pregunta hasta tu primera solicitud de empleo en EE.UU.',
+    aboutCtaText: '¿Listo para descubrir cómo se traducen tus credenciales? Comienza con el evaluador — tarda menos de dos minutos y te da una imagen real de dónde estás.',
+    // How It Works page
+    howBadge: '⚡ Simple, Paso a Paso',
+    stepLabel: 'Paso',
+    whatNeedTitle: '📦 Lo Que Necesitarás Para Comenzar',
+    howCtaText: '¿Listo para comenzar? El evaluador tarda menos de dos minutos. Ingresa tus datos y generaremos tu informe de equivalencia y hoja de ruta de acción al instante.',
+    step01T: 'Crear Tu Cuenta',
+    step01D: 'Regístrate con un nombre de usuario y correo electrónico. Tu información permanece privada y segura — solo se usa para guardar tu progreso y corresponderte sobre tu evaluación.',
+    step01Det: 'Mantenemos tus datos estrictamente confidenciales. Nunca se comparten con agencias gubernamentales, empleadores ni terceros.',
+    step02T: 'Ingresa los Detalles de Tu Credencial',
+    step02D: 'Cuéntanos tu país de estudios, nombre de la institución, nivel del título y campo de estudio. Cuanto más detalle proporciones, más específicos serán tus resultados.',
+    step02Det: 'También puedes indicar tu objetivo principal — admisión universitaria, empleo, licencia profesional o inmigración — para adaptar la hoja de ruta a tu camino.',
+    step03T: 'Analizamos Tus Credenciales',
+    step03D: 'Nuestra plataforma mapea tu título a su equivalente en EE.UU., identifica las agencias evaluadoras NACES relevantes y muestra los requisitos de licencias y regulaciones específicos de tu campo.',
+    step03Det: 'Los resultados se generan al instante en base a tus datos, dándote un punto de partida claro antes de que gastes tiempo o dinero en evaluaciones oficiales.',
+    step04T: 'Sigue Tu Hoja de Ruta Personalizada',
+    step04D: 'Recibes un plan de acción paso a paso: verifica tu institución, mapea tu plan de estudios, alinéate con los requisitos de tu objetivo y prepara tu expediente de solicitud NACES.',
+    step04Det: 'Cada paso es verificable para que puedas hacer seguimiento de tu progreso mientras avanzas en el proceso.',
+    step05T: '¿Necesitas Ayuda? Contáctanos',
+    step05D: '¿Bloqueado? ¿No sabes qué agencia evaluadora aplica a tu situación? Nuestro equipo está disponible para responder preguntas, revisar tu caso y ayudarte a dar el siguiente paso.',
+    step05Det: 'Usa el formulario de contacto en la plataforma principal para enviarnos un mensaje. Respondemos en 24 horas.',
+    step06T: 'Comienza a Solicitar Empleos en EE.UU.',
+    step06D: 'Una vez evaluadas tus credenciales, usa nuestros links integrados de bolsas de trabajo para buscar posiciones en tu campo en Indeed, LinkedIn, Glassdoor, USAJobs y más.',
+    step06Det: 'Muchos empleadores de EE.UU. reclutan activamente a profesionales educados internacionalmente — la evaluación de tu credencial es la documentación que abre esas puertas.',
+    need01L: 'Transcripciones o diploma oficial', need01N: 'Originales o copias certificadas de tu institución',
+    need02L: 'Nombre de la institución y país', need02N: 'Exactamente como aparece en tus documentos',
+    need03L: 'Título y campo de estudio', need03N: 'Tu especialidad o área de concentración específica',
+    need04L: 'Tu objetivo en EE.UU.', need04N: 'Empleo, licencia, posgrado o inmigración',
+    need05L: 'Correo de correspondencia', need05N: 'Para que podamos orientarte con guía adicional',
+    need06L: 'Paciencia — y confianza', need06N: 'El proceso lleva tiempo, pero funciona',
+    // Contact section
+    contactTitle: '¿Necesitas Ayuda Para Comenzar?',
+    contactDesc: '¿No sabes por dónde empezar con tu transferencia de credenciales? Nuestro equipo puede guiarte a través del proceso de evaluación NACES, ayudarte a elegir la agencia correcta y responder preguntas sobre tu campo y país específicos.',
+    contactC1: 'Orientación para elegir WES, ECE u otros evaluadores',
+    contactC2: 'Ayuda para recopilar documentos de tu país de origen',
+    contactC3: 'Asesoría sobre requisitos de licencia en EE.UU. por campo',
+    contactC4: 'Apoyo para navegar el reconocimiento de credenciales del USCIS',
+    contactSent: 'Mensaje Listo Para Enviar',
+    contactSentSub: 'Tu cliente de correo debería haberse abierto. Te responderemos en 24 horas.',
+    contactLName: 'Tu Nombre', contactLEmail: 'Dirección de Correo', contactLMsg: '¿Cómo Podemos Ayudarte?',
+    contactPName: 'Nombre completo', contactPMsg: 'Describe tu credencial, país, campo y lo que intentas lograr en EE.UU. ...',
+    contactBtn: 'Enviar Mensaje',
+    // Job boards
+    jobTitle: 'Comienza a Aplicar Ahora',
+    jobDesc: 'Una vez que tengas tu evaluación de credenciales, usa estas bolsas de trabajo para encontrar posiciones en EE.UU. en tu campo. Muchos empleadores aceptan credenciales internacionales — tu hoja de ruta te da la documentación que necesitan.',
+    jobIndeed: 'Busca millones de empleos en EE.UU. por título, ubicación y salario.',
+    jobLinkedIn: 'Postúlate directamente y conecta con gerentes de contratación.',
+    jobGlassdoor: 'Empleos con información de salarios y reseñas de empresas.',
+    jobZip: 'Recomendaciones de empleo con IA enviadas a tu bandeja de entrada.',
+    jobUSA: 'Portal oficial para puestos del gobierno federal de EE.UU.',
+    jobMonster: 'Publicaciones de empleo en industrias de todo el país.',
+    // Auth errors
+    errCorrupt: 'Los datos de la cuenta están corruptos y no se pueden leer. Por favor contacte al administrador.',
+    errLoad: 'No se pudieron cargar las cuentas. Por favor recargue e intente de nuevo.',
+    errTaken: 'Ya existe una cuenta con ese nombre de usuario. Ingresa tu contraseña para iniciar sesión.',
+    errCredentials: 'Usuario o contraseña incorrectos.',
+    errUnexpected: 'Ocurrió un error inesperado. Por favor recargue e intente de nuevo.',
   },
 } as const;
 
@@ -234,98 +384,76 @@ function Modal({ id, title, children, onClose }: { id: string; title: string; ch
 
 // ─── About Page ───────────────────────────────────────────────────────────────
 
+const ABOUT_VALUES = [
+  { icon: '🤝', tKey: 'val1' },
+  { icon: '🎯', tKey: 'val2' },
+  { icon: '🌱', tKey: 'val3' },
+] as const;
+
 function AboutPage() {
   const { t } = useLang();
   const [, setLocation] = useLocation();
   return (
     <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full">
-      {/* Back */}
       <button onClick={() => setLocation('/')} data-testid="button-back-about" className="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors mb-10 bg-transparent border-none cursor-pointer">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
         {t('backHome')}
       </button>
 
-      {/* Hero */}
       <div className="mb-14">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-xs text-slate-300 mb-6 shadow-sm">
-          <span className="text-indigo-400 font-semibold">🌍 Our Mission</span>
+          <span className="text-indigo-400 font-semibold">{t('aboutBadge')}</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
-          Starting Over in a New Country{' '}
+          {t('aboutH1')}{' '}
           <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
-            Is One of the Hardest Things a Person Can Do.
+            {t('aboutH2')}
           </span>
         </h1>
-        <p className="text-slate-400 text-lg leading-relaxed">
-          We know this — because the people who built VerifED Global have lived it, or watched someone they love go through it.
-        </p>
+        <p className="text-slate-400 text-lg leading-relaxed">{t('aboutIntro')}</p>
       </div>
 
-      {/* Story sections */}
       <div className="space-y-10">
-
         <div className="glass-panel p-8 rounded-3xl">
           <h2 className="text-white font-bold text-xl mb-4 flex items-center gap-3">
             <span className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-sm flex-shrink-0">01</span>
-            The Journey Is Real — and It Is Hard
+            {t('about01T')}
           </h2>
-          <p className="text-slate-300 text-sm leading-relaxed mb-4">
-            You spent years earning your education. You worked hard, you sacrificed, and you built something real. Then you arrived in the United States and were told it might not count here — or worse, you were given a dozen different answers from a dozen different people, none of them quite right.
-          </p>
-          <p className="text-slate-300 text-sm leading-relaxed">
-            Moving to a new country means rebuilding everything. Your professional identity, your credentials, your career — sometimes even your confidence. The system is not designed to make that easy. And too many talented, qualified people lose years of their lives trying to navigate it alone.
-          </p>
+          <p className="text-slate-300 text-sm leading-relaxed mb-4">{t('about01P1')}</p>
+          <p className="text-slate-300 text-sm leading-relaxed">{t('about01P2')}</p>
         </div>
 
         <div className="glass-panel p-8 rounded-3xl border-l-4 border-l-violet-500">
           <h2 className="text-white font-bold text-xl mb-4 flex items-center gap-3">
             <span className="w-8 h-8 rounded-xl bg-violet-500/20 border border-violet-500/30 flex items-center justify-center text-violet-400 text-sm flex-shrink-0">02</span>
-            The Advice Is Not Always Correct
+            {t('about02T')}
           </h2>
-          <p className="text-slate-300 text-sm leading-relaxed mb-4">
-            One of the most painful parts of this process is that people will give you advice — friends, neighbors, even professionals — with complete confidence, and still be wrong. They will tell you your degree does not transfer when it does. They will point you to the wrong evaluation agency. They will underestimate what your credentials are worth, or send you down a path that costs you time and money you cannot afford to lose.
-          </p>
-          <p className="text-slate-300 text-sm leading-relaxed">
-            This is not because people are malicious. It is because this system is genuinely complex, and the correct answer depends on your specific country, degree, field, and goal. Generic advice fails people every day.
-          </p>
+          <p className="text-slate-300 text-sm leading-relaxed mb-4">{t('about02P1')}</p>
+          <p className="text-slate-300 text-sm leading-relaxed">{t('about02P2')}</p>
         </div>
 
         <div className="glass-panel p-8 rounded-3xl border-l-4 border-l-cyan-500">
           <h2 className="text-white font-bold text-xl mb-4 flex items-center gap-3">
             <span className="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-sm flex-shrink-0">03</span>
-            We Are Here to Help Guide You in the Right Direction
+            {t('about03T')}
           </h2>
-          <p className="text-slate-300 text-sm leading-relaxed mb-4">
-            VerifED Global was built for one purpose: to give international individuals access to the kind of clear, specific, honest information that can actually move their situation forward. We do not claim to do everything. But we will do our absolute best to point you in the right direction.
-          </p>
-          <p className="text-slate-300 text-sm leading-relaxed mb-4">
-            We map your credentials to U.S. equivalency standards, help you understand which evaluation agencies apply to your situation, surface the field-specific licensing and employment requirements you need to know, and connect you with the job boards where real opportunities are waiting.
-          </p>
-          <p className="text-slate-300 text-sm leading-relaxed">
-            We cannot promise the road ahead will be short. But we can promise you will not be walking it without a map.
-          </p>
+          <p className="text-slate-300 text-sm leading-relaxed mb-4">{t('about03P1')}</p>
+          <p className="text-slate-300 text-sm leading-relaxed mb-4">{t('about03P2')}</p>
+          <p className="text-slate-300 text-sm leading-relaxed">{t('about03P3')}</p>
         </div>
 
-        {/* Values strip */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
-          {[
-            { icon: '🤝', title: 'Honest Guidance', desc: 'We tell you what we know — and what we do not know. No false promises, no shortcuts.' },
-            { icon: '🎯', title: 'Specific Answers', desc: 'Your country. Your degree. Your field. The right answer depends on all three.' },
-            { icon: '🌱', title: 'Built for the Journey', desc: 'We are with you from your first question to your first U.S. job application.' },
-          ].map((v) => (
-            <div key={v.title} className="glass-panel p-6 rounded-2xl text-center">
+          {ABOUT_VALUES.map((v) => (
+            <div key={v.tKey} className="glass-panel p-6 rounded-2xl text-center">
               <div className="text-3xl mb-3">{v.icon}</div>
-              <h3 className="text-white font-bold text-sm mb-2">{v.title}</h3>
-              <p className="text-slate-400 text-xs leading-relaxed">{v.desc}</p>
+              <h3 className="text-white font-bold text-sm mb-2">{t(`${v.tKey}T` as TKey)}</h3>
+              <p className="text-slate-400 text-xs leading-relaxed">{t(`${v.tKey}D` as TKey)}</p>
             </div>
           ))}
         </div>
 
-        {/* CTA */}
         <div className="glass-panel p-8 rounded-3xl text-center">
-          <p className="text-slate-300 text-sm leading-relaxed mb-6 max-w-xl mx-auto">
-            Ready to find out how your credentials translate? Start with the evaluator — it takes less than two minutes and gives you a real picture of where you stand.
-          </p>
+          <p className="text-slate-300 text-sm leading-relaxed mb-6 max-w-xl mx-auto">{t('aboutCtaText')}</p>
           <button
             onClick={() => setLocation('/')}
             data-testid="button-go-to-evaluator"
@@ -343,86 +471,40 @@ function AboutPage() {
 // ─── How It Works Page ────────────────────────────────────────────────────────
 
 const HOW_STEPS = [
-  {
-    num: '01',
-    icon: '📋',
-    color: 'from-indigo-600 to-indigo-500',
-    border: 'border-l-indigo-500',
-    title: 'Create Your Account',
-    desc: 'Sign up with a username and email. Your information stays private and secure — it is used only to save your progress and correspond with you about your evaluation.',
-    detail: 'We keep your data strictly confidential. It is never shared with government agencies, employers, or third parties.',
-  },
-  {
-    num: '02',
-    icon: '📄',
-    color: 'from-violet-600 to-violet-500',
-    border: 'border-l-violet-500',
-    title: 'Enter Your Credential Details',
-    desc: 'Tell us your country of education, institution name, degree level, and field of study. The more detail you provide, the more specific your results will be.',
-    detail: 'You can also note your primary goal — university admission, employment, professional licensing, or immigration — so we can tailor the roadmap to your path.',
-  },
-  {
-    num: '03',
-    icon: '🛰️',
-    color: 'from-cyan-600 to-cyan-500',
-    border: 'border-l-cyan-500',
-    title: 'We Analyze Your Credentials',
-    desc: 'Our platform maps your degree to its U.S. equivalent, identifies the relevant NACES evaluation agencies, and surfaces field-specific licensing and regulatory requirements.',
-    detail: 'Results are generated instantly based on your inputs, giving you a clear starting point before you spend time or money on official evaluations.',
-  },
-  {
-    num: '04',
-    icon: '🗺️',
-    color: 'from-emerald-600 to-emerald-500',
-    border: 'border-l-emerald-500',
-    title: 'Follow Your Personalized Roadmap',
-    desc: 'You receive a step-by-step action plan: verify your institution, map your coursework, align with your goal\'s requirements, and prepare your NACES application dossier.',
-    detail: 'Each step is checkable so you can track your progress as you move through the process.',
-  },
-  {
-    num: '05',
-    icon: '🤝',
-    color: 'from-rose-600 to-rose-500',
-    border: 'border-l-rose-500',
-    title: 'Reach Out If You Need Help',
-    desc: 'Stuck? Not sure which evaluation agency fits your situation? Our team is available to answer questions, review your specific case, and help you take the next step.',
-    detail: 'Use the contact form on the main platform to send us a message. We respond within 24 hours.',
-  },
-  {
-    num: '06',
-    icon: '💼',
-    color: 'from-orange-600 to-orange-500',
-    border: 'border-l-orange-500',
-    title: 'Start Applying for U.S. Jobs',
-    desc: 'Once your credentials are evaluated, use our integrated job board links to search for positions in your field across Indeed, LinkedIn, Glassdoor, USAJobs, and more.',
-    detail: 'Many U.S. employers actively recruit internationally educated professionals — your credential evaluation is the documentation that opens those doors.',
-  },
-];
+  { num: '01', icon: '📋', color: 'from-indigo-600 to-indigo-500', border: 'border-l-indigo-500', tKey: 'step01' },
+  { num: '02', icon: '📄', color: 'from-violet-600 to-violet-500', border: 'border-l-violet-500', tKey: 'step02' },
+  { num: '03', icon: '🛰️', color: 'from-cyan-600 to-cyan-500', border: 'border-l-cyan-500', tKey: 'step03' },
+  { num: '04', icon: '🗺️', color: 'from-emerald-600 to-emerald-500', border: 'border-l-emerald-500', tKey: 'step04' },
+  { num: '05', icon: '🤝', color: 'from-rose-600 to-rose-500', border: 'border-l-rose-500', tKey: 'step05' },
+  { num: '06', icon: '💼', color: 'from-orange-600 to-orange-500', border: 'border-l-orange-500', tKey: 'step06' },
+] as const;
+
+const NEED_ITEMS = [
+  { lKey: 'need01L', nKey: 'need01N' }, { lKey: 'need02L', nKey: 'need02N' },
+  { lKey: 'need03L', nKey: 'need03N' }, { lKey: 'need04L', nKey: 'need04N' },
+  { lKey: 'need05L', nKey: 'need05N' }, { lKey: 'need06L', nKey: 'need06N' },
+] as const;
 
 function HowItWorksPage() {
   const { t } = useLang();
   const [, setLocation] = useLocation();
   return (
     <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full">
-      {/* Back */}
       <button onClick={() => setLocation('/')} data-testid="button-back-how" className="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors mb-10 bg-transparent border-none cursor-pointer">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
         {t('backHome')}
       </button>
 
-      {/* Hero */}
       <div className="mb-14">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-xs text-slate-300 mb-6 shadow-sm">
-          <span className="text-indigo-400 font-semibold">⚡ Simple, Step-by-Step</span>
+          <span className="text-indigo-400 font-semibold">{t('howBadge')}</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
           <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
             {t('howTitle')}
           </span>
         </h1>
-        <p className="text-slate-400 text-lg leading-relaxed max-w-2xl">
-          {t('howSub')}
-        </p>
+        <p className="text-slate-400 text-lg leading-relaxed max-w-2xl">{t('howSub')}</p>
       </div>
 
       {/* Steps */}
@@ -434,37 +516,26 @@ function HowItWorksPage() {
                 {step.icon}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Step {step.num}</span>
-                </div>
-                <h3 className="text-white font-bold text-lg mb-2">{step.title}</h3>
-                <p className="text-slate-300 text-sm leading-relaxed mb-3">{step.desc}</p>
-                <p className="text-slate-500 text-xs leading-relaxed italic border-l-2 border-slate-700 pl-3">{step.detail}</p>
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t('stepLabel')} {step.num}</span>
+                <h3 className="text-white font-bold text-lg mt-1 mb-2">{t(`${step.tKey}T` as TKey)}</h3>
+                <p className="text-slate-300 text-sm leading-relaxed mb-3">{t(`${step.tKey}D` as TKey)}</p>
+                <p className="text-slate-500 text-xs leading-relaxed italic border-l-2 border-slate-700 pl-3">{t(`${step.tKey}Det` as TKey)}</p>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* What you need section */}
+      {/* What you need */}
       <div className="glass-panel p-8 rounded-3xl mt-10">
-        <h2 className="text-white font-bold text-lg mb-6 flex items-center gap-3">
-          <span className="text-indigo-400 text-xl">📦</span> What You Will Need to Get Started
-        </h2>
+        <h2 className="text-white font-bold text-lg mb-6">{t('whatNeedTitle')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {[
-            { label: 'Official transcripts or diploma', note: 'Originals or certified copies from your institution' },
-            { label: 'Institution name & country', note: 'Exactly as it appears on your documents' },
-            { label: 'Degree title & field of study', note: 'Your specific major or specialization' },
-            { label: 'Your U.S. goal', note: 'Employment, licensing, grad school, or immigration' },
-            { label: 'Correspondence email', note: 'So we can follow up with additional guidance' },
-            { label: 'Patience — and confidence', note: 'The process takes time, but it works' },
-          ].map((item) => (
-            <div key={item.label} className="flex items-start gap-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/60">
+          {NEED_ITEMS.map((item) => (
+            <div key={item.lKey} className="flex items-start gap-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/60">
               <span className="text-indigo-400 mt-0.5 flex-shrink-0 text-sm">✓</span>
               <div>
-                <p className="text-white text-xs font-semibold mb-0.5">{item.label}</p>
-                <p className="text-slate-500 text-xs">{item.note}</p>
+                <p className="text-white text-xs font-semibold mb-0.5">{t(item.lKey)}</p>
+                <p className="text-slate-500 text-xs">{t(item.nKey)}</p>
               </div>
             </div>
           ))}
@@ -473,15 +544,13 @@ function HowItWorksPage() {
 
       {/* CTA */}
       <div className="glass-panel p-8 rounded-3xl mt-6 text-center">
-        <p className="text-slate-300 text-sm leading-relaxed mb-6 max-w-xl mx-auto">
-          Ready to get started? The evaluator takes less than two minutes. Enter your details and we will generate your equivalency report and action roadmap instantly.
-        </p>
+        <p className="text-slate-300 text-sm leading-relaxed mb-6 max-w-xl mx-auto">{t('howCtaText')}</p>
         <button
           onClick={() => setLocation('/')}
           data-testid="button-go-to-evaluator-how"
           className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 px-8 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer"
         >
-          Go to the Evaluator
+          {t('goEval')}
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
         </button>
       </div>
@@ -509,19 +578,14 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
       try {
         users = getUsers();
       } catch (err) {
-        setError(
-          err instanceof UserStoreCorruptError
-            ? 'Account data is corrupted and cannot be read. Please contact the administrator.'
-            : 'Unable to load accounts. Please refresh and try again.',
-        );
+        setError(err instanceof UserStoreCorruptError ? t('errCorrupt') : t('errLoad'));
         return;
       }
 
       if (isSignUp) {
         if (users.find((u) => u.username.toLowerCase() === username.toLowerCase())) {
-          // Account already exists — switch to sign-in so the user can log in immediately
           setIsSignUp(false);
-          setError('An account with that username already exists. Enter your password to sign in.');
+          setError(t('errTaken'));
           return;
         }
         const { hash, salt } = await hashPassword(password);
@@ -540,12 +604,12 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
             const { hash, salt } = await hashPassword(password);
             saveUsers([{ username, email: '', password: hash, salt, createdAt: new Date().toISOString() }]);
           } else {
-            setError('Incorrect username or password.');
+            setError(t('errCredentials'));
             return;
           }
         } else {
           const { valid, newHash, newSalt } = await verifyAndMigratePassword(user.password, password, user.salt);
-          if (!valid) { setError('Incorrect username or password.'); return; }
+          if (!valid) { setError(t('errCredentials')); return; }
           if (newHash && newSalt) {
             saveUsers(users.map((u) => u.username === user.username ? { ...u, password: newHash, salt: newSalt } : u));
           }
@@ -555,11 +619,7 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
       localStorage.setItem(STORAGE_KEY, username);
       onLogin(username);
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? `Something went wrong: ${err.message}`
-          : 'An unexpected error occurred. Please refresh and try again.',
-      );
+      setError(err instanceof Error ? `${t('errUnexpected')} (${err.message})` : t('errUnexpected'));
     }
   }
 
@@ -685,25 +745,24 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
 // ─── Job Boards ───────────────────────────────────────────────────────────────
 
 const JOB_BOARDS = [
-  { name: 'Indeed', url: 'https://www.indeed.com', desc: 'Search millions of U.S. jobs by title, location, and salary.', color: 'from-blue-600 to-blue-500', initials: 'In' },
-  { name: 'LinkedIn Jobs', url: 'https://www.linkedin.com/jobs', desc: 'Apply directly and connect with hiring managers.', color: 'from-sky-700 to-sky-500', initials: 'Li' },
-  { name: 'Glassdoor', url: 'https://www.glassdoor.com/Job', desc: 'Jobs with salary insights and company reviews.', color: 'from-emerald-600 to-emerald-500', initials: 'Gd' },
-  { name: 'ZipRecruiter', url: 'https://www.ziprecruiter.com', desc: 'AI-matched job recommendations sent to your inbox.', color: 'from-orange-600 to-orange-500', initials: 'Zr' },
-  { name: 'USAJobs', url: 'https://www.usajobs.gov', desc: 'Official portal for U.S. federal government positions.', color: 'from-red-700 to-red-500', initials: 'US' },
-  { name: 'Monster', url: 'https://www.monster.com', desc: 'Job postings across industries nationwide.', color: 'from-violet-600 to-violet-500', initials: 'Mo' },
+  { name: 'Indeed', url: 'https://www.indeed.com', descKey: 'jobIndeed' as const, color: 'from-blue-600 to-blue-500', initials: 'In' },
+  { name: 'LinkedIn Jobs', url: 'https://www.linkedin.com/jobs', descKey: 'jobLinkedIn' as const, color: 'from-sky-700 to-sky-500', initials: 'Li' },
+  { name: 'Glassdoor', url: 'https://www.glassdoor.com/Job', descKey: 'jobGlassdoor' as const, color: 'from-emerald-600 to-emerald-500', initials: 'Gd' },
+  { name: 'ZipRecruiter', url: 'https://www.ziprecruiter.com', descKey: 'jobZip' as const, color: 'from-orange-600 to-orange-500', initials: 'Zr' },
+  { name: 'USAJobs', url: 'https://www.usajobs.gov', descKey: 'jobUSA' as const, color: 'from-red-700 to-red-500', initials: 'US' },
+  { name: 'Monster', url: 'https://www.monster.com', descKey: 'jobMonster' as const, color: 'from-violet-600 to-violet-500', initials: 'Mo' },
 ];
 
 function JobBoardsSection() {
+  const { t } = useLang();
   return (
     <div className="mt-16">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <span className="text-indigo-400 text-2xl">💼</span>
-          <h2 className="text-white font-extrabold text-2xl tracking-tight">Start Applying Now</h2>
+          <h2 className="text-white font-extrabold text-2xl tracking-tight">{t('jobTitle')}</h2>
         </div>
-        <p className="text-slate-400 text-sm leading-relaxed max-w-2xl">
-          Once you have your credential evaluation, use these job boards to find U.S. positions in your field. Many employers accept international credentials — your roadmap gives you the documentation they need.
-        </p>
+        <p className="text-slate-400 text-sm leading-relaxed max-w-2xl">{t('jobDesc')}</p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {JOB_BOARDS.map((board) => (
@@ -714,7 +773,7 @@ function JobBoardsSection() {
                 <span className="text-white font-bold text-sm group-hover:text-indigo-300 transition-colors">{board.name}</span>
                 <svg className="w-3 h-3 text-slate-500 group-hover:text-indigo-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">{board.desc}</p>
+              <p className="text-xs text-slate-400 leading-relaxed">{t(board.descKey)}</p>
             </div>
           </a>
         ))}
@@ -725,7 +784,10 @@ function JobBoardsSection() {
 
 // ─── Contact Section ──────────────────────────────────────────────────────────
 
+const CONTACT_ITEMS = ['contactC1', 'contactC2', 'contactC3', 'contactC4'] as const;
+
 function ContactSection() {
+  const { t } = useLang();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -748,21 +810,14 @@ function ContactSection() {
           <div>
             <div className="flex items-center gap-3 mb-3">
               <span className="text-indigo-400 text-2xl">🤝</span>
-              <h2 className="text-white font-extrabold text-2xl tracking-tight">Need Help Getting Started?</h2>
+              <h2 className="text-white font-extrabold text-2xl tracking-tight">{t('contactTitle')}</h2>
             </div>
-            <p className="text-slate-400 text-sm leading-relaxed mb-6">
-              Not sure where to begin with your credential transfer? Our team can walk you through the NACES evaluation process, help you choose the right agency, and answer questions about your specific field and country.
-            </p>
+            <p className="text-slate-400 text-sm leading-relaxed mb-6">{t('contactDesc')}</p>
             <ul className="space-y-3">
-              {[
-                'Guidance on choosing WES, ECE, or other evaluators',
-                'Help gathering documents from your home country',
-                'Advice on field-specific U.S. licensing requirements',
-                'Support navigating USCIS credential recognition',
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-xs text-slate-300">
+              {CONTACT_ITEMS.map((key) => (
+                <li key={key} className="flex items-start gap-2.5 text-xs text-slate-300">
                   <span className="text-indigo-400 mt-0.5 flex-shrink-0">✓</span>
-                  {item}
+                  {t(key)}
                 </li>
               ))}
             </ul>
@@ -771,25 +826,25 @@ function ContactSection() {
             {sent ? (
               <div className="flex flex-col items-center justify-center h-full text-center py-8">
                 <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl mb-4">✅</div>
-                <p className="text-white font-bold text-lg mb-1">Message Ready to Send</p>
-                <p className="text-slate-400 text-sm">Your email client should have opened. We'll get back to you within 24 hours.</p>
+                <p className="text-white font-bold text-lg mb-1">{t('contactSent')}</p>
+                <p className="text-slate-400 text-sm">{t('contactSentSub')}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4" data-testid="form-contact">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Your Name</label>
-                  <input value={name} onChange={(e) => setName(e.target.value)} data-testid="input-contact-name" required placeholder="Full name" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('contactLName')}</label>
+                  <input value={name} onChange={(e) => setName(e.target.value)} data-testid="input-contact-name" required placeholder={t('contactPName')} className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Email Address</label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('contactLEmail')}</label>
                   <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="input-contact-email" required placeholder="name@example.com" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">How Can We Help?</label>
-                  <textarea value={message} onChange={(e) => setMessage(e.target.value)} data-testid="input-contact-message" required rows={4} placeholder="Describe your credential, country, field, and what you're trying to achieve in the U.S. ..." className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none" />
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('contactLMsg')}</label>
+                  <textarea value={message} onChange={(e) => setMessage(e.target.value)} data-testid="input-contact-message" required rows={4} placeholder={t('contactPMsg')} className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none" />
                 </div>
                 <button type="submit" data-testid="button-contact-submit" className="w-full bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
-                  <span>Send Message</span>
+                  <span>{t('contactBtn')}</span>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </button>
               </form>
@@ -1349,7 +1404,6 @@ function AdminPage() {
     }
     const updated = current.filter((u) => u.username !== deleteTarget.username);
     saveUsers(updated);
-    // Log out the deleted user if they're currently logged in
     if (localStorage.getItem(STORAGE_KEY) === deleteTarget.username) {
       localStorage.removeItem(STORAGE_KEY);
     }
@@ -1357,18 +1411,11 @@ function AdminPage() {
     setDeleteTarget(null);
   }
 
-  function exportCSV() {
-    const rows = [['Username', 'Email', 'Joined']];
-    try { getUsers().forEach((u) => rows.push([u.username, u.email, new Date(u.createdAt).toLocaleDateString()])); }
-    catch { /* corrupt — export whatever we already loaded into state */ users.forEach((u) => rows.push([u.username, u.email, new Date(u.createdAt).toLocaleDateString()])); }
-    const csv  = rows.map((r) => r.map((c) => `"${c}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a'); a.href = url; a.download = 'verifed-users.csv'; a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  const filtered = users.filter(
+  // Sort newest-first, then apply search filter
+  const sorted = [...users].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
+  const filtered = sorted.filter(
     (u) =>
       u.username.toLowerCase().includes(search.toLowerCase()) ||
       u.email.toLowerCase().includes(search.toLowerCase()),
@@ -1390,10 +1437,7 @@ function AdminPage() {
             <p className="text-slate-400 text-xs">{users.length} registered account{users.length !== 1 ? 's' : ''}</p>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <button onClick={exportCSV} className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium">⬇ Export CSV</button>
-          <button onClick={refresh} className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium">↻ Refresh</button>
-        </div>
+        <button onClick={refresh} className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium self-start sm:self-auto">↻ Refresh</button>
       </div>
 
       {/* Search bar */}
@@ -1407,56 +1451,97 @@ function AdminPage() {
         />
       </div>
 
-      {/* User table */}
-      <div className="glass-panel rounded-2xl overflow-hidden">
-        {filtered.length === 0 ? (
-          <div className="p-16 text-center text-slate-500 text-sm">
-            {users.length === 0 ? 'No users have registered yet.' : 'No results match your search.'}
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-800 bg-slate-900/60">
-                  <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-400">Username</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-400">Email</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-400">Joined</th>
-                  <th className="text-right px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-400">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((user, idx) => (
-                  <tr key={user.username} className={`border-b border-slate-800/60 ${idx % 2 === 0 ? 'bg-slate-900/20' : ''} hover:bg-slate-800/30 transition-colors`}>
-                    <td className="px-6 py-4">
-                      <span className="font-mono text-indigo-300 text-xs bg-indigo-500/10 border border-indigo-500/20 px-2 py-1 rounded-md">@{user.username}</span>
-                    </td>
-                    <td className="px-6 py-4 text-slate-300 text-xs">{user.email || <span className="text-slate-600 italic">not provided</span>}</td>
-                    <td className="px-6 py-4 text-slate-400 text-xs">{new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => { setResetTarget(user); setNewPass(''); setNewPassConfirm(''); setResetMsg(''); }}
-                          className="text-xs px-3 py-1.5 rounded-lg bg-indigo-900/40 hover:bg-indigo-800/60 border border-indigo-700/50 text-indigo-300 hover:text-white transition-all cursor-pointer font-medium"
-                        >
-                          Reset Password
-                        </button>
-                        <button
-                          onClick={() => setDeleteTarget(user)}
-                          className="text-xs px-3 py-1.5 rounded-lg bg-red-900/30 hover:bg-red-900/50 border border-red-700/40 text-red-400 hover:text-red-200 transition-all cursor-pointer font-medium"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      {/* User Grid */}
+      {filtered.length === 0 ? (
+        <div className="glass-panel rounded-2xl p-16 text-center text-slate-500 text-sm">
+          {users.length === 0 ? 'No users have registered yet.' : 'No results match your search.'}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.map((user) => {
+            const hasEmail  = Boolean(user.email);
+            const secLevel  = user.salt ? 'PBKDF2' : user.password.length === 64 ? 'SHA-256' : 'Legacy';
+            const missing   = [...(!hasEmail ? ['Email'] : [])];
+            const incomplete = missing.length > 0;
 
-      <button onClick={refresh} className="mt-4 text-xs text-slate-500 hover:text-slate-300 transition-colors cursor-pointer bg-transparent border-none">↻ Refresh list</button>
+            return (
+              <div
+                key={user.username}
+                className={`glass-panel rounded-2xl p-5 relative flex flex-col gap-4 border transition-colors ${
+                  incomplete ? 'border-amber-500/40' : 'border-slate-700/30'
+                }`}
+              >
+                {/* Top accent bar */}
+                <div
+                  className={`absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl ${
+                    incomplete
+                      ? 'bg-gradient-to-r from-amber-400 to-orange-400'
+                      : 'bg-gradient-to-r from-blue-500 via-violet-500 to-fuchsia-500'
+                  }`}
+                />
+
+                {/* Username + action buttons */}
+                <div className="flex items-center justify-between gap-2 pt-1">
+                  <span className="font-mono text-indigo-300 text-sm bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg truncate max-w-[60%]">
+                    @{user.username}
+                  </span>
+                  <div className="flex gap-1.5 flex-shrink-0">
+                    <button
+                      onClick={() => { setResetTarget(user); setNewPass(''); setNewPassConfirm(''); setResetMsg(''); }}
+                      title="Reset password"
+                      className="w-7 h-7 flex items-center justify-center rounded-lg bg-indigo-900/40 hover:bg-indigo-800/60 border border-indigo-700/50 text-indigo-300 text-xs transition-all cursor-pointer"
+                    >🔑</button>
+                    <button
+                      onClick={() => setDeleteTarget(user)}
+                      title="Delete account"
+                      className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-900/30 hover:bg-red-900/50 border border-red-700/40 text-red-400 text-xs transition-all cursor-pointer"
+                    >🗑</button>
+                  </div>
+                </div>
+
+                {/* Field rows */}
+                <div className="space-y-2.5">
+                  {/* Email */}
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">Email</span>
+                    {hasEmail
+                      ? <span className="text-xs text-slate-300 font-mono truncate">{user.email}</span>
+                      : <span className="text-xs px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-400 font-medium flex-shrink-0">⚠ Still needed</span>
+                    }
+                  </div>
+
+                  {/* Password */}
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">Password</span>
+                    <span className="text-xs px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-medium flex-shrink-0">
+                      ✓ Set · {secLevel}
+                    </span>
+                  </div>
+
+                  {/* Joined */}
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">Joined</span>
+                    <span className="text-xs text-slate-400">
+                      {new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Incomplete summary footer */}
+                {incomplete && (
+                  <div className="pt-2 border-t border-amber-500/20">
+                    <span className="text-xs text-amber-400">
+                      {missing.length} field{missing.length !== 1 ? 's' : ''} still needed: {missing.join(', ')}
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <button onClick={refresh} className="mt-6 text-xs text-slate-500 hover:text-slate-300 transition-colors cursor-pointer bg-transparent border-none">↻ Refresh list</button>
 
       {/* Reset Password Modal */}
       {resetTarget && (
