@@ -100,6 +100,107 @@ describe('App — StorageCorruptBanner visibility', () => {
   });
 });
 
+// ─── StorageCorruptBanner — Clear & Reset flow ────────────────────────────────
+
+describe('StorageCorruptBanner — Clear & Reset flow', () => {
+  // Preserve the real location object so we can restore it after each test.
+  let originalLocation: Location;
+
+  // Seed corrupt data and stub window.location.reload before every test.
+  beforeEach(() => {
+    originalLocation = window.location;
+    localStorage.setItem(USERS_KEY, '{{bad json');
+
+    // jsdom's location object is not configurable, so we replace the whole
+    // thing with a plain object carrying a spy for reload().
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      writable: true,
+      value: { reload: vi.fn() },
+    });
+  });
+
+  afterEach(() => {
+    // Restore the real location so subsequent describe blocks are unaffected.
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      writable: true,
+      value: originalLocation,
+    });
+  });
+
+  it('shows the Clear & Reset button when ge_users is corrupt', async () => {
+    await act(async () => { render(<App />); });
+
+    await waitFor(() => {
+      // The banner (and its button) may appear in more than one place in the tree.
+      expect(screen.getAllByTestId('button-clear-corrupt-store').length).toBeGreaterThan(0);
+    });
+  });
+
+  it('clicking Confirm calls localStorage.removeItem and triggers a reload', async () => {
+    const removeSpy = vi.spyOn(Storage.prototype, 'removeItem');
+
+    await act(async () => { render(<App />); });
+
+    // Open the confirm dialog via the first Clear & Reset button in the DOM.
+    await waitFor(() => {
+      expect(screen.getAllByTestId('button-clear-corrupt-store').length).toBeGreaterThan(0);
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getAllByTestId('button-clear-corrupt-store')[0]);
+    });
+
+    // Confirm dialog should now be visible.
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-confirm-clear-store')).not.toBeNull();
+    });
+
+    // Click the destructive confirm button.
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('button-confirm-clear-store'));
+    });
+
+    // localStorage.removeItem must have been called with the users key.
+    expect(removeSpy).toHaveBeenCalledWith(USERS_KEY);
+    // And a reload must have been requested.
+    expect(window.location.reload).toHaveBeenCalledTimes(1);
+  });
+
+  it('clicking Cancel closes the dialog without touching storage or reloading', async () => {
+    const removeSpy = vi.spyOn(Storage.prototype, 'removeItem');
+
+    await act(async () => { render(<App />); });
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('button-clear-corrupt-store').length).toBeGreaterThan(0);
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getAllByTestId('button-clear-corrupt-store')[0]);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-confirm-clear-store')).not.toBeNull();
+    });
+
+    // Click Cancel.
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('button-cancel-clear-store'));
+    });
+
+    // Dialog should be gone.
+    await waitFor(() => {
+      expect(screen.queryByTestId('modal-confirm-clear-store')).toBeNull();
+    });
+
+    // Storage must be untouched and no reload issued.
+    expect(removeSpy).not.toHaveBeenCalledWith(USERS_KEY);
+    expect(window.location.reload).not.toHaveBeenCalled();
+  });
+});
+
 // ─── Sign-up duplicate username rejection ──────────────────────────────────────
 
 describe('App — sign-up rejects duplicate username', () => {
