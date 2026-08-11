@@ -11,6 +11,7 @@ import React from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, waitFor, act, cleanup, fireEvent } from '@testing-library/react';
 import App from './App';
+import { StorageCorruptBanner } from './StorageCorruptBanner';
 import { USERS_KEY } from './userStore';
 
 // jsdom provides localStorage natively — no manual mock needed.
@@ -189,6 +190,54 @@ describe('App — StorageCorruptBanner on the admin route', () => {
     });
 
     expect(removeSpy).not.toHaveBeenCalledWith(USERS_KEY);
+    expect(window.location.reload).not.toHaveBeenCalled();
+  });
+});
+
+// ─── StorageCorruptBanner — dismiss button ────────────────────────────────────
+
+describe('StorageCorruptBanner — dismiss button', () => {
+  let originalLocation: Location;
+
+  beforeEach(() => {
+    originalLocation = window.location;
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      writable: true,
+      value: { ...originalLocation, reload: vi.fn() },
+    });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      writable: true,
+      value: originalLocation,
+    });
+  });
+
+  it('renders the × button when an onDismiss prop is provided', () => {
+    render(<StorageCorruptBanner message="boom" onDismiss={() => {}} />);
+    expect(screen.queryByTestId('button-dismiss-storage-corrupt')).not.toBeNull();
+  });
+
+  it('does NOT render the × button when onDismiss is omitted', () => {
+    render(<StorageCorruptBanner message="boom" />);
+    expect(screen.queryByTestId('button-dismiss-storage-corrupt')).toBeNull();
+  });
+
+  it('clicking × calls onDismiss without touching storage or reloading', async () => {
+    const onDismiss = vi.fn();
+    const removeSpy = vi.spyOn(Storage.prototype, 'removeItem');
+
+    render(<StorageCorruptBanner message="boom" onDismiss={onDismiss} />);
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('button-dismiss-storage-corrupt'));
+    });
+
+    expect(onDismiss).toHaveBeenCalledTimes(1);
+    expect(removeSpy).not.toHaveBeenCalled();
     expect(window.location.reload).not.toHaveBeenCalled();
   });
 });
