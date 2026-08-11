@@ -143,12 +143,266 @@ const TX = {
     jobZip: 'AI-matched job recommendations sent to your inbox.',
     jobUSA: 'Official portal for U.S. federal government positions.',
     jobMonster: 'Job postings across industries nationwide.',
+    // Job boards — field-aligned panel
+    jobAlignedWith: 'Jobs Aligned with',
+    jobAlignedDesc1: 'These U.S. job titles commonly align with a',
+    jobAlignedDesc2: 'background. Every link below opens a live, pre-filtered search for your field — not a generic job board homepage.',
+    jobRolesTitle: 'Roles That Match Your Field',
+    jobRolesTip: 'Each role opens a live U.S. job search you can refine by city and salary.',
+    jobPrefiltered: 'jobs — pre-filtered search',
     // Auth errors
     errCorrupt: 'Account data is corrupted and cannot be read. Please contact the administrator.',
     errLoad: 'Unable to load accounts. Please refresh and try again.',
     errTaken: 'An account with that username already exists. Enter your password to sign in.',
     errCredentials: 'Incorrect username or password.',
     errUnexpected: 'An unexpected error occurred. Please refresh and try again.',
+    // Service unavailable banner
+    svcUnavailableTitle: '🔧 Account service temporarily unavailable',
+    svcUnavailableSub: 'Sign-in and registration are temporarily unavailable. Please try again later or contact support.',
+    // Evaluator
+    evalBadge: '⚡ Unified Platform Scraper: Pulling real-time NACES, USCIS & State Board frameworks.',
+    evalH1: 'Transform Your Foreign Education Into',
+    evalH2: 'U.S. Equivalency',
+    evalSubtitle: 'Instantly crawl academic databases, map international coursework to U.S. standards, and generate a dynamic verification roadmap.',
+    evalFormTitle: 'Credential Parameters',
+    evalFormStep: 'STEP 1 OF 2',
+    evalLCountry: 'Country of Education',
+    evalPCountry: 'e.g., India, Nigeria, Brazil, UK',
+    evalLInstitution: 'Institution Name',
+    evalPInstitution: 'e.g., University of Lagos',
+    evalLDegree: 'Degree Level',
+    evalPDegree: 'e.g., B.Sc, M.Eng, MBBS',
+    evalLField: 'Field of Study',
+    evalPField: 'e.g., Accounting, Computer Science',
+    evalLCredits: 'Credits / Years',
+    evalLCreditsOpt: '(Opt)',
+    evalPCredits: 'e.g., 4 Years / 180 ECTS',
+    evalLGoal: 'Primary Goal',
+    evalOptGoal: 'Select goal...',
+    evalGoal1: 'University Admission',
+    evalGoal2: 'Employment / HR',
+    evalGoal3: 'Professional Licensing',
+    evalGoal4: 'Immigration (USCIS)',
+    evalBtn: 'Crawl & Generate Equivalency Report',
+    evalCrawlComplete: 'Platform Crawl Complete',
+    evalSummaryPre: 'Your education from',
+    evalSummaryMid: 'in',
+    evalSummaryPost: 'evaluates equivalently to a',
+    evalInsightTitle: 'Industry Regulatory Pathway',
+    evalRoadmapTitle: 'Scraped Platform Action Roadmap',
+    evalRoadmapSynced: 'Synced',
+    evalRoadmapDesc: 'Check each step to expand its action details and track your progress through the evaluation process:',
+    evalEmptyTitle: 'Platform Scraper Awaiting Input',
+    evalEmptyDesc: 'Fill out your academic parameters on the left to trigger real-time database crawling and build your roadmap.',
+    // Roadmap steps — titles & descriptions (static parts)
+    rm1Title: 'Crawl & Verify Institutional Credentials from',
+    rm1DescPre: 'Automated scrape of',
+    rm1DescSuf: 'Ministry of Education registries to verify accreditation status and active degree registry records.',
+    rm2Title: 'Map Coursework to NACES-Accredited Standards',
+    rm2DescPre: 'Convert regional credit hours to U.S. semester credit units (SCU) matching standard undergraduate/graduate benchmarks for',
+    rm3TitlePre: 'Align with',
+    rm3TitleFallback: 'General U.S. Employment/Admission',
+    rm3TitleSuf: 'Prerequisites',
+    rm3Desc: 'Extract specific state board guidelines, GPA conversion rules, and prerequisite course minimums.',
+    rm4Title: 'Export Official NACES Application Dossier',
+    rm4Desc: 'Compile your scraped data packet into a standardized format ready for direct submission to WES, ECE, or Josef Silny & Associates.',
+    // Verify step content
+    verifyStatus: 'Accreditation Confirmed',
+    verifyInstitution: 'Institution',
+    verifyCountry: 'Country',
+    verifyDegree: 'Degree Recorded',
+    verifyRegistry: 'Registry Source',
+    verifyRegistrySuf: 'Ministry of Education – Active Registry',
+    verifyRecognition: 'Recognition Status',
+    verifyRecognitionVal: 'Recognized by NACES-member agencies',
+    verifyWES: 'WES Eligibility',
+    verifyWESVal: 'Eligible for World Education Services evaluation',
+    verifyECE: 'ECE Eligibility',
+    verifyECEVal: 'Eligible for Educational Credential Evaluators review',
+    verifyActionLabel: 'Verify on WES Registry',
+    // Coursework step content
+    cwColSubject: 'Subject / Course Block',
+    cwColSCU: 'U.S. SCU',
+    cwColNotes: 'Notes',
+    cwNACESLink: 'View all NACES member agencies →',
+    cwTotalEstimated: 'Estimated from',
+    cwTotalDefault: 'Estimated 120–130 SCU total',
+    // Prereq step content (labels)
+    preqCPACredit: 'CPA Credit Requirement',
+    preqCPACreditVal: '150 semester credit hours (most states)',
+    preqGPA: 'GPA Conversion',
+    preqGPAVal: 'Foreign GPA converted via WES GPA calculator; typically 2.5+ U.S. equivalent required',
+    preqAcctHrs: 'Accounting Hours Minimum',
+    preqAcctHrsVal: '24–30 SCU in accounting subjects',
+    preqBizHrs: 'Business Hours Minimum',
+    preqBizHrsVal: '24 SCU in general business',
+    preqNASBA: 'State Board Link',
+    preqNASBAVal: 'NASBA – National Association of State Boards of Accountancy',
+    preqFE: 'FE Exam Eligibility',
+    preqFEVal: 'Credential evaluation required before sitting for NCEES FE exam',
+    preqGPAMin: 'GPA Minimum',
+    preqGPAMinVal: '2.0 U.S. equivalent on 4.0 scale (varies by state board)',
+    preqABET: 'ABET Review',
+    preqABETVal: 'Non-ABET programs evaluated course-by-course; deficiencies may require additional coursework',
+    preqNCEES: 'PE Licensing Board',
+    preqNCEESVal: 'NCEES – National Council of Examiners for Engineering',
+    preqCGFNS: 'CGFNS Certification',
+    preqCGFNSVal: 'Required for international nurses before NCLEX',
+    preqEnglish: 'English Proficiency',
+    preqEnglishVal: 'TOEFL iBT 83+ or IELTS 6.5+ typically required',
+    preqClinical: 'Clinical Hours Verification',
+    preqClinicalVal: 'State board reviews clinical logs from home country program',
+    preqNCLEX: 'NCLEX Board',
+    preqNCLEXVal: 'NCSBN – National Council of State Boards of Nursing',
+    preqGPAGen: 'GPA Conversion',
+    preqGPAGenVal: 'Convert via WES iGPA Calculator; 3.0+ U.S. recommended for graduate programs',
+    preqEnglishGen: 'English Proficiency',
+    preqEnglishGenVal: 'TOEFL or IELTS may be required for admission or licensing',
+    preqCredEval: 'Credential Evaluation',
+    preqCredEvalVal: 'NACES-member agency evaluation letter required for most employers and schools',
+    preqUSCIS: 'USCIS Recognition',
+    preqUSCISVal: 'Form I-140 or EB-2/EB-3 petition may require credential evaluation letter',
+    preqGradAdm: 'Graduate Admissions',
+    preqGradAdmVal: 'Most U.S. graduate programs require official NACES evaluation + certified translations',
+    // Dossier step
+    dossierDesc: 'Your dossier is compiled from the information you provided and the data pulled across all steps above. It includes your credential summary, institutional verification, NACES agency recommendations, U.S. regulatory requirements, and your equivalency tags — formatted and ready to accompany your official evaluation application.',
+    dossierItem1: 'Credential Summary',
+    dossierItem2: 'Institutional Verification',
+    dossierItem3: 'NACES Agency List',
+    dossierItem4: 'Regulatory Pathway',
+    dossierItem5: 'U.S. Equivalency Tags',
+    dossierItem6: 'Compliance Disclaimer',
+    dossierDownload: 'Download NACES Application Dossier',
+    dossierDownloaded: '✓ Dossier Downloaded',
+    dossierOpenNote: 'Open the downloaded file in your browser to print or save as PDF.',
+    // Agency outreach
+    agencyTitle: 'Contact NACES Agencies',
+    agencyDescPre: 'A personalized inquiry email has been drafted for you using your evaluation details',
+    agencyDescEmail: 'and your account email',
+    agencyDescSuf: '. Open it in your email app, or copy it and paste it into the contact form on the agency\'s website — it sends from your own address, so replies come straight back to you.',
+    agencyDraft: '✉️ Draft',
+    agencyCopy: 'Copy',
+    agencyCopied: '✓ Copied',
+    agencySite: 'Site ↗',
+    agencyMemberSince: 'Member since',
+    agencyTip: 'Tip: you do not need to contact every agency — pick 2–3 whose fees and turnaround fit your goal. Each agency\'s exact contact email or inquiry form is on its website.',
+    // U.S. degree level labels
+    usLevelMaster: "U.S. Master's Degree",
+    usLevelDoctor: 'U.S. Doctoral Degree',
+    usLevelAssociate: 'U.S. Associate Degree / Diploma',
+    usLevelBachelor: "Standard U.S. Bachelor's Degree",
+    // Insight text
+    insightAccount: "• CPA Licensure Pathway: Most U.S. state boards require 150 semester credit hours. Foreign accounting coursework is mapped course-by-course to satisfy specific accounting and business subject minimums.\n• Professional Competitiveness: Supplemental designations like CFA, CIA, or FMVA can strengthen your profile in corporate finance and investment banking.",
+    insightEngineering: "• Technical Equivalency: ABET-equivalent coursework mapping is standard for engineering degrees. Professional Engineer (PE) licensure requires passing the FE exam.\n• Industry Alignment: High recognition for international tech degrees; portfolios, GitHub activity, and cloud/security certifications carry substantial weight.",
+    insightHealth: "• Healthcare Regulatory Requirements: Healthcare fields require state licensing board credential review, English language testing, and board examinations (such as the NCLEX).",
+    insightGeneral: "• General Professional Recognition: Your credential aligns well with standard U.S. employment and admissions frameworks. Review specific institutional prerequisite checklists.",
+    // Admin
+    adminTitle: 'Admin Dashboard',
+    adminAccountSingular: 'registered account',
+    adminAccountPlural: 'registered accounts',
+    adminRefresh: '↻ Refresh',
+    adminRefreshList: '↻ Refresh list',
+    adminSearchPlaceholder: 'Search by username or email…',
+    adminNoUsers: 'No users have registered yet.',
+    adminNoResults: 'No results match your search.',
+    adminFieldEmail: 'Email',
+    adminFieldPassword: 'Password',
+    adminFieldJoined: 'Joined',
+    adminEmailMissing: '⚠ Still needed',
+    adminPassSet: '✓ Set ·',
+    adminFieldsNeededSingular: 'field still needed:',
+    adminFieldsNeededPlural: 'fields still needed:',
+    adminResetTitle: 'Reset Password',
+    adminResetFor: 'Setting new password for',
+    adminResetLNew: 'New Password',
+    adminResetPNew: 'Min. 6 characters',
+    adminResetLConfirm: 'Confirm New Password',
+    adminResetPConfirm: 'Repeat password',
+    adminResetBtn: 'Update Password',
+    adminCancelBtn: 'Cancel',
+    adminResetErrEmpty: 'Password cannot be empty.',
+    adminResetErrMatch: 'Passwords do not match.',
+    adminResetSuccess: '✓ Password updated successfully.',
+    adminDeleteTitle: 'Delete Account?',
+    adminDeleteMsg1: 'This will permanently delete',
+    adminDeleteMsg2: 'and all their data. This cannot be undone.',
+    adminDeleteBtn: 'Yes, Delete',
+    // Server-mode / admin-key strings (ours from main)
+    adminModeServer: '● Central database — all devices',
+    adminModeLocal: '⚠ This device only — backend offline',
+    adminKeyTitle: '🔑 Admin key required',
+    adminKeyDesc: 'The central database is protected. Enter the admin key to view and manage accounts on this device.',
+    adminKeyPlaceholder: 'Admin key…',
+    adminKeyBtn: 'Unlock',
+    adminKeyRejected: 'The saved key was rejected — please enter it again.',
+    adminFieldSchool: 'School',
+    adminFieldCountry: 'Country',
+    adminFieldIntention: 'Intention',
+    adminFieldNotProvided: 'Not provided yet',
+    adminResetErrServer: 'Could not reach the server. Try again.',
+    // Privacy & Terms modal bodies
+    privP1: '<strong>Strict Privacy &amp; Independence Notice:</strong> VerifED Global is a private, separate, and independent commercial company designed strictly to help international individuals navigate their educational and professional experience in the United States.',
+    privP2: '<strong>Basic Information &amp; Purpose:</strong> We collect basic account credentials (username, password, and correspondence email) solely to keep records and properly correspond with you regarding your credential evaluation roadmap.',
+    privP3: '<strong>Zero Data Selling &amp; Absolute Government Protection:</strong> <strong>We will never sell your information, nor will we ever hand over, share, or disclose any user data, personal records, or search inputs to any government agencies, immigration authorities, or external third parties.</strong> Your data remains strictly confidential, private, and secure within our platform.',
+    termsP1: 'Welcome to VerifED Global. By creating an account and logging in, you agree to these terms of service.',
+    termsP2: '<strong>Marketing and Communication Agreement:</strong> By signing up with your username, password, and email, <strong>you expressly agree to receive marketing, platform updates, and service communication emails from us.</strong> You may opt out of communications at any time by contacting support.',
+    termsP3: '<strong>Non-Official Preview:</strong> All credential mappings generated by this application are for preliminary guidance and informational purposes only and do not constitute official NACES-accredited evaluations.',
+    termsP4: 'All intellectual property and code assets are engineered by LAD MEDIA.',
+    // Dossier HTML (export)
+    dossierSubtitle: '2026 Credential Engine — NACES Application Dossier',
+    dossierGenerated: 'Generated:',
+    dossierSecCredential: 'Credential Summary',
+    dossierSecVerification: 'Institutional Verification',
+    dossierSecNACES: 'Recommended NACES Agencies',
+    dossierSecRegulatory: 'U.S. Regulatory Pathway Notes',
+    dossierSecInsight: 'Regulatory Insight',
+    dossierSecTags: 'Credential Tags',
+    dossierRowInstitution: 'Applicant Institution',
+    dossierRowCountry: 'Country of Education',
+    dossierRowDegree: 'Degree Level',
+    dossierRowField: 'Field of Study',
+    dossierRowUSEq: 'U.S. Equivalent',
+    dossierRowGoal: 'Primary Goal',
+    dossierDisclaimer: '<strong>Disclaimer:</strong> This dossier is generated by VerifED Global for preliminary guidance only. It does not constitute an official NACES-accredited credential evaluation. For official recognition, submit your documents to a NACES-member agency listed above. VerifED Global is a private, independent platform not affiliated with any government body.',
+    dossierFooter: '© 2026 VerifED Global. Engineered by LAD MEDIA. All rights reserved.',
+    // Coursework course names (EN)
+    cwAcct1: 'Financial Accounting I & II',
+    cwAcct2: 'Cost & Managerial Accounting',
+    cwAcct3: 'Auditing & Assurance',
+    cwAcct4: 'Taxation (Domestic/International)',
+    cwAcct5: 'Business Law',
+    cwAcct6: 'Economics (Micro + Macro)',
+    cwEng1: 'Calculus I–III',
+    cwEng2: 'Physics I & II',
+    cwEng3: 'Core Engineering / CS Courses',
+    cwEng4: 'Capstone / Thesis',
+    cwHealth1: 'Anatomy & Physiology',
+    cwHealth2: 'Pharmacology',
+    cwHealth3: 'Nursing Theory & Practice',
+    cwHealth4: 'Clinical Hours',
+    cwGen1: 'Core Major Courses',
+    cwGen2: 'General Education',
+    cwGen3: 'Electives',
+    cwGen4: 'Thesis / Capstone',
+    // Coursework notes (EN)
+    cwNoteAASCB: 'Matches AACSB benchmark',
+    cwNoteCPAPath: 'Required for CPA pathway',
+    cwNoteStateMin: 'State board minimum',
+    cwNoteTaxElec: 'Maps to U.S. tax law elective',
+    cwNote150: 'Required for 150-hour CPA rule',
+    cwNoteCoreBiz: 'Core business requirement',
+    cwNoteABETMath: 'ABET math foundation',
+    cwNoteLabCred: 'Lab credits included',
+    cwNoteMajorMap: 'Major-specific mapping',
+    cwNoteSenDes: 'Counts toward senior design',
+    cwNoteWithLab: 'With lab',
+    cwNoteClinReq: 'Clinical requirement',
+    cwNoteNCLEXPre: 'NCLEX prerequisite',
+    cwNoteStateBdMin: 'State board minimum varies',
+    cwNoteCourseRev: 'Subject to course-by-course review',
+    cwNoteGenEd: 'English, Math, Sciences, Humanities',
+    cwNoteInstElec: 'Institutional electives',
+    cwNoteIfApp: 'If applicable',
   },
   es: {
     about: 'Acerca de', howItWorks: 'Cómo Funciona', signOut: 'Cerrar Sesión',
@@ -246,12 +500,266 @@ const TX = {
     jobZip: 'Recomendaciones de empleo con IA enviadas a tu bandeja de entrada.',
     jobUSA: 'Portal oficial para puestos del gobierno federal de EE.UU.',
     jobMonster: 'Publicaciones de empleo en industrias de todo el país.',
+    // Job boards — field-aligned panel
+    jobAlignedWith: 'Empleos Alineados con',
+    jobAlignedDesc1: 'Estos títulos de empleo en EE.UU. comúnmente se alinean con un perfil de',
+    jobAlignedDesc2: '. Cada enlace abre una búsqueda en vivo y prefiltrada para tu campo — no la página principal genérica de la bolsa de trabajo.',
+    jobRolesTitle: 'Puestos que Coinciden con Tu Campo',
+    jobRolesTip: 'Cada puesto abre una búsqueda de empleo en vivo en EE.UU. que puedes refinar por ciudad y salario.',
+    jobPrefiltered: 'empleos — búsqueda prefiltrada',
     // Auth errors
     errCorrupt: 'Los datos de la cuenta están corruptos y no se pueden leer. Por favor contacte al administrador.',
     errLoad: 'No se pudieron cargar las cuentas. Por favor recargue e intente de nuevo.',
     errTaken: 'Ya existe una cuenta con ese nombre de usuario. Ingresa tu contraseña para iniciar sesión.',
     errCredentials: 'Usuario o contraseña incorrectos.',
     errUnexpected: 'Ocurrió un error inesperado. Por favor recargue e intente de nuevo.',
+    // Service unavailable banner
+    svcUnavailableTitle: '🔧 Servicio de cuentas temporalmente no disponible',
+    svcUnavailableSub: 'El inicio de sesión y el registro están temporalmente no disponibles. Por favor intente más tarde o contacte al soporte.',
+    // Evaluator
+    evalBadge: '⚡ Plataforma Unificada: Procesando marcos NACES, USCIS y Juntas Estatales en tiempo real.',
+    evalH1: 'Transforma Tu Educación Extranjera en',
+    evalH2: 'Equivalencia en EE.UU.',
+    evalSubtitle: 'Consulta bases de datos académicas al instante, mapea estudios internacionales a estándares de EE.UU. y genera una hoja de ruta de verificación dinámica.',
+    evalFormTitle: 'Parámetros de Credencial',
+    evalFormStep: 'PASO 1 DE 2',
+    evalLCountry: 'País de Estudios',
+    evalPCountry: 'ej., India, Nigeria, Brasil, Reino Unido',
+    evalLInstitution: 'Nombre de la Institución',
+    evalPInstitution: 'ej., Universidad de Lagos',
+    evalLDegree: 'Nivel del Título',
+    evalPDegree: 'ej., B.Sc, M.Eng, MBBS',
+    evalLField: 'Campo de Estudio',
+    evalPField: 'ej., Contabilidad, Ciencias de la Computación',
+    evalLCredits: 'Créditos / Años',
+    evalLCreditsOpt: '(Opc)',
+    evalPCredits: 'ej., 4 Años / 180 ECTS',
+    evalLGoal: 'Objetivo Principal',
+    evalOptGoal: 'Selecciona objetivo...',
+    evalGoal1: 'Admisión Universitaria',
+    evalGoal2: 'Empleo / RRHH',
+    evalGoal3: 'Licencia Profesional',
+    evalGoal4: 'Inmigración (USCIS)',
+    evalBtn: 'Consultar y Generar Informe de Equivalencia',
+    evalCrawlComplete: 'Consulta de Plataforma Completa',
+    evalSummaryPre: 'Tu educación de',
+    evalSummaryMid: 'en',
+    evalSummaryPost: 'equivale a',
+    evalInsightTitle: 'Ruta Regulatoria por Industria',
+    evalRoadmapTitle: 'Hoja de Ruta de Acción de la Plataforma',
+    evalRoadmapSynced: 'Sincronizado',
+    evalRoadmapDesc: 'Marca cada paso para expandir los detalles de acción y hacer seguimiento de tu progreso en el proceso de evaluación:',
+    evalEmptyTitle: 'Plataforma en Espera de Datos',
+    evalEmptyDesc: 'Completa tus parámetros académicos a la izquierda para iniciar la consulta de bases de datos y construir tu hoja de ruta.',
+    // Roadmap steps — titles & descriptions (static parts)
+    rm1Title: 'Verificar Credenciales Institucionales de',
+    rm1DescPre: 'Consulta automatizada de registros del',
+    rm1DescSuf: 'Ministerio de Educación para verificar el estado de acreditación y los registros de títulos activos.',
+    rm2Title: 'Mapear Plan de Estudios a Estándares NACES',
+    rm2DescPre: 'Convertir créditos regionales a unidades de crédito semestral de EE.UU. (SCU) según los referentes de pregrado/posgrado estándar para',
+    rm3TitlePre: 'Alinear con',
+    rm3TitleFallback: 'Empleo/Admisión General en EE.UU.',
+    rm3TitleSuf: 'Requisitos Previos',
+    rm3Desc: 'Extraer lineamientos específicos de juntas estatales, reglas de conversión de GPA y mínimos de cursos previos.',
+    rm4Title: 'Exportar Expediente Oficial de Solicitud NACES',
+    rm4Desc: 'Compilar tu paquete de datos en un formato estandarizado listo para envío directo a WES, ECE o Josef Silny & Associates.',
+    // Verify step content
+    verifyStatus: 'Acreditación Confirmada',
+    verifyInstitution: 'Institución',
+    verifyCountry: 'País',
+    verifyDegree: 'Título Registrado',
+    verifyRegistry: 'Fuente del Registro',
+    verifyRegistrySuf: 'Ministerio de Educación – Registro Activo',
+    verifyRecognition: 'Estado de Reconocimiento',
+    verifyRecognitionVal: 'Reconocido por agencias miembros de NACES',
+    verifyWES: 'Elegibilidad WES',
+    verifyWESVal: 'Elegible para evaluación de World Education Services',
+    verifyECE: 'Elegibilidad ECE',
+    verifyECEVal: 'Elegible para revisión de Educational Credential Evaluators',
+    verifyActionLabel: 'Verificar en el Registro WES',
+    // Coursework step content
+    cwColSubject: 'Materia / Bloque de Cursos',
+    cwColSCU: 'SCU EE.UU.',
+    cwColNotes: 'Notas',
+    cwNACESLink: 'Ver todas las agencias miembros de NACES →',
+    cwTotalEstimated: 'Estimado de',
+    cwTotalDefault: 'Estimado 120–130 SCU total',
+    // Prereq step content (labels)
+    preqCPACredit: 'Requisito de Créditos CPA',
+    preqCPACreditVal: '150 horas de crédito semestral (mayoría de estados)',
+    preqGPA: 'Conversión de GPA',
+    preqGPAVal: 'GPA extranjero convertido con la calculadora WES; típicamente se requiere equivalente EE.UU. de 2.5+',
+    preqAcctHrs: 'Mínimo de Horas de Contabilidad',
+    preqAcctHrsVal: '24–30 SCU en materias de contabilidad',
+    preqBizHrs: 'Mínimo de Horas de Negocios',
+    preqBizHrsVal: '24 SCU en negocios generales',
+    preqNASBA: 'Enlace de Junta Estatal',
+    preqNASBAVal: 'NASBA – Asociación Nacional de Juntas Estatales de Contabilidad',
+    preqFE: 'Elegibilidad para Examen FE',
+    preqFEVal: 'Se requiere evaluación de credenciales antes de presentar el examen FE de NCEES',
+    preqGPAMin: 'GPA Mínimo',
+    preqGPAMinVal: 'Equivalente 2.0 en escala de 4.0 en EE.UU. (varía por junta estatal)',
+    preqABET: 'Revisión ABET',
+    preqABETVal: 'Programas no-ABET evaluados curso por curso; las deficiencias pueden requerir cursos adicionales',
+    preqNCEES: 'Junta de Licencia PE',
+    preqNCEESVal: 'NCEES – Consejo Nacional de Examinadores de Ingeniería',
+    preqCGFNS: 'Certificación CGFNS',
+    preqCGFNSVal: 'Requerida para enfermeras internacionales antes del NCLEX',
+    preqEnglish: 'Dominio del Inglés',
+    preqEnglishVal: 'Típicamente se requiere TOEFL iBT 83+ o IELTS 6.5+',
+    preqClinical: 'Verificación de Horas Clínicas',
+    preqClinicalVal: 'La junta estatal revisa los registros clínicos del programa del país de origen',
+    preqNCLEX: 'Junta NCLEX',
+    preqNCLEXVal: 'NCSBN – Consejo Nacional de Juntas Estatales de Enfermería',
+    preqGPAGen: 'Conversión de GPA',
+    preqGPAGenVal: 'Convierte con la calculadora iGPA de WES; se recomienda 3.0+ en EE.UU. para programas de posgrado',
+    preqEnglishGen: 'Dominio del Inglés',
+    preqEnglishGenVal: 'Es posible que se requiera TOEFL o IELTS para admisión o licencias',
+    preqCredEval: 'Evaluación de Credenciales',
+    preqCredEvalVal: 'La mayoría de empleadores y escuelas requieren carta de evaluación de agencia miembro de NACES',
+    preqUSCIS: 'Reconocimiento USCIS',
+    preqUSCISVal: 'La petición Formulario I-140 o EB-2/EB-3 puede requerir carta de evaluación de credenciales',
+    preqGradAdm: 'Admisión de Posgrado',
+    preqGradAdmVal: 'La mayoría de programas de posgrado en EE.UU. requieren evaluación NACES oficial + traducciones certificadas',
+    // Dossier step
+    dossierDesc: 'Tu expediente se compila a partir de la información que proporcionaste y los datos obtenidos en todos los pasos anteriores. Incluye tu resumen de credenciales, verificación institucional, recomendaciones de agencias NACES, requisitos regulatorios de EE.UU. y tus etiquetas de equivalencia — formateados y listos para acompañar tu solicitud de evaluación oficial.',
+    dossierItem1: 'Resumen de Credenciales',
+    dossierItem2: 'Verificación Institucional',
+    dossierItem3: 'Lista de Agencias NACES',
+    dossierItem4: 'Ruta Regulatoria',
+    dossierItem5: 'Etiquetas de Equivalencia EE.UU.',
+    dossierItem6: 'Aviso de Cumplimiento',
+    dossierDownload: 'Descargar Expediente de Solicitud NACES',
+    dossierDownloaded: '✓ Expediente Descargado',
+    dossierOpenNote: 'Abre el archivo descargado en tu navegador para imprimir o guardar como PDF.',
+    // Agency outreach
+    agencyTitle: 'Contactar Agencias NACES',
+    agencyDescPre: 'Se ha redactado un correo de consulta personalizado usando los detalles de tu evaluación',
+    agencyDescEmail: 'y el correo de tu cuenta',
+    agencyDescSuf: '. Ábrelo en tu aplicación de correo, o cópialo y pégalo en el formulario de contacto del sitio de la agencia — se envía desde tu propia dirección, así que las respuestas llegarán directamente a ti.',
+    agencyDraft: '✉️ Borrador',
+    agencyCopy: 'Copiar',
+    agencyCopied: '✓ Copiado',
+    agencySite: 'Sitio ↗',
+    agencyMemberSince: 'Miembro desde',
+    agencyTip: 'Consejo: no necesitas contactar a todas las agencias — elige 2–3 cuyas tarifas y tiempos de entrega se adapten a tu objetivo. El correo o formulario de contacto de cada agencia está en su sitio web.',
+    // U.S. degree level labels
+    usLevelMaster: 'Maestría en EE.UU.',
+    usLevelDoctor: 'Doctorado en EE.UU.',
+    usLevelAssociate: 'Título de Asociado / Diploma en EE.UU.',
+    usLevelBachelor: 'Licenciatura Estándar en EE.UU.',
+    // Insight text
+    insightAccount: "• Vía de Licencia CPA: La mayoría de las juntas estatales de EE.UU. requieren 150 horas de crédito semestral. Los cursos de contabilidad extranjeros se mapean uno a uno para cumplir con los mínimos específicos de materias de contabilidad y negocios.\n• Competitividad Profesional: Las designaciones adicionales como CFA, CIA o FMVA pueden fortalecer tu perfil en finanzas corporativas y banca de inversión.",
+    insightEngineering: "• Equivalencia Técnica: El mapeo de cursos equivalentes a ABET es estándar para títulos de ingeniería. La licencia de Ingeniero Profesional (PE) requiere aprobar el examen FE.\n• Alineación con la Industria: Alta reconocibilidad para títulos internacionales en tecnología; portafolios, actividad en GitHub y certificaciones en nube/seguridad tienen gran peso.",
+    insightHealth: "• Requisitos Regulatorios de Salud: Los campos de salud requieren revisión de credenciales por la junta estatal de licencias, prueba de idioma inglés y exámenes de junta (como el NCLEX).",
+    insightGeneral: "• Reconocimiento Profesional General: Tu credencial se alinea bien con los marcos estándar de empleo y admisión en EE.UU. Revisa las listas de requisitos previos específicas de cada institución.",
+    // Admin
+    adminTitle: 'Panel de Administración',
+    adminAccountSingular: 'cuenta registrada',
+    adminAccountPlural: 'cuentas registradas',
+    adminRefresh: '↻ Actualizar',
+    adminRefreshList: '↻ Actualizar lista',
+    adminSearchPlaceholder: 'Buscar por usuario o correo…',
+    adminNoUsers: 'Aún no hay usuarios registrados.',
+    adminNoResults: 'Ningún resultado coincide con tu búsqueda.',
+    adminFieldEmail: 'Correo',
+    adminFieldPassword: 'Contraseña',
+    adminFieldJoined: 'Registro',
+    adminEmailMissing: '⚠ Pendiente',
+    adminPassSet: '✓ Configurada ·',
+    adminFieldsNeededSingular: 'campo pendiente:',
+    adminFieldsNeededPlural: 'campos pendientes:',
+    adminResetTitle: 'Restablecer Contraseña',
+    adminResetFor: 'Estableciendo nueva contraseña para',
+    adminResetLNew: 'Nueva Contraseña',
+    adminResetPNew: 'Mín. 6 caracteres',
+    adminResetLConfirm: 'Confirmar Nueva Contraseña',
+    adminResetPConfirm: 'Repetir contraseña',
+    adminResetBtn: 'Actualizar Contraseña',
+    adminCancelBtn: 'Cancelar',
+    adminResetErrEmpty: 'La contraseña no puede estar vacía.',
+    adminResetErrMatch: 'Las contraseñas no coinciden.',
+    adminResetSuccess: '✓ Contraseña actualizada con éxito.',
+    adminDeleteTitle: '¿Eliminar Cuenta?',
+    adminDeleteMsg1: 'Esto eliminará permanentemente',
+    adminDeleteMsg2: 'y todos sus datos. Esta acción no se puede deshacer.',
+    adminDeleteBtn: 'Sí, Eliminar',
+    // Server-mode / admin-key strings (ours from main)
+    adminModeServer: '● Base de datos central — todos los dispositivos',
+    adminModeLocal: '⚠ Solo este dispositivo — servidor sin conexión',
+    adminKeyTitle: '🔑 Clave de administrador requerida',
+    adminKeyDesc: 'La base de datos central está protegida. Ingresa la clave de administrador para ver y gestionar las cuentas en este dispositivo.',
+    adminKeyPlaceholder: 'Clave de administrador…',
+    adminKeyBtn: 'Desbloquear',
+    adminKeyRejected: 'La clave guardada fue rechazada — ingrésala de nuevo.',
+    adminFieldSchool: 'Institución',
+    adminFieldCountry: 'País',
+    adminFieldIntention: 'Intención',
+    adminFieldNotProvided: 'No proporcionado',
+    adminResetErrServer: 'No se pudo conectar al servidor. Inténtalo de nuevo.',
+    // Privacy & Terms modal bodies
+    privP1: '<strong>Aviso de Privacidad Estricta e Independencia:</strong> VerifED Global es una empresa comercial privada, separada e independiente, diseñada estrictamente para ayudar a personas internacionales a navegar su experiencia educativa y profesional en los Estados Unidos.',
+    privP2: '<strong>Información Básica y Propósito:</strong> Recopilamos credenciales básicas de cuenta (nombre de usuario, contraseña y correo de correspondencia) únicamente para mantener registros y correspondernos adecuadamente contigo sobre tu hoja de ruta de evaluación de credenciales.',
+    privP3: '<strong>Sin Venta de Datos y Protección Absoluta ante el Gobierno:</strong> <strong>Nunca venderemos tu información, ni entregaremos, compartiremos ni divulgaremos ningún dato de usuario, registro personal o entrada de búsqueda a ninguna agencia gubernamental, autoridad de inmigración o terceros externos.</strong> Tus datos permanecen estrictamente confidenciales, privados y seguros dentro de nuestra plataforma.',
+    termsP1: 'Bienvenido a VerifED Global. Al crear una cuenta e iniciar sesión, aceptas estos términos de servicio.',
+    termsP2: '<strong>Acuerdo de Marketing y Comunicación:</strong> Al registrarte con tu nombre de usuario, contraseña y correo electrónico, <strong>aceptas expresamente recibir correos de marketing, actualizaciones de la plataforma y comunicaciones de servicio de nuestra parte.</strong> Puedes optar por no recibir comunicaciones en cualquier momento contactando al soporte.',
+    termsP3: '<strong>Vista Previa No Oficial:</strong> Todos los mapeos de credenciales generados por esta aplicación son solo para orientación preliminar e informativa y no constituyen evaluaciones oficiales acreditadas por NACES.',
+    termsP4: 'Todos los activos de propiedad intelectual y código son desarrollados por LAD MEDIA.',
+    // Dossier HTML (export)
+    dossierSubtitle: 'Motor de Credenciales 2026 — Expediente de Solicitud NACES',
+    dossierGenerated: 'Generado:',
+    dossierSecCredential: 'Resumen de Credenciales',
+    dossierSecVerification: 'Verificación Institucional',
+    dossierSecNACES: 'Agencias NACES Recomendadas',
+    dossierSecRegulatory: 'Notas de Ruta Regulatoria en EE.UU.',
+    dossierSecInsight: 'Análisis Regulatorio',
+    dossierSecTags: 'Etiquetas de Credencial',
+    dossierRowInstitution: 'Institución del Solicitante',
+    dossierRowCountry: 'País de Estudios',
+    dossierRowDegree: 'Nivel del Título',
+    dossierRowField: 'Campo de Estudio',
+    dossierRowUSEq: 'Equivalente en EE.UU.',
+    dossierRowGoal: 'Objetivo Principal',
+    dossierDisclaimer: '<strong>Aviso Legal:</strong> Este expediente es generado por VerifED Global únicamente para orientación preliminar. No constituye una evaluación de credenciales oficial acreditada por NACES. Para reconocimiento oficial, envía tus documentos a una agencia miembro de NACES listada arriba. VerifED Global es una plataforma privada e independiente, no afiliada a ningún organismo gubernamental.',
+    dossierFooter: '© 2026 VerifED Global. Desarrollado por LAD MEDIA. Todos los derechos reservados.',
+    // Coursework course names (ES)
+    cwAcct1: 'Contabilidad Financiera I y II',
+    cwAcct2: 'Contabilidad de Costos y Gerencial',
+    cwAcct3: 'Auditoría y Aseguramiento',
+    cwAcct4: 'Impuestos (Nacional/Internacional)',
+    cwAcct5: 'Derecho Mercantil',
+    cwAcct6: 'Economía (Micro + Macro)',
+    cwEng1: 'Cálculo I–III',
+    cwEng2: 'Física I y II',
+    cwEng3: 'Cursos Centrales de Ingeniería / Computación',
+    cwEng4: 'Proyecto Final / Tesis',
+    cwHealth1: 'Anatomía y Fisiología',
+    cwHealth2: 'Farmacología',
+    cwHealth3: 'Teoría y Práctica de Enfermería',
+    cwHealth4: 'Horas Clínicas',
+    cwGen1: 'Cursos Principales de la Carrera',
+    cwGen2: 'Educación General',
+    cwGen3: 'Electivas',
+    cwGen4: 'Tesis / Proyecto Final',
+    // Coursework notes (ES)
+    cwNoteAASCB: 'Cumple con referente AACSB',
+    cwNoteCPAPath: 'Requerido para vía CPA',
+    cwNoteStateMin: 'Mínimo de junta estatal',
+    cwNoteTaxElec: 'Equivale a electiva de derecho fiscal en EE.UU.',
+    cwNote150: 'Requerido para regla CPA de 150 horas',
+    cwNoteCoreBiz: 'Requisito central de negocios',
+    cwNoteABETMath: 'Base matemática ABET',
+    cwNoteLabCred: 'Incluye créditos de laboratorio',
+    cwNoteMajorMap: 'Mapeo específico de carrera',
+    cwNoteSenDes: 'Cuenta para diseño de proyecto senior',
+    cwNoteWithLab: 'Con laboratorio',
+    cwNoteClinReq: 'Requisito clínico',
+    cwNoteNCLEXPre: 'Prerrequisito NCLEX',
+    cwNoteStateBdMin: 'Mínimo de junta estatal varía',
+    cwNoteCourseRev: 'Sujeto a revisión curso por curso',
+    cwNoteGenEd: 'Inglés, Matemáticas, Ciencias, Humanidades',
+    cwNoteInstElec: 'Electivas institucionales',
+    cwNoteIfApp: 'Si aplica',
   },
 } as const;
 
@@ -262,56 +770,55 @@ const LangCtx = createContext<{ lang: Lang; toggleLang: () => void; t: (k: TKey)
 function useLang() { return useContext(LangCtx); }
 type AppView = 'auth' | 'app';
 
+// Only raw inputs are stored; all derived display strings are computed at render-time
+// from the active language so that language switches always reflect the current locale.
 interface EvalResult {
   country: string;
   institution: string;
   degree: string;
   field: string;
   purpose: string;
-  usLevel: string;
-  insight: string;
-  roadmap: { title: string; desc: string }[];
 }
 
-function getUsLevel(degree: string): string {
+// Spanish synonyms are included so users who type field names in Spanish get the correct pathway.
+function getUsLevel(degree: string, t: (k: TKey) => string): string {
   const d = degree.toLowerCase();
-  if (d.includes('master') || d.includes('postgraduate') || d.includes('pg')) return "U.S. Master's Degree";
-  if (d.includes('doctor') || d.includes('phd')) return 'U.S. Doctoral Degree';
-  if (d.includes('diploma') || d.includes('associate') || d.includes('hnd')) return 'U.S. Associate Degree / Diploma';
-  return "Standard U.S. Bachelor's Degree";
+  if (d.includes('master') || d.includes('postgraduate') || d.includes('pg') ||
+      d.includes('maestr') || d.includes('posgrado') || d.includes('postgrado')) return t('usLevelMaster');
+  if (d.includes('doctor') || d.includes('phd') || d.includes('doctorado')) return t('usLevelDoctor');
+  if (d.includes('diploma') || d.includes('associate') || d.includes('hnd') ||
+      d.includes('técnico') || d.includes('tecnico') || d.includes('tecnólogo') || d.includes('tecnologo') || d.includes('diplomado')) return t('usLevelAssociate');
+  return t('usLevelBachelor');
 }
 
-function getInsight(field: string): string {
+function getInsight(field: string, t: (k: TKey) => string): string {
   const f = field.toLowerCase();
-  if (f.includes('account') || f.includes('finance') || f.includes('audit')) {
-    return `• CPA Licensure Pathway: Most U.S. state boards require 150 semester credit hours. Foreign accounting coursework is mapped course-by-course to satisfy specific accounting and business subject minimums.\n• Professional Competitiveness: Supplemental designations like CFA, CIA, or FMVA can strengthen your profile in corporate finance and investment banking.`;
-  }
-  if (f.includes('engineering') || f.includes('tech') || f.includes('computer')) {
-    return `• Technical Equivalency: ABET-equivalent coursework mapping is standard for engineering degrees. Professional Engineer (PE) licensure requires passing the FE exam.\n• Industry Alignment: High recognition for international tech degrees; portfolios, GitHub activity, and cloud/security certifications carry substantial weight.`;
-  }
-  if (f.includes('nursing') || f.includes('health') || f.includes('medicine')) {
-    return `• Healthcare Regulatory Requirements: Healthcare fields require state licensing board credential review, English language testing, and board examinations (such as the NCLEX).`;
-  }
-  return `• General Professional Recognition: Your credential aligns well with standard U.S. employment and admissions frameworks. Review specific institutional prerequisite checklists.`;
+  if (f.includes('account') || f.includes('finance') || f.includes('audit') ||
+      f.includes('contab') || f.includes('finanz') || f.includes('auditor') || f.includes('contabilid')) return t('insightAccount');
+  if (f.includes('engineering') || f.includes('tech') || f.includes('computer') ||
+      f.includes('ingeni') || f.includes('tecnolog') || f.includes('computac') || f.includes('informát') || f.includes('informat') || f.includes('sistem')) return t('insightEngineering');
+  if (f.includes('nursing') || f.includes('health') || f.includes('medicine') ||
+      f.includes('enfermer') || f.includes('salud') || f.includes('medic') || f.includes('medicina')) return t('insightHealth');
+  return t('insightGeneral');
 }
 
-function getRoadmap(country: string, institution: string, field: string, purpose: string) {
+function getRoadmap(country: string, institution: string, field: string, purpose: string, t: (k: TKey) => string) {
   return [
     {
-      title: `Crawl & Verify Institutional Credentials from ${institution || 'Foreign Institution'}`,
-      desc: `Automated scrape of ${country || 'International'} Ministry of Education registries to verify accreditation status and active degree registry records.`,
+      title: `${t('rm1Title')} ${institution || 'Foreign Institution'}`,
+      desc: `${t('rm1DescPre')} ${country || 'International'} ${t('rm1DescSuf')}`,
     },
     {
-      title: `Map Coursework to NACES-Accredited Standards`,
-      desc: `Convert regional credit hours to U.S. semester credit units (SCU) matching standard undergraduate/graduate benchmarks for ${field || 'your field'}.`,
+      title: t('rm2Title'),
+      desc: `${t('rm2DescPre')} ${field || 'your field'}.`,
     },
     {
-      title: `Align with ${purpose || 'General U.S. Employment/Admission'} Prerequisites`,
-      desc: `Extract specific state board guidelines, GPA conversion rules, and prerequisite course minimums.`,
+      title: `${t('rm3TitlePre')} ${purpose || t('rm3TitleFallback')} ${t('rm3TitleSuf')}`,
+      desc: t('rm3Desc'),
     },
     {
-      title: `Export Official NACES Application Dossier`,
-      desc: `Compile your scraped data packet into a standardized format ready for direct submission to WES, ECE, or Josef Silny & Associates.`,
+      title: t('rm4Title'),
+      desc: t('rm4Desc'),
     },
   ];
 }
@@ -321,7 +828,8 @@ function LangToggle() {
     <button
       onClick={toggleLang}
       className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:border-slate-500 transition-all cursor-pointer select-none"
-      aria-label="Toggle language"
+      data-testid="button-lang-toggle"
+      aria-label={lang === 'en' ? 'Switch to Spanish' : 'Cambiar a inglés'}
     >
       <span>{lang === 'en' ? '🇺🇸' : '🇲🇽'}</span>
       <span>{lang === 'en' ? 'EN' : 'ES'}</span>
@@ -404,99 +912,87 @@ function Footer({ onPrivacy, onTerms }: { onPrivacy: () => void; onTerms: () => 
 
 // ─── Modal ────────────────────────────────────────────────────────────────────
 
-function Modal({ id, title, children, onClose }: { id: string; title: string; children: React.ReactNode; onClose: () => void }) {
+function Modal({ id, title, onClose, children }: { id: string; title: string; onClose: () => void; children: React.ReactNode }) {
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) { if (e.key === 'Escape') onClose(); }
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" data-testid={`modal-${id}`} onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="glass-panel p-8 rounded-3xl max-w-lg w-full relative border border-slate-700 shadow-2xl">
-        <h3 className="text-xl font-bold text-white mb-4">{title}</h3>
-        <div className="text-xs text-slate-300 space-y-3 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">{children}</div>
-        <button onClick={onClose} data-testid={`button-close-${id}`} className="mt-6 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-indigo-600/30">Close</button>
+    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-6" onClick={onClose} data-testid={`modal-${id}`}>
+      <div className="glass-panel p-8 rounded-3xl w-full max-w-lg shadow-2xl relative overflow-hidden max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-violet-500 to-fuchsia-500" />
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-white font-bold text-lg">{title}</h2>
+          <button onClick={onClose} data-testid={`button-close-modal-${id}`} className="text-slate-400 hover:text-white transition-colors text-2xl leading-none cursor-pointer bg-transparent border-none">×</button>
+        </div>
+        <div className="text-slate-300 text-sm leading-relaxed space-y-4">{children}</div>
       </div>
     </div>
   );
 }
 
-// ─── About Page ───────────────────────────────────────────────────────────────
-
-const ABOUT_VALUES = [
-  { icon: '🤝', tKey: 'val1' },
-  { icon: '🎯', tKey: 'val2' },
-  { icon: '🌱', tKey: 'val3' },
+const VALUE_CARDS = [
+  { tKey: 'val1', icon: '🎯', color: 'from-indigo-600 to-blue-600', border: 'border-indigo-500/20' },
+  { tKey: 'val2', icon: '🔎', color: 'from-violet-600 to-indigo-600', border: 'border-violet-500/20' },
+  { tKey: 'val3', icon: '🧭', color: 'from-fuchsia-600 to-violet-600', border: 'border-fuchsia-500/20' },
 ] as const;
-
 function AboutPage() {
   const { t } = useLang();
   const [, setLocation] = useLocation();
   return (
-    <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full">
-      <button onClick={() => setLocation('/')} data-testid="button-back-about" className="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors mb-10 bg-transparent border-none cursor-pointer">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-        {t('backHome')}
-      </button>
-
-      <div className="mb-14">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-xs text-slate-300 mb-6 shadow-sm">
-          <span className="text-indigo-400 font-semibold">{t('aboutBadge')}</span>
+    <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full space-y-16">
+      {/* Hero */}
+      <div className="text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs text-indigo-300 font-semibold mb-8">
+          {t('aboutBadge')}
         </div>
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
-          {t('aboutH1')}{' '}
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4 leading-[1.1]">
+          {t('aboutH1')}<br />
           <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
             {t('aboutH2')}
           </span>
         </h1>
-        <p className="text-slate-400 text-lg leading-relaxed">{t('aboutIntro')}</p>
+        <p className="text-slate-400 text-lg leading-relaxed max-w-2xl mx-auto mt-6">{t('aboutIntro')}</p>
       </div>
 
+      {/* Story */}
       <div className="space-y-10">
-        <div className="glass-panel p-8 rounded-3xl">
-          <h2 className="text-white font-bold text-xl mb-4 flex items-center gap-3">
-            <span className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-sm flex-shrink-0">01</span>
-            {t('about01T')}
-          </h2>
-          <p className="text-slate-300 text-sm leading-relaxed mb-4">{t('about01P1')}</p>
-          <p className="text-slate-300 text-sm leading-relaxed">{t('about01P2')}</p>
-        </div>
-
-        <div className="glass-panel p-8 rounded-3xl border-l-4 border-l-violet-500">
-          <h2 className="text-white font-bold text-xl mb-4 flex items-center gap-3">
-            <span className="w-8 h-8 rounded-xl bg-violet-500/20 border border-violet-500/30 flex items-center justify-center text-violet-400 text-sm flex-shrink-0">02</span>
-            {t('about02T')}
-          </h2>
-          <p className="text-slate-300 text-sm leading-relaxed mb-4">{t('about02P1')}</p>
-          <p className="text-slate-300 text-sm leading-relaxed">{t('about02P2')}</p>
-        </div>
-
-        <div className="glass-panel p-8 rounded-3xl border-l-4 border-l-cyan-500">
-          <h2 className="text-white font-bold text-xl mb-4 flex items-center gap-3">
-            <span className="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-sm flex-shrink-0">03</span>
-            {t('about03T')}
-          </h2>
-          <p className="text-slate-300 text-sm leading-relaxed mb-4">{t('about03P1')}</p>
-          <p className="text-slate-300 text-sm leading-relaxed mb-4">{t('about03P2')}</p>
-          <p className="text-slate-300 text-sm leading-relaxed">{t('about03P3')}</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
-          {ABOUT_VALUES.map((v) => (
-            <div key={v.tKey} className="glass-panel p-6 rounded-2xl text-center">
-              <div className="text-3xl mb-3">{v.icon}</div>
-              <h3 className="text-white font-bold text-sm mb-2">{t(`${v.tKey}T` as TKey)}</h3>
-              <p className="text-slate-400 text-xs leading-relaxed">{t(`${v.tKey}D` as TKey)}</p>
+        {(['01', '02', '03'] as const).map((n) => (
+          <div key={n} className="glass-panel p-8 rounded-3xl">
+            <h2 className="text-white font-bold text-xl mb-4">{t(`about${n}T` as TKey)}</h2>
+            <div className="space-y-4 text-slate-300 text-sm leading-relaxed">
+              <p>{t(`about${n}P1` as TKey)}</p>
+              <p>{t(`about${n}P2` as TKey)}</p>
+              {n === '03' && <p>{t('about03P3')}</p>}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
 
-        <div className="glass-panel p-8 rounded-3xl text-center">
-          <p className="text-slate-300 text-sm leading-relaxed mb-6 max-w-xl mx-auto">{t('aboutCtaText')}</p>
-          <button
-            onClick={() => setLocation('/')}
-            data-testid="button-go-to-evaluator"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 px-8 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer"
-          >
-            {t('goEval')}
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-          </button>
-        </div>
+      {/* Values */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {VALUE_CARDS.map((card) => (
+          <div key={card.tKey} className={`glass-panel p-6 rounded-3xl border ${card.border}`}>
+            <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${card.color} flex items-center justify-center text-lg mb-4 shadow-lg`}>{card.icon}</div>
+            <h3 className="text-white font-bold text-sm mb-2">{t(`${card.tKey}T` as TKey)}</h3>
+            <p className="text-slate-400 text-xs leading-relaxed">{t(`${card.tKey}D` as TKey)}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA */}
+      <div className="glass-panel p-8 rounded-3xl text-center">
+        <p className="text-slate-300 text-sm leading-relaxed mb-6 max-w-xl mx-auto">{t('aboutCtaText')}</p>
+        <button
+          onClick={() => setLocation('/')}
+          data-testid="button-go-to-evaluator-about"
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 px-8 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer"
+        >
+          {t('goEval')}
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+        </button>
       </div>
     </main>
   );
@@ -505,32 +1001,31 @@ function AboutPage() {
 // ─── How It Works Page ────────────────────────────────────────────────────────
 
 const HOW_STEPS = [
-  { num: '01', icon: '📋', color: 'from-indigo-600 to-indigo-500', border: 'border-l-indigo-500', tKey: 'step01' },
-  { num: '02', icon: '📄', color: 'from-violet-600 to-violet-500', border: 'border-l-violet-500', tKey: 'step02' },
-  { num: '03', icon: '🛰️', color: 'from-cyan-600 to-cyan-500', border: 'border-l-cyan-500', tKey: 'step03' },
-  { num: '04', icon: '🗺️', color: 'from-emerald-600 to-emerald-500', border: 'border-l-emerald-500', tKey: 'step04' },
-  { num: '05', icon: '🤝', color: 'from-rose-600 to-rose-500', border: 'border-l-rose-500', tKey: 'step05' },
-  { num: '06', icon: '💼', color: 'from-orange-600 to-orange-500', border: 'border-l-orange-500', tKey: 'step06' },
+  { num: '01', tKey: 'step01', icon: '🔐', color: 'from-indigo-500 to-blue-500', border: 'border-indigo-500/40' },
+  { num: '02', tKey: 'step02', icon: '📋', color: 'from-violet-500 to-indigo-500', border: 'border-violet-500/40' },
+  { num: '03', tKey: 'step03', icon: '🛰️', color: 'from-fuchsia-500 to-violet-500', border: 'border-fuchsia-500/40' },
+  { num: '04', tKey: 'step04', icon: '🗺️', color: 'from-cyan-500 to-blue-500', border: 'border-cyan-500/40' },
+  { num: '05', tKey: 'step05', icon: '🤝', color: 'from-emerald-500 to-cyan-500', border: 'border-emerald-500/40' },
+  { num: '06', tKey: 'step06', icon: '💼', color: 'from-amber-500 to-orange-500', border: 'border-amber-500/40' },
 ] as const;
 
 const NEED_ITEMS = [
-  { lKey: 'need01L', nKey: 'need01N' }, { lKey: 'need02L', nKey: 'need02N' },
-  { lKey: 'need03L', nKey: 'need03N' }, { lKey: 'need04L', nKey: 'need04N' },
-  { lKey: 'need05L', nKey: 'need05N' }, { lKey: 'need06L', nKey: 'need06N' },
+  { lKey: 'need01L', nKey: 'need01N' },
+  { lKey: 'need02L', nKey: 'need02N' },
+  { lKey: 'need03L', nKey: 'need03N' },
+  { lKey: 'need04L', nKey: 'need04N' },
+  { lKey: 'need05L', nKey: 'need05N' },
+  { lKey: 'need06L', nKey: 'need06N' },
 ] as const;
 
 function HowItWorksPage() {
   const { t } = useLang();
   const [, setLocation] = useLocation();
   return (
-    <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full">
-      <button onClick={() => setLocation('/')} data-testid="button-back-how" className="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors mb-10 bg-transparent border-none cursor-pointer">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-        {t('backHome')}
-      </button>
-
-      <div className="mb-14">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-xs text-slate-300 mb-6 shadow-sm">
+    <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full space-y-8">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs mb-8">
           <span className="text-indigo-400 font-semibold">{t('howBadge')}</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
@@ -745,9 +1240,9 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
             data-testid="banner-service-unavailable"
             className="rounded-2xl border border-amber-500/30 bg-amber-950/40 backdrop-blur-sm px-5 py-4 text-center"
           >
-            <p className="text-amber-300 font-semibold text-sm mb-1">🔧 Account service temporarily unavailable</p>
+            <p className="text-amber-300 font-semibold text-sm mb-1">{t('svcUnavailableTitle')}</p>
             <p className="text-amber-400/80 text-xs leading-relaxed">
-              Sign-in and registration are temporarily unavailable. Please try again later or contact support.
+              {t('svcUnavailableSub')}
             </p>
           </div>
         </div>
@@ -836,25 +1331,29 @@ function jobSearchUrl(boardName: string, query: string): string {
 // Suggested U.S. job titles aligned with the user's field of study
 function getAlignedRoles(field: string): string[] {
   const f = field.toLowerCase();
-  if (f.includes('account') || f.includes('finance') || f.includes('audit')) {
+  if (f.includes('account') || f.includes('finance') || f.includes('audit') ||
+      f.includes('contab') || f.includes('finanz') || f.includes('auditor') || f.includes('contabilid')) {
     return ['Staff Accountant', 'Financial Analyst', 'Auditor', 'Tax Associate', 'Bookkeeper', 'Accounts Payable Specialist'];
   }
-  if (f.includes('computer') || f.includes('software') || f.includes('information') || /\bit\b/.test(f) || f.includes('data science') || f.includes('cyber')) {
+  if (f.includes('computer') || f.includes('software') || f.includes('information') || /\bit\b/.test(f) || f.includes('data science') || f.includes('cyber') ||
+      f.includes('computac') || f.includes('informát') || f.includes('informat') || f.includes('sistem') || f.includes('datos') || f.includes('cibersegur')) {
     return ['Software Engineer', 'Web Developer', 'Data Analyst', 'QA Engineer', 'IT Support Specialist', 'DevOps Engineer'];
   }
-  if (f.includes('engineer')) {
+  if (f.includes('engineer') || f.includes('ingeni')) {
     return [`${field} Engineer`, 'Project Engineer', 'Design Engineer', 'CAD Technician', 'Quality Engineer', 'Field Engineer'];
   }
-  if (f.includes('nursing') || f.includes('health') || f.includes('medicine') || f.includes('medical')) {
+  if (f.includes('nursing') || f.includes('health') || f.includes('medicine') || f.includes('medical') ||
+      f.includes('enfermer') || f.includes('salud') || f.includes('medic') || f.includes('medicina')) {
     return ['Registered Nurse', 'Medical Assistant', 'Patient Care Technician', 'Clinical Research Coordinator', 'Health Services Coordinator', 'Medical Technologist'];
   }
-  if (f.includes('business') || f.includes('management') || f.includes('admin')) {
+  if (f.includes('business') || f.includes('management') || f.includes('admin') ||
+      f.includes('negoci') || f.includes('administrac') || f.includes('gestión') || f.includes('gestion')) {
     return ['Business Analyst', 'Operations Coordinator', 'Project Coordinator', 'Account Manager', 'Office Manager', 'Management Trainee'];
   }
-  if (f.includes('teach') || f.includes('educat')) {
+  if (f.includes('teach') || f.includes('educat') || f.includes('docen') || f.includes('pedagog') || f.includes('educaci')) {
     return ['Teacher', 'Teaching Assistant', 'Tutor', 'Instructional Aide', 'Education Coordinator', 'Curriculum Specialist'];
   }
-  if (f.includes('law') || f.includes('legal')) {
+  if (f.includes('law') || f.includes('legal') || f.includes('derecho') || f.includes('jurídic') || f.includes('juridic')) {
     return ['Paralegal', 'Legal Assistant', 'Compliance Analyst', 'Contract Administrator', 'Legal Researcher'];
   }
   return [`${field} Specialist`, `${field} Analyst`, `${field} Coordinator`, `${field} Assistant`, `Entry Level ${field}`];
@@ -870,12 +1369,12 @@ function JobBoardsSection({ field }: { field?: string }) {
         <div className="flex items-center gap-3 mb-2">
           <span className="text-indigo-400 text-2xl">💼</span>
           <h2 className="text-white font-extrabold text-2xl tracking-tight">
-            {hasField ? <>Jobs Aligned with <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">{field}</span></> : t('jobTitle')}
+            {hasField ? <>{t('jobAlignedWith')} <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">{field}</span></> : t('jobTitle')}
           </h2>
         </div>
         <p className="text-slate-400 text-sm leading-relaxed max-w-2xl">
           {hasField
-            ? `These U.S. job titles commonly align with a ${field} background. Every link below opens a live, pre-filtered search for your field — not a generic job board homepage.`
+            ? `${t('jobAlignedDesc1')} ${field} ${t('jobAlignedDesc2')}`
             : t('jobDesc')}
         </p>
       </div>
@@ -883,7 +1382,7 @@ function JobBoardsSection({ field }: { field?: string }) {
       {hasField && (
         <div className="glass-panel p-6 rounded-2xl mb-6" data-testid="aligned-roles">
           <h3 className="text-white font-bold text-xs uppercase tracking-wider mb-4 flex items-center gap-2">
-            <span className="text-indigo-400">🎯</span> Roles That Match Your Field
+            <span className="text-indigo-400">🎯</span> {t('jobRolesTitle')}
           </h3>
           <div className="flex flex-wrap gap-2">
             {roles.map((role) => (
@@ -898,7 +1397,7 @@ function JobBoardsSection({ field }: { field?: string }) {
               </a>
             ))}
           </div>
-          <p className="text-[10px] text-slate-500 mt-3">Each role opens a live U.S. job search you can refine by city and salary.</p>
+          <p className="text-[10px] text-slate-500 mt-3">{t('jobRolesTip')}</p>
         </div>
       )}
 
@@ -912,7 +1411,7 @@ function JobBoardsSection({ field }: { field?: string }) {
                 <svg className="w-3 h-3 text-slate-500 group-hover:text-indigo-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
               </div>
               <p className="text-xs text-slate-400 leading-relaxed">
-                {hasField ? `${field} jobs — pre-filtered search` : t(board.descKey)}
+                {hasField ? `${field} ${t('jobPrefiltered')}` : t(board.descKey)}
               </p>
             </div>
           </a>
@@ -1000,109 +1499,116 @@ function ContactSection() {
 
 // ─── Step content generators ──────────────────────────────────────────────────
 
-function getVerifyContent(institution: string, country: string, degree: string) {
+function getVerifyContent(institution: string, country: string, degree: string, t: (k: TKey) => string) {
   return {
-    status: 'Accreditation Confirmed',
+    status: t('verifyStatus'),
     rows: [
-      { label: 'Institution', value: institution },
-      { label: 'Country', value: country },
-      { label: 'Degree Recorded', value: degree },
-      { label: 'Registry Source', value: `${country} Ministry of Education – Active Registry` },
-      { label: 'Recognition Status', value: 'Recognized by NACES-member agencies' },
-      { label: 'WES Eligibility', value: 'Eligible for World Education Services evaluation' },
-      { label: 'ECE Eligibility', value: 'Eligible for Educational Credential Evaluators review' },
+      { label: t('verifyInstitution'), value: institution },
+      { label: t('verifyCountry'), value: country },
+      { label: t('verifyDegree'), value: degree },
+      { label: t('verifyRegistry'), value: `${country} ${t('verifyRegistrySuf')}` },
+      { label: t('verifyRecognition'), value: t('verifyRecognitionVal') },
+      { label: t('verifyWES'), value: t('verifyWESVal') },
+      { label: t('verifyECE'), value: t('verifyECEVal') },
     ],
-    action: { label: 'Verify on WES Registry', url: 'https://www.wes.org/about-credential-evaluations/the-evaluation-process/' },
+    action: { label: t('verifyActionLabel'), url: 'https://www.wes.org/about-credential-evaluations/the-evaluation-process/' },
   };
 }
 
-function getCourseworkContent(field: string, credits: string) {
+function getCourseworkContent(field: string, credits: string, t: (k: TKey) => string) {
   const f = field.toLowerCase();
   let rows: { regional: string; usSCU: string; notes: string }[] = [];
-  if (f.includes('account') || f.includes('finance')) {
+  if (f.includes('account') || f.includes('finance') ||
+      f.includes('contab') || f.includes('finanz') || f.includes('auditor') || f.includes('contabilid')) {
     rows = [
-      { regional: 'Financial Accounting I & II', usSCU: '6 SCU', notes: 'Matches AACSB benchmark' },
-      { regional: 'Cost & Managerial Accounting', usSCU: '3 SCU', notes: 'Required for CPA pathway' },
-      { regional: 'Auditing & Assurance', usSCU: '3 SCU', notes: 'State board minimum' },
-      { regional: 'Taxation (Domestic/International)', usSCU: '3 SCU', notes: 'Maps to U.S. tax law elective' },
-      { regional: 'Business Law', usSCU: '3 SCU', notes: 'Required for 150-hour CPA rule' },
-      { regional: 'Economics (Micro + Macro)', usSCU: '6 SCU', notes: 'Core business requirement' },
+      { regional: t('cwAcct1'), usSCU: '6 SCU', notes: t('cwNoteAASCB') },
+      { regional: t('cwAcct2'), usSCU: '3 SCU', notes: t('cwNoteCPAPath') },
+      { regional: t('cwAcct3'), usSCU: '3 SCU', notes: t('cwNoteStateMin') },
+      { regional: t('cwAcct4'), usSCU: '3 SCU', notes: t('cwNoteTaxElec') },
+      { regional: t('cwAcct5'), usSCU: '3 SCU', notes: t('cwNote150') },
+      { regional: t('cwAcct6'), usSCU: '6 SCU', notes: t('cwNoteCoreBiz') },
     ];
-  } else if (f.includes('engineer') || f.includes('tech') || f.includes('computer')) {
+  } else if (f.includes('engineer') || f.includes('tech') || f.includes('computer') ||
+             f.includes('ingeni') || f.includes('tecnolog') || f.includes('computac') || f.includes('informat') || f.includes('sistem')) {
     rows = [
-      { regional: 'Calculus I–III', usSCU: '9 SCU', notes: 'ABET math foundation' },
-      { regional: 'Physics I & II', usSCU: '8 SCU', notes: 'Lab credits included' },
-      { regional: 'Core Engineering / CS Courses', usSCU: '30–36 SCU', notes: 'Major-specific mapping' },
-      { regional: 'Capstone / Thesis', usSCU: '6 SCU', notes: 'Counts toward senior design' },
+      { regional: t('cwEng1'), usSCU: '9 SCU', notes: t('cwNoteABETMath') },
+      { regional: t('cwEng2'), usSCU: '8 SCU', notes: t('cwNoteLabCred') },
+      { regional: t('cwEng3'), usSCU: '30–36 SCU', notes: t('cwNoteMajorMap') },
+      { regional: t('cwEng4'), usSCU: '6 SCU', notes: t('cwNoteSenDes') },
     ];
-  } else if (f.includes('nurs') || f.includes('health') || f.includes('medic')) {
+  } else if (f.includes('nurs') || f.includes('health') || f.includes('medic') ||
+             f.includes('enfermer') || f.includes('salud') || f.includes('medicina')) {
     rows = [
-      { regional: 'Anatomy & Physiology', usSCU: '8 SCU', notes: 'With lab' },
-      { regional: 'Pharmacology', usSCU: '3 SCU', notes: 'Clinical requirement' },
-      { regional: 'Nursing Theory & Practice', usSCU: '18–24 SCU', notes: 'NCLEX prerequisite' },
-      { regional: 'Clinical Hours', usSCU: '500+ hrs', notes: 'State board minimum varies' },
+      { regional: t('cwHealth1'), usSCU: '8 SCU', notes: t('cwNoteWithLab') },
+      { regional: t('cwHealth2'), usSCU: '3 SCU', notes: t('cwNoteClinReq') },
+      { regional: t('cwHealth3'), usSCU: '18–24 SCU', notes: t('cwNoteNCLEXPre') },
+      { regional: t('cwHealth4'), usSCU: '500+ hrs', notes: t('cwNoteStateBdMin') },
     ];
   } else {
     rows = [
-      { regional: 'Core Major Courses', usSCU: '30–36 SCU', notes: 'Subject to course-by-course review' },
-      { regional: 'General Education', usSCU: '30 SCU', notes: 'English, Math, Sciences, Humanities' },
-      { regional: 'Electives', usSCU: '12–18 SCU', notes: 'Institutional electives' },
-      { regional: 'Thesis / Capstone', usSCU: '3–6 SCU', notes: 'If applicable' },
+      { regional: t('cwGen1'), usSCU: '30–36 SCU', notes: t('cwNoteCourseRev') },
+      { regional: t('cwGen2'), usSCU: '30 SCU', notes: t('cwNoteGenEd') },
+      { regional: t('cwGen3'), usSCU: '12–18 SCU', notes: t('cwNoteInstElec') },
+      { regional: t('cwGen4'), usSCU: '3–6 SCU', notes: t('cwNoteIfApp') },
     ];
   }
-  const totalSCU = credits ? `Estimated from ${credits}` : 'Estimated 120–130 SCU total';
+  const totalSCU = credits ? `${t('cwTotalEstimated')} ${credits}` : t('cwTotalDefault');
   return { rows, totalSCU };
 }
 
-function getPrereqContent(field: string, purpose: string) {
+function getPrereqContent(field: string, purpose: string, t: (k: TKey) => string) {
   const f = field.toLowerCase();
   const p = purpose.toLowerCase();
   const items: { label: string; value: string; link?: string }[] = [];
 
-  if (f.includes('account') || f.includes('finance')) {
+  if (f.includes('account') || f.includes('finance') ||
+      f.includes('contab') || f.includes('finanz') || f.includes('auditor') || f.includes('contabilid')) {
     items.push(
-      { label: 'CPA Credit Requirement', value: '150 semester credit hours (most states)' },
-      { label: 'GPA Conversion', value: 'Foreign GPA converted via WES GPA calculator; typically 2.5+ U.S. equivalent required' },
-      { label: 'Accounting Hours Minimum', value: '24–30 SCU in accounting subjects' },
-      { label: 'Business Hours Minimum', value: '24 SCU in general business' },
-      { label: 'State Board Link', value: 'NASBA – National Association of State Boards of Accountancy', link: 'https://nasba.org/licensure/applyforalicense/' },
+      { label: t('preqCPACredit'), value: t('preqCPACreditVal') },
+      { label: t('preqGPA'), value: t('preqGPAVal') },
+      { label: t('preqAcctHrs'), value: t('preqAcctHrsVal') },
+      { label: t('preqBizHrs'), value: t('preqBizHrsVal') },
+      { label: t('preqNASBA'), value: t('preqNASBAVal'), link: 'https://nasba.org/licensure/applyforalicense/' },
     );
-  } else if (f.includes('engineer') || f.includes('tech') || f.includes('computer')) {
+  } else if (f.includes('engineer') || f.includes('tech') || f.includes('computer') ||
+             f.includes('ingeni') || f.includes('tecnolog') || f.includes('computac') || f.includes('informat') || f.includes('sistem')) {
     items.push(
-      { label: 'FE Exam Eligibility', value: 'Credential evaluation required before sitting for NCEES FE exam' },
-      { label: 'GPA Minimum', value: '2.0 U.S. equivalent on 4.0 scale (varies by state board)' },
-      { label: 'ABET Review', value: 'Non-ABET programs evaluated course-by-course; deficiencies may require additional coursework' },
-      { label: 'PE Licensing Board', value: 'NCEES – National Council of Examiners for Engineering', link: 'https://ncees.org/engineering/fe/' },
+      { label: t('preqFE'), value: t('preqFEVal') },
+      { label: t('preqGPAMin'), value: t('preqGPAMinVal') },
+      { label: t('preqABET'), value: t('preqABETVal') },
+      { label: t('preqNCEES'), value: t('preqNCEESVal'), link: 'https://ncees.org/engineering/fe/' },
     );
-  } else if (f.includes('nurs') || f.includes('health') || f.includes('medic')) {
+  } else if (f.includes('nurs') || f.includes('health') || f.includes('medic') ||
+             f.includes('enfermer') || f.includes('salud') || f.includes('medicina')) {
     items.push(
-      { label: 'CGFNS Certification', value: 'Required for international nurses before NCLEX' },
-      { label: 'English Proficiency', value: 'TOEFL iBT 83+ or IELTS 6.5+ typically required' },
-      { label: 'Clinical Hours Verification', value: 'State board reviews clinical logs from home country program' },
-      { label: 'NCLEX Board', value: 'NCSBN – National Council of State Boards of Nursing', link: 'https://www.ncsbn.org/nclex.htm' },
+      { label: t('preqCGFNS'), value: t('preqCGFNSVal') },
+      { label: t('preqEnglish'), value: t('preqEnglishVal') },
+      { label: t('preqClinical'), value: t('preqClinicalVal') },
+      { label: t('preqNCLEX'), value: t('preqNCLEXVal'), link: 'https://www.ncsbn.org/nclex.htm' },
     );
   } else {
     items.push(
-      { label: 'GPA Conversion', value: 'Convert via WES iGPA Calculator; 3.0+ U.S. recommended for graduate programs' },
-      { label: 'English Proficiency', value: 'TOEFL or IELTS may be required for admission or licensing' },
-      { label: 'Credential Evaluation', value: 'NACES-member agency evaluation letter required for most employers and schools' },
+      { label: t('preqGPAGen'), value: t('preqGPAGenVal') },
+      { label: t('preqEnglishGen'), value: t('preqEnglishGenVal') },
+      { label: t('preqCredEval'), value: t('preqCredEvalVal') },
     );
   }
 
-  if (p.includes('immigration')) {
-    items.push({ label: 'USCIS Recognition', value: 'Form I-140 or EB-2/EB-3 petition may require credential evaluation letter', link: 'https://www.uscis.gov/working-in-the-united-states' });
+  if (p.includes('immigration') || p.includes('inmigraci')) {
+    items.push({ label: t('preqUSCIS'), value: t('preqUSCISVal'), link: 'https://www.uscis.gov/working-in-the-united-states' });
   }
-  if (p.includes('university')) {
-    items.push({ label: 'Graduate Admissions', value: 'Most U.S. graduate programs require official NACES evaluation + certified translations' });
+  if (p.includes('university') || p.includes('universitaria') || p.includes('admisi')) {
+    items.push({ label: t('preqGradAdm'), value: t('preqGradAdmVal') });
   }
 
   return items;
 }
 
-function exportDossier(result: EvalResult, verifyRows: { label: string; value: string }[], prereqItems: { label: string; value: string }[]) {
-  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+function exportDossier(result: EvalResult, usLevel: string, verifyRows: { label: string; value: string }[], prereqItems: { label: string; value: string }[], lang: Lang, t: (k: TKey) => string) {
+  const locale = lang === 'es' ? 'es-ES' : 'en-US';
+  const today = new Date().toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' });
   const html = `<!DOCTYPE html>
-<html lang="en">
+<html lang="${lang}">
 <head>
 <meta charset="UTF-8"/>
 <title>VerifED Global – NACES Dossier</title>
@@ -1125,26 +1631,26 @@ function exportDossier(result: EvalResult, verifyRows: { label: string; value: s
 <body>
 <div class="header">
   <div class="logo">VerifED Global</div>
-  <div class="subtitle">2026 Credential Engine — NACES Application Dossier</div>
-  <div class="ref">Generated: ${today}<br/>REF-2026-US</div>
+  <div class="subtitle">${t('dossierSubtitle')}</div>
+  <div class="ref">${t('dossierGenerated')} ${today}<br/>REF-2026-US</div>
 </div>
 
-<h2>Credential Summary</h2>
+<h2>${t('dossierSecCredential')}</h2>
 <table>
-  <tr><td>Applicant Institution</td><td>${result.institution}</td></tr>
-  <tr><td>Country of Education</td><td>${result.country}</td></tr>
-  <tr><td>Degree Level</td><td>${result.degree}</td></tr>
-  <tr><td>Field of Study</td><td>${result.field}</td></tr>
-  <tr><td>U.S. Equivalent</td><td><strong>${result.usLevel}</strong></td></tr>
-  ${result.purpose ? `<tr><td>Primary Goal</td><td>${result.purpose}</td></tr>` : ''}
+  <tr><td>${t('dossierRowInstitution')}</td><td>${result.institution}</td></tr>
+  <tr><td>${t('dossierRowCountry')}</td><td>${result.country}</td></tr>
+  <tr><td>${t('dossierRowDegree')}</td><td>${result.degree}</td></tr>
+  <tr><td>${t('dossierRowField')}</td><td>${result.field}</td></tr>
+  <tr><td>${t('dossierRowUSEq')}</td><td><strong>${usLevel}</strong></td></tr>
+  ${result.purpose ? `<tr><td>${t('dossierRowGoal')}</td><td>${result.purpose}</td></tr>` : ''}
 </table>
 
-<h2>Institutional Verification</h2>
+<h2>${t('dossierSecVerification')}</h2>
 <table>
   ${verifyRows.map(r => `<tr><td>${r.label}</td><td>${r.value}</td></tr>`).join('')}
 </table>
 
-<h2>Recommended NACES Agencies</h2>
+<h2>${t('dossierSecNACES')}</h2>
 <table>
   <tr><td>World Education Services (WES)</td><td><a href="https://www.wes.org">wes.org</a></td></tr>
   <tr><td>Educational Credential Evaluators (ECE)</td><td><a href="https://www.ece.org">ece.org</a></td></tr>
@@ -1152,28 +1658,27 @@ function exportDossier(result: EvalResult, verifyRows: { label: string; value: s
   <tr><td>SpanTran</td><td><a href="https://spantran.com">spantran.com</a></td></tr>
 </table>
 
-<h2>U.S. Regulatory Pathway Notes</h2>
+<h2>${t('dossierSecRegulatory')}</h2>
 <table>
   ${prereqItems.map(r => `<tr><td>${r.label}</td><td>${r.value}</td></tr>`).join('')}
 </table>
 
-<h2>Regulatory Insight</h2>
-<p style="font-size:13px; color:#374151;">${result.insight.replace(/\n/g, '<br/>')}</p>
+<h2>${t('dossierSecInsight')}</h2>
+<p style="font-size:13px; color:#374151;">${getInsight(result.field, t).replace(/\n/g, '<br/>')}</p>
 
-<h2>Credential Tags</h2>
+<h2>${t('dossierSecTags')}</h2>
 <div>
-  <span class="badge">🎓 ${result.usLevel}</span>
+  <span class="badge">🎓 ${usLevel}</span>
   <span class="badge">📚 ${result.field}</span>
   <span class="badge">📍 ${result.country}</span>
   ${result.purpose ? `<span class="badge">🎯 ${result.purpose}</span>` : ''}
 </div>
 
 <p class="notice">
-  <strong>Disclaimer:</strong> This dossier is generated by VerifED Global for preliminary guidance only. It does not constitute an official NACES-accredited credential evaluation. 
-  For official recognition, submit your documents to a NACES-member agency listed above. VerifED Global is a private, independent platform not affiliated with any government body.
+  ${t('dossierDisclaimer')}
 </p>
 
-<div class="footer">© 2026 VerifED Global. Engineered by LAD MEDIA. All rights reserved.</div>
+<div class="footer">${t('dossierFooter')}</div>
 </body>
 </html>`;
 
@@ -1189,9 +1694,6 @@ function exportDossier(result: EvalResult, verifyRows: { label: string; value: s
 // ─── Evaluator View ───────────────────────────────────────────────────────────
 
 // ─── NACES Agency Outreach ────────────────────────────────────────────────────
-// Directory of current NACES members (source: naces.org/members). Websites are
-// each agency's official public site; users contact agencies from their own
-// email address via a pre-written draft.
 const NACES_AGENCIES = [
   { name: 'Academic Evaluation Services, Inc.', since: 'May 2008', url: 'https://aes-edu.org/' },
   { name: 'Center for Applied Research, Evaluation & Education, Inc.', since: 'March 1987', url: 'https://www.iescaree.com/' },
@@ -1248,6 +1750,7 @@ function buildAgencyDraft(agency: string, result: EvalResult, user: { username: 
 }
 
 function AgencyOutreach({ result }: { result: EvalResult }) {
+  const { t } = useLang();
   const [copied, setCopied] = useState<string | null>(null);
   const user = getSignedInUser();
 
@@ -1258,7 +1761,6 @@ function AgencyOutreach({ result }: { result: EvalResult }) {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(text);
       } else {
-        // Fallback for browsers without the async clipboard API
         const ta = document.createElement('textarea');
         ta.value = text;
         ta.style.position = 'fixed';
@@ -1271,7 +1773,6 @@ function AgencyOutreach({ result }: { result: EvalResult }) {
       setCopied(agencyName);
       setTimeout(() => setCopied(null), 2000);
     } catch {
-      // Clipboard blocked — open the draft in the mail client instead
       window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     }
   }
@@ -1280,10 +1781,10 @@ function AgencyOutreach({ result }: { result: EvalResult }) {
     <div className="mt-6 pt-5 border-t border-slate-800/80">
       <div className="flex items-center gap-2 mb-1.5">
         <span className="text-indigo-400">✉️</span>
-        <h4 className="text-white font-bold text-xs uppercase tracking-wider">Contact NACES Agencies</h4>
+        <h4 className="text-white font-bold text-xs uppercase tracking-wider">{t('agencyTitle')}</h4>
       </div>
       <p className="text-xs text-slate-400 leading-relaxed mb-4">
-        A personalized inquiry email has been drafted for you using your evaluation details{user.email ? <> and your account email (<span className="text-slate-300 font-mono">{user.email}</span>)</> : ''}. Open it in your email app, or copy it and paste it into the contact form on the agency's website — it sends from your own address, so replies come straight back to you.
+        {t('agencyDescPre')}{user.email ? <> {t('agencyDescEmail')} (<span className="text-slate-300 font-mono">{user.email}</span>)</> : ''}{t('agencyDescSuf')}
       </p>
       <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
         {NACES_AGENCIES.map((agency) => {
@@ -1293,27 +1794,28 @@ function AgencyOutreach({ result }: { result: EvalResult }) {
             <div key={agency.name} className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/70 border border-slate-800/70" data-testid={`agency-${agency.name.slice(0, 12).toLowerCase().replace(/[^a-z]+/g, '-')}`}>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-white font-semibold truncate">{agency.name}</p>
-                <p className="text-[10px] text-slate-500">Member since {agency.since}</p>
+                <p className="text-[10px] text-slate-500">{t('agencyMemberSince')} {agency.since}</p>
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
-                <a href={mailto} title="Open pre-written email draft" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 hover:bg-indigo-500/25 transition-colors">✉️ Draft</a>
+                <a href={mailto} title="Open pre-written email draft" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 hover:bg-indigo-500/25 transition-colors">{t('agencyDraft')}</a>
                 <button type="button" onClick={() => copyDraft(agency.name)} title="Copy email draft" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:text-white transition-colors cursor-pointer">
-                  {copied === agency.name ? '✓ Copied' : 'Copy'}
+                  {copied === agency.name ? t('agencyCopied') : t('agencyCopy')}
                 </button>
-                <a href={agency.url} target="_blank" rel="noopener noreferrer" title="Visit agency website" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:text-white transition-colors">Site ↗</a>
+                <a href={agency.url} target="_blank" rel="noopener noreferrer" title="Visit agency website" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:text-white transition-colors">{t('agencySite')}</a>
               </div>
             </div>
           );
         })}
       </div>
       <p className="text-[10px] text-slate-500 mt-3 leading-relaxed">
-        Tip: you do not need to contact every agency — pick 2–3 whose fees and turnaround fit your goal. Each agency's exact contact email or inquiry form is on its website.
+        {t('agencyTip')}
       </p>
     </div>
   );
 }
 
 function EvaluatorView() {
+  const { lang, t } = useLang();
   const [country, setCountry] = useState('');
   const [institution, setInstitution] = useState('');
   const [degree, setDegree] = useState('');
@@ -1327,10 +1829,10 @@ function EvaluatorView() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const usLevel = getUsLevel(degree);
-    const insight = getInsight(field);
-    const roadmap = getRoadmap(country, institution, field, purpose);
-    setResult({ country, institution, degree, field, purpose, usLevel, insight, roadmap });
+    // Store only raw inputs — derived strings (usLevel, insight, roadmap) are computed
+    // at render time from the active language, so toggling language after submission
+    // always shows text in the current locale without re-submitting the form.
+    setResult({ country, institution, degree, field, purpose });
     setCheckedSteps([false, false, false, false]);
     setExpandedStep(null);
     setDownloaded(false);
@@ -1354,14 +1856,14 @@ function EvaluatorView() {
     <div>
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-xs text-slate-300 mb-6 shadow-sm">
-          <span className="text-indigo-400 font-semibold">⚡ Unified Platform Scraper:</span> Pulling real-time NACES, USCIS &amp; State Board frameworks.
+          <span className="text-indigo-400 font-semibold">{t('evalBadge')}</span>
         </div>
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
-          Transform Your Foreign Education Into{' '}
-          <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">U.S. Equivalency</span>
+          {t('evalH1')}{' '}
+          <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">{t('evalH2')}</span>
         </h1>
         <p className="text-slate-400 text-lg md:text-xl font-normal leading-relaxed">
-          Instantly crawl academic databases, map international coursework to U.S. standards, and generate a dynamic verification roadmap.
+          {t('evalSubtitle')}
         </p>
       </div>
 
@@ -1371,46 +1873,46 @@ function EvaluatorView() {
           <div className="glass-panel p-8 rounded-3xl relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-violet-500 to-fuchsia-500" />
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white font-bold text-lg tracking-tight">Credential Parameters</h2>
-              <span className="text-xs text-indigo-400 font-mono bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-indigo-500/20">STEP 1 OF 2</span>
+              <h2 className="text-white font-bold text-lg tracking-tight">{t('evalFormTitle')}</h2>
+              <span className="text-xs text-indigo-400 font-mono bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-indigo-500/20">{t('evalFormStep')}</span>
             </div>
             <form onSubmit={handleSubmit} className="space-y-5" data-testid="form-eval">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Country of Education</label>
-                <input value={country} onChange={(e) => setCountry(e.target.value)} data-testid="input-country" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder="e.g., India, Nigeria, Brazil, UK" required />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLCountry')}</label>
+                <input value={country} onChange={(e) => setCountry(e.target.value)} data-testid="input-country" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPCountry')} required />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Institution Name</label>
-                <input value={institution} onChange={(e) => setInstitution(e.target.value)} data-testid="input-institution" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder="e.g., University of Lagos" required />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLInstitution')}</label>
+                <input value={institution} onChange={(e) => setInstitution(e.target.value)} data-testid="input-institution" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPInstitution')} required />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Degree Level</label>
-                  <input value={degree} onChange={(e) => setDegree(e.target.value)} data-testid="input-degree" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder="e.g., B.Sc, M.Eng, MBBS" required />
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLDegree')}</label>
+                  <input value={degree} onChange={(e) => setDegree(e.target.value)} data-testid="input-degree" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPDegree')} required />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Field of Study</label>
-                  <input value={field} onChange={(e) => setField(e.target.value)} data-testid="input-field" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder="e.g., Accounting, Computer Science" required />
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLField')}</label>
+                  <input value={field} onChange={(e) => setField(e.target.value)} data-testid="input-field" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPField')} required />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Credits / Years <span className="text-slate-500 font-normal">(Opt)</span></label>
-                  <input value={credits} onChange={(e) => setCredits(e.target.value)} data-testid="input-credits" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder="e.g., 4 Years / 180 ECTS" />
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLCredits')} <span className="text-slate-500 font-normal">{t('evalLCreditsOpt')}</span></label>
+                  <input value={credits} onChange={(e) => setCredits(e.target.value)} data-testid="input-credits" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPCredits')} />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Primary Goal</label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLGoal')}</label>
                   <select value={purpose} onChange={(e) => setPurpose(e.target.value)} data-testid="select-purpose" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
-                    <option value="">Select goal...</option>
-                    <option value="University Admission">University Admission</option>
-                    <option value="Employment & HR">Employment / HR</option>
-                    <option value="Professional Licensing">Professional Licensing</option>
-                    <option value="Immigration (USCIS)">Immigration (USCIS)</option>
+                    <option value="">{t('evalOptGoal')}</option>
+                    <option value="University Admission">{t('evalGoal1')}</option>
+                    <option value="Employment & HR">{t('evalGoal2')}</option>
+                    <option value="Professional Licensing">{t('evalGoal3')}</option>
+                    <option value="Immigration (USCIS)">{t('evalGoal4')}</option>
                   </select>
                 </div>
               </div>
               <button type="submit" data-testid="button-eval-submit" className="w-full mt-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-4 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center space-x-2">
-                <span>Crawl &amp; Generate Equivalency Report</span>
+                <span>{t('evalBtn')}</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </button>
             </form>
@@ -1419,20 +1921,26 @@ function EvaluatorView() {
 
         {/* Results Column */}
         <section className="lg:col-span-7" id="results-section">
-          {result ? (
+          {result ? (() => {
+            // Derive all display strings from the current language at render time.
+            // This ensures toggling EN↔ES after submission immediately re-renders in the new locale.
+            const usLevel = getUsLevel(result.degree, t);
+            const insight = getInsight(result.field, t);
+            const roadmap = getRoadmap(result.country, result.institution, result.field, result.purpose, t);
+            return (
             <div className="space-y-6" data-testid="results-container">
               <div className="glass-panel p-8 rounded-3xl border-l-4 border-l-indigo-500 relative overflow-hidden shadow-2xl">
                 <div className="flex items-center justify-between mb-4">
                   <span className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> Platform Crawl Complete
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> {t('evalCrawlComplete')}
                   </span>
                   <span className="text-xs text-slate-400 font-mono bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-800">REF-2026-US</span>
                 </div>
                 <div className="text-2xl md:text-3xl font-bold text-white leading-snug mb-6" data-testid="text-summary">
-                  Your education from {result.institution} ({result.country}) in {result.field} evaluates equivalently to a {result.usLevel}.
+                  {t('evalSummaryPre')} {result.institution} ({result.country}) {t('evalSummaryMid')} {result.field} {t('evalSummaryPost')} {usLevel}.
                 </div>
                 <div className="flex flex-wrap gap-2.5 pt-4 border-t border-slate-800/80" data-testid="badges-container">
-                  <span className="px-3.5 py-1.5 rounded-xl bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-xs font-bold">🎓 {result.usLevel}</span>
+                  <span className="px-3.5 py-1.5 rounded-xl bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-xs font-bold">🎓 {usLevel}</span>
                   <span className="px-3.5 py-1.5 rounded-xl bg-slate-900 text-slate-300 border border-slate-800 text-xs font-bold">📚 {result.field}</span>
                   <span className="px-3.5 py-1.5 rounded-xl bg-slate-900 text-slate-300 border border-slate-800 text-xs font-bold">📍 {result.country}</span>
                   {result.purpose && <span className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 text-xs font-bold">🎯 {result.purpose}</span>}
@@ -1441,29 +1949,29 @@ function EvaluatorView() {
 
               <div className="glass-panel p-8 rounded-3xl" data-testid="insight-card">
                 <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-3 flex items-center">
-                  <span className="text-indigo-400 mr-2 text-lg">📊</span> Industry Regulatory Pathway
+                  <span className="text-indigo-400 mr-2 text-lg">📊</span> {t('evalInsightTitle')}
                 </h3>
-                <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line" data-testid="text-insight">{result.insight}</p>
+                <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line" data-testid="text-insight">{insight}</p>
               </div>
 
               <div className="glass-panel p-8 rounded-3xl relative overflow-hidden" data-testid="roadmap-section">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-white font-bold text-sm uppercase tracking-wider flex items-center">
-                    <span className="text-indigo-400 mr-2 text-lg">🛰️</span> Scraped Platform Action Roadmap
+                    <span className="text-indigo-400 mr-2 text-lg">🛰️</span> {t('evalRoadmapTitle')}
                   </h3>
-                  <span className="text-[10px] uppercase font-bold px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Synced</span>
+                  <span className="text-[10px] uppercase font-bold px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">{t('evalRoadmapSynced')}</span>
                 </div>
-                <p className="text-xs text-slate-400 mb-6">Check each step to expand its action details and track your progress through the evaluation process:</p>
+                <p className="text-xs text-slate-400 mb-6">{t('evalRoadmapDesc')}</p>
 
                 {(() => {
-                  const verifyContent = getVerifyContent(result.institution, result.country, result.degree);
-                  const courseworkContent = getCourseworkContent(result.field, result.field);
-                  const prereqContent = getPrereqContent(result.field, result.purpose);
+                  const verifyContent = getVerifyContent(result.institution, result.country, result.degree, t);
+                  const courseworkContent = getCourseworkContent(result.field, result.field, t);
+                  const prereqContent = getPrereqContent(result.field, result.purpose, t);
 
                   const steps = [
                     {
-                      title: result.roadmap[0].title,
-                      desc: result.roadmap[0].desc,
+                      title: roadmap[0].title,
+                      desc: roadmap[0].desc,
                       icon: '🔍',
                       content: (
                         <div className="mt-4 space-y-3">
@@ -1488,8 +1996,8 @@ function EvaluatorView() {
                       ),
                     },
                     {
-                      title: result.roadmap[1].title,
-                      desc: result.roadmap[1].desc,
+                      title: roadmap[1].title,
+                      desc: roadmap[1].desc,
                       icon: '📐',
                       content: (
                         <div className="mt-4">
@@ -1497,9 +2005,9 @@ function EvaluatorView() {
                           <table className="w-full text-xs">
                             <thead>
                               <tr className="border-b border-slate-700">
-                                <th className="text-left py-2 pr-3 text-slate-400 font-semibold">Subject / Course Block</th>
-                                <th className="text-left py-2 pr-3 text-indigo-400 font-semibold">U.S. SCU</th>
-                                <th className="text-left py-2 text-slate-400 font-semibold hidden sm:table-cell">Notes</th>
+                                <th className="text-left py-2 pr-3 text-slate-400 font-semibold">{t('cwColSubject')}</th>
+                                <th className="text-left py-2 pr-3 text-indigo-400 font-semibold">{t('cwColSCU')}</th>
+                                <th className="text-left py-2 text-slate-400 font-semibold hidden sm:table-cell">{t('cwColNotes')}</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -1513,15 +2021,15 @@ function EvaluatorView() {
                             </tbody>
                           </table>
                           <a href="https://www.naces.org/members" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
-                            View all NACES member agencies →
+                            {t('cwNACESLink')}
                           </a>
                           <AgencyOutreach result={result} />
                         </div>
                       ),
                     },
                     {
-                      title: result.roadmap[2].title,
-                      desc: result.roadmap[2].desc,
+                      title: roadmap[2].title,
+                      desc: roadmap[2].desc,
                       icon: '⚖️',
                       content: (
                         <div className="mt-4 space-y-2">
@@ -1539,36 +2047,36 @@ function EvaluatorView() {
                       ),
                     },
                     {
-                      title: result.roadmap[3].title,
-                      desc: result.roadmap[3].desc,
+                      title: roadmap[3].title,
+                      desc: roadmap[3].desc,
                       icon: '📦',
                       content: (
                         <div className="mt-4">
                           <p className="text-xs text-slate-300 leading-relaxed mb-4">
-                            Your dossier is compiled from the information you provided and the data pulled across all steps above. It includes your credential summary, institutional verification, NACES agency recommendations, U.S. regulatory requirements, and your equivalency tags — formatted and ready to accompany your official evaluation application.
+                            {t('dossierDesc')}
                           </p>
                           <div className="grid grid-cols-2 gap-2 mb-5">
-                            {['Credential Summary', 'Institutional Verification', 'NACES Agency List', 'Regulatory Pathway', 'U.S. Equivalency Tags', 'Compliance Disclaimer'].map((item) => (
-                              <div key={item} className="flex items-center gap-2 text-xs text-slate-300">
-                                <span className="text-emerald-400 flex-shrink-0">✓</span> {item}
+                            {(['dossierItem1', 'dossierItem2', 'dossierItem3', 'dossierItem4', 'dossierItem5', 'dossierItem6'] as const).map((key) => (
+                              <div key={key} className="flex items-center gap-2 text-xs text-slate-300">
+                                <span className="text-emerald-400 flex-shrink-0">✓</span> {t(key)}
                               </div>
                             ))}
                           </div>
                           <button
-                            onClick={() => { exportDossier(result, verifyContent.rows, prereqContent); setDownloaded(true); }}
+                            onClick={() => { exportDossier(result, getUsLevel(result.degree, t), verifyContent.rows, prereqContent, lang, t); setDownloaded(true); }}
                             data-testid="button-export-dossier"
                             className="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-emerald-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
                           >
                             {downloaded ? (
-                              <><span>✓ Dossier Downloaded</span></>
+                              <><span>{t('dossierDownloaded')}</span></>
                             ) : (
                               <>
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                                <span>Download NACES Application Dossier</span>
+                                <span>{t('dossierDownload')}</span>
                               </>
                             )}
                           </button>
-                          {downloaded && <p className="text-xs text-slate-400 text-center mt-2">Open the downloaded file in your browser to print or save as PDF.</p>}
+                          {downloaded && <p className="text-xs text-slate-400 text-center mt-2">{t('dossierOpenNote')}</p>}
                         </div>
                       ),
                     },
@@ -1607,11 +2115,11 @@ function EvaluatorView() {
                 })()}
               </div>
             </div>
-          ) : (
+          ); })() : (
             <div className="glass-panel p-16 text-center rounded-3xl flex flex-col items-center justify-center min-h-[500px] border-dashed border-2 border-slate-800/80" data-testid="placeholder-state">
               <div className="w-20 h-20 rounded-2xl bg-slate-900/90 border border-slate-700/60 flex items-center justify-center text-3xl text-indigo-400 mb-6 shadow-xl scraper-pulse">🛰️</div>
-              <h3 className="font-bold text-white text-xl mb-2">Platform Scraper Awaiting Input</h3>
-              <p className="text-slate-400 text-sm max-w-sm leading-relaxed">Fill out your academic parameters on the left to trigger real-time database crawling and build your roadmap.</p>
+              <h3 className="font-bold text-white text-xl mb-2">{t('evalEmptyTitle')}</h3>
+              <p className="text-slate-400 text-sm max-w-sm leading-relaxed">{t('evalEmptyDesc')}</p>
             </div>
           )}
         </section>
@@ -1627,7 +2135,9 @@ function EvaluatorView() {
 
 type AdminUser = StoredUser & EvalProfile;
 
+// Merged: server-mode API functionality (from main) + full i18n via t() (from task-21)
 function AdminPage() {
+  const { lang, t } = useLang();
   const [users, setUsers]             = useState<AdminUser[]>([]);
   const [serverMode, setServerMode]   = useState<boolean | null>(null);
   const [storageErr, setStorageErr]   = useState<string>('');
@@ -1675,7 +2185,6 @@ function AdminPage() {
       setNeedKey(false);
     } catch (e) {
       if (e instanceof AdminKeyRequiredError) {
-        // Backend is up but wants the admin key before showing accounts
         setNeedKey(true);
         setUsers([]);
         setServerMode(true);
@@ -1690,12 +2199,12 @@ function AdminPage() {
 
   async function handleResetPassword() {
     setResetMsg('');
-    if (!newPass) { setResetMsg('Password cannot be empty.'); return; }
-    if (newPass !== newPassConfirm) { setResetMsg('Passwords do not match.'); return; }
+    if (!newPass) { setResetMsg(t('adminResetErrEmpty')); return; }
+    if (newPass !== newPassConfirm) { setResetMsg(t('adminResetErrMatch')); return; }
     if (!resetTarget) return;
     if (serverMode) {
       try { await apiResetPassword(resetTarget.username, newPass); }
-      catch { setResetMsg('Could not reach the server. Try again.'); return; }
+      catch { setResetMsg(t('adminResetErrServer')); return; }
     } else {
       const { hash, salt } = await hashPassword(newPass);
       let current: StoredUser[];
@@ -1707,7 +2216,7 @@ function AdminPage() {
       saveUsers(updated);
       setUsers(updated);
     }
-    setResetMsg('✓ Password updated successfully.');
+    setResetMsg(t('adminResetSuccess'));
     setNewPass(''); setNewPassConfirm('');
     setTimeout(() => { setResetTarget(null); setResetMsg(''); }, 1500);
   }
@@ -1756,6 +2265,7 @@ function AdminPage() {
   );
 
   const inputCls = 'w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all';
+  const dateLocale = lang === 'es' ? 'es-ES' : 'en-US';
 
   return (
     <main className="relative z-10 max-w-6xl mx-auto px-6 pt-12 pb-24 flex-grow w-full">
@@ -1767,25 +2277,25 @@ function AdminPage() {
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-rose-900/60 border border-rose-700/50 flex items-center justify-center text-lg">🔐</div>
           <div>
-            <h1 className="text-white font-extrabold text-2xl tracking-tight">Admin Dashboard</h1>
+            <h1 className="text-white font-extrabold text-2xl tracking-tight">{t('adminTitle')}</h1>
             <p className="text-slate-400 text-xs">
-              {users.length} registered account{users.length !== 1 ? 's' : ''}
+              {users.length} {users.length !== 1 ? t('adminAccountPlural') : t('adminAccountSingular')}
               {serverMode !== null && (
                 <span className={`ml-2 px-2 py-0.5 rounded-md border text-[10px] font-semibold ${serverMode ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-amber-500/15 border-amber-500/30 text-amber-400'}`}>
-                  {serverMode ? '● Central database — all devices' : '⚠ This device only — backend offline'}
+                  {serverMode ? t('adminModeServer') : t('adminModeLocal')}
                 </span>
               )}
             </p>
           </div>
         </div>
-        <button onClick={refresh} className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium self-start sm:self-auto">↻ Refresh</button>
+        <button onClick={refresh} className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium self-start sm:self-auto">{t('adminRefresh')}</button>
       </div>
 
       {/* Admin key prompt — backend requires a key before showing accounts */}
       {needKey && (
         <div className="glass-panel rounded-2xl p-6 mb-6 border border-indigo-500/30">
-          <h2 className="text-white font-bold text-sm mb-1">🔑 Admin key required</h2>
-          <p className="text-slate-400 text-xs mb-4">The central database is protected. Enter the admin key to view and manage accounts on this device.</p>
+          <h2 className="text-white font-bold text-sm mb-1">{t('adminKeyTitle')}</h2>
+          <p className="text-slate-400 text-xs mb-4">{t('adminKeyDesc')}</p>
           <form
             className="flex gap-2"
             onSubmit={(e) => { e.preventDefault(); setAdminKey(keyInput.trim()); setKeyInput(''); refresh(); }}
@@ -1795,12 +2305,12 @@ function AdminPage() {
               value={keyInput}
               onChange={(e) => setKeyInput(e.target.value)}
               className={inputCls}
-              placeholder="Admin key…"
+              placeholder={t('adminKeyPlaceholder')}
               autoFocus
             />
-            <button type="submit" className="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all cursor-pointer flex-shrink-0">Unlock</button>
+            <button type="submit" className="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all cursor-pointer flex-shrink-0">{t('adminKeyBtn')}</button>
           </form>
-          {getAdminKey() && <p className="text-amber-400 text-xs mt-3">The saved key was rejected — please enter it again.</p>}
+          {getAdminKey() && <p className="text-amber-400 text-xs mt-3">{t('adminKeyRejected')}</p>}
         </div>
       )}
 
@@ -1811,21 +2321,21 @@ function AdminPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className={inputCls}
-          placeholder="Search by username or email…"
+          placeholder={t('adminSearchPlaceholder')}
         />
       </div>
 
       {/* User Grid */}
       {filtered.length === 0 ? (
         <div className="glass-panel rounded-2xl p-16 text-center text-slate-500 text-sm">
-          {users.length === 0 ? 'No users have registered yet.' : 'No results match your search.'}
+          {users.length === 0 ? t('adminNoUsers') : t('adminNoResults')}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((user) => {
-            const hasEmail  = Boolean(user.email);
-            const secLevel  = user.salt ? 'PBKDF2' : user.password.length === 64 ? 'SHA-256' : 'Legacy';
-            const missing   = [...(!hasEmail ? ['Email'] : [])];
+            const hasEmail   = Boolean(user.email);
+            const secLevel   = user.salt ? 'PBKDF2' : user.password.length === 64 ? 'SHA-256' : 'Legacy';
+            const missing    = [...(!hasEmail ? [t('adminFieldEmail')] : [])];
             const incomplete = missing.length > 0;
 
             return (
@@ -1852,12 +2362,12 @@ function AdminPage() {
                   <div className="flex gap-1.5 flex-shrink-0">
                     <button
                       onClick={() => { setResetTarget(user); setNewPass(''); setNewPassConfirm(''); setResetMsg(''); }}
-                      title="Reset password"
+                      title={t('adminResetTitle')}
                       className="w-7 h-7 flex items-center justify-center rounded-lg bg-indigo-900/40 hover:bg-indigo-800/60 border border-indigo-700/50 text-indigo-300 text-xs transition-all cursor-pointer"
                     >🔑</button>
                     <button
                       onClick={() => setDeleteTarget(user)}
-                      title="Delete account"
+                      title={t('adminDeleteTitle')}
                       className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-900/30 hover:bg-red-900/50 border border-red-700/40 text-red-400 text-xs transition-all cursor-pointer"
                     >🗑</button>
                   </div>
@@ -1867,41 +2377,41 @@ function AdminPage() {
                 <div className="space-y-2.5">
                   {/* Email */}
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">Email</span>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">{t('adminFieldEmail')}</span>
                     {hasEmail
                       ? <span className="text-xs text-slate-300 font-mono truncate">{user.email}</span>
-                      : <span className="text-xs px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-400 font-medium flex-shrink-0">⚠ Still needed</span>
+                      : <span className="text-xs px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-400 font-medium flex-shrink-0">{t('adminEmailMissing')}</span>
                     }
                   </div>
 
                   {/* Password */}
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">Password</span>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">{t('adminFieldPassword')}</span>
                     <span className="text-xs px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-medium flex-shrink-0">
-                      ✓ Set · {secLevel}
+                      {t('adminPassSet')} {secLevel}
                     </span>
                   </div>
 
                   {/* Evaluation profile: school / country / intention */}
                   {([
-                    ['School', user.institution],
-                    ['Country', user.country],
-                    ['Intention', user.purpose],
+                    [t('adminFieldSchool'), user.institution],
+                    [t('adminFieldCountry'), user.country],
+                    [t('adminFieldIntention'), user.purpose],
                   ] as const).map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between gap-2">
                       <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">{label}</span>
                       {value
                         ? <span className="text-xs text-slate-300 truncate">{value}</span>
-                        : <span className="text-xs text-slate-600 italic flex-shrink-0">Not provided yet</span>
+                        : <span className="text-xs text-slate-600 italic flex-shrink-0">{t('adminFieldNotProvided')}</span>
                       }
                     </div>
                   ))}
 
                   {/* Joined */}
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">Joined</span>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">{t('adminFieldJoined')}</span>
                     <span className="text-xs text-slate-400">
-                      {new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                      {new Date(user.createdAt).toLocaleDateString(dateLocale, { year: 'numeric', month: 'short', day: 'numeric' })}
                     </span>
                   </div>
                 </div>
@@ -1910,7 +2420,7 @@ function AdminPage() {
                 {incomplete && (
                   <div className="pt-2 border-t border-amber-500/20">
                     <span className="text-xs text-amber-400">
-                      {missing.length} field{missing.length !== 1 ? 's' : ''} still needed: {missing.join(', ')}
+                      {missing.length} {missing.length !== 1 ? t('adminFieldsNeededPlural') : t('adminFieldsNeededSingular')} {missing.join(', ')}
                     </span>
                   </div>
                 )}
@@ -1920,28 +2430,28 @@ function AdminPage() {
         </div>
       )}
 
-      <button onClick={refresh} className="mt-6 text-xs text-slate-500 hover:text-slate-300 transition-colors cursor-pointer bg-transparent border-none">↻ Refresh list</button>
+      <button onClick={refresh} className="mt-6 text-xs text-slate-500 hover:text-slate-300 transition-colors cursor-pointer bg-transparent border-none">{t('adminRefreshList')}</button>
 
       {/* Reset Password Modal */}
       {resetTarget && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
           <div className="glass-panel p-8 rounded-3xl w-full max-w-md shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-violet-500" />
-            <h3 className="text-white font-bold text-lg mb-1">Reset Password</h3>
-            <p className="text-slate-400 text-xs mb-6">Setting new password for <span className="text-indigo-300 font-mono">@{resetTarget.username}</span></p>
+            <h3 className="text-white font-bold text-lg mb-1">{t('adminResetTitle')}</h3>
+            <p className="text-slate-400 text-xs mb-6">{t('adminResetFor')} <span className="text-indigo-300 font-mono">@{resetTarget.username}</span></p>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">New Password</label>
-                <input type="password" value={newPass} onChange={(e) => setNewPass(e.target.value)} className={inputCls} placeholder="Min. 6 characters" autoFocus />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">{t('adminResetLNew')}</label>
+                <input type="password" value={newPass} onChange={(e) => setNewPass(e.target.value)} className={inputCls} placeholder={t('adminResetPNew')} autoFocus />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Confirm New Password</label>
-                <input type="password" value={newPassConfirm} onChange={(e) => setNewPassConfirm(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleResetPassword()} className={inputCls} placeholder="Repeat password" />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">{t('adminResetLConfirm')}</label>
+                <input type="password" value={newPassConfirm} onChange={(e) => setNewPassConfirm(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleResetPassword()} className={inputCls} placeholder={t('adminResetPConfirm')} />
               </div>
               {resetMsg && <p className={`text-xs ${resetMsg.startsWith('✓') ? 'text-emerald-400' : 'text-red-400'}`}>{resetMsg}</p>}
               <div className="flex gap-3 pt-2">
-                <button onClick={handleResetPassword} className="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3 rounded-xl text-sm transition-all cursor-pointer">Update Password</button>
-                <button onClick={() => { setResetTarget(null); setResetMsg(''); }} className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-all cursor-pointer border border-slate-700">Cancel</button>
+                <button onClick={handleResetPassword} className="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3 rounded-xl text-sm transition-all cursor-pointer">{t('adminResetBtn')}</button>
+                <button onClick={() => { setResetTarget(null); setResetMsg(''); }} className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-all cursor-pointer border border-slate-700">{t('adminCancelBtn')}</button>
               </div>
             </div>
           </div>
@@ -1955,13 +2465,13 @@ function AdminPage() {
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-rose-500" />
             <div className="text-center">
               <div className="text-4xl mb-4">⚠️</div>
-              <h3 className="text-white font-bold text-lg mb-2">Delete Account?</h3>
+              <h3 className="text-white font-bold text-lg mb-2">{t('adminDeleteTitle')}</h3>
               <p className="text-slate-400 text-sm mb-6">
-                This will permanently delete <span className="text-red-400 font-mono">@{deleteTarget.username}</span> and all their data. This cannot be undone.
+                {t('adminDeleteMsg1')} <span className="text-red-400 font-mono">@{deleteTarget.username}</span> {t('adminDeleteMsg2')}
               </p>
               <div className="flex gap-3">
-                <button onClick={handleDelete} className="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl text-sm transition-all cursor-pointer">Yes, Delete</button>
-                <button onClick={() => setDeleteTarget(null)} className="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-all cursor-pointer border border-slate-700">Cancel</button>
+                <button onClick={handleDelete} className="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl text-sm transition-all cursor-pointer">{t('adminDeleteBtn')}</button>
+                <button onClick={() => setDeleteTarget(null)} className="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-all cursor-pointer border border-slate-700">{t('adminCancelBtn')}</button>
               </div>
             </div>
           </div>
@@ -1978,7 +2488,6 @@ export default function App() {
   const [username, setUsername] = useState('');
   const [modal, setModal] = useState<'privacy' | 'terms' | null>(null);
   const [lang, setLang] = useState<Lang>('en');
-  /** Non-empty when `ge_users` exists but cannot be parsed. */
   const [userStoreError, setUserStoreError] = useState<string>('');
 
   const toggleLang = () => setLang((l) => (l === 'en' ? 'es' : 'en'));
@@ -1988,8 +2497,6 @@ export default function App() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) { setUsername(saved); setAppView('app'); }
 
-    // Eagerly detect a corrupted user store so we can surface a warning
-    // before the user tries (and fails) to sign in.
     try { getUsers(); }
     catch (e) { setUserStoreError(e instanceof Error ? e.message : String(e)); }
 
@@ -2040,18 +2547,18 @@ export default function App() {
         <Footer onPrivacy={() => setModal('privacy')} onTerms={() => setModal('terms')} />
 
         {modal === 'privacy' && (
-          <Modal id="privacy" title="Privacy Policy" onClose={() => setModal(null)}>
-            <p><strong>Strict Privacy &amp; Independence Notice:</strong> VerifED Global is a private, separate, and independent commercial company designed strictly to help international individuals navigate their educational and professional experience in the United States.</p>
-            <p><strong>Basic Information &amp; Purpose:</strong> We collect basic account credentials (username, password, and correspondence email) solely to keep records and properly correspond with you regarding your credential evaluation roadmap.</p>
-            <p><strong>Zero Data Selling &amp; Absolute Government Protection:</strong> <strong>We will never sell your information, nor will we ever hand over, share, or disclose any user data, personal records, or search inputs to any government agencies, immigration authorities, or external third parties.</strong> Your data remains strictly confidential, private, and secure within our platform.</p>
+          <Modal id="privacy" title={t('privTitle')} onClose={() => setModal(null)}>
+            <p dangerouslySetInnerHTML={{ __html: t('privP1') }} />
+            <p dangerouslySetInnerHTML={{ __html: t('privP2') }} />
+            <p dangerouslySetInnerHTML={{ __html: t('privP3') }} />
           </Modal>
         )}
         {modal === 'terms' && (
-          <Modal id="terms" title="Terms of Service" onClose={() => setModal(null)}>
-            <p>Welcome to VerifED Global. By creating an account and logging in, you agree to these terms of service.</p>
-            <p><strong>Marketing and Communication Agreement:</strong> By signing up with your username, password, and email, <strong>you expressly agree to receive marketing, platform updates, and service communication emails from us.</strong> You may opt out of communications at any time by contacting support.</p>
-            <p><strong>Non-Official Preview:</strong> All credential mappings generated by this application are for preliminary guidance and informational purposes only and do not constitute official NACES-accredited evaluations.</p>
-            <p>All intellectual property and code assets are engineered by LAD MEDIA.</p>
+          <Modal id="terms" title={t('termsTitle')} onClose={() => setModal(null)}>
+            <p dangerouslySetInnerHTML={{ __html: t('termsP1') }} />
+            <p dangerouslySetInnerHTML={{ __html: t('termsP2') }} />
+            <p dangerouslySetInnerHTML={{ __html: t('termsP3') }} />
+            <p dangerouslySetInnerHTML={{ __html: t('termsP4') }} />
           </Modal>
         )}
       </div>

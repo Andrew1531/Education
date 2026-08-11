@@ -11,7 +11,7 @@ export default defineConfig({
         test: {
           name: 'integration',
           environment: 'jsdom',
-          include: ['src/**/*.integration.test.tsx'],
+          include: ['src/**/*.integration.test.tsx', 'src/**/*.i18n.test.tsx'],
         },
       },
       {
