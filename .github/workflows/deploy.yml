@@ -41,6 +41,9 @@ jobs:
           BASE_PATH: /
           PORT: 3000
           NODE_ENV: production
+          # Central backend URL (set repo variable VITE_API_URL once the
+          # backend is published; until then the site runs in device-local mode)
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
 
       - name: Copy index.html to 404.html for SPA routing
         run: cp artifacts/education/dist/public/index.html artifacts/education/dist/public/404.html

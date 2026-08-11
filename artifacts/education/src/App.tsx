@@ -8,6 +8,40 @@ import {
   saveUsers,
 } from './userStore';
 import { StorageCorruptBanner } from './StorageCorruptBanner';
+import {
+  type ServerUser,
+  ApiUnavailableError,
+  AdminKeyRequiredError,
+  getAdminKey,
+  setAdminKey,
+  apiSignup,
+  apiSignin,
+  apiListUsers,
+  apiImportUsers,
+  apiDeleteUser,
+  apiResetPassword,
+  apiSyncSelf,
+  apiSaveProfile,
+  type EvalProfile,
+} from './api';
+
+/**
+ * Best-effort push of this visitor's own account + evaluation profile to the
+ * central database. Runs once per page load; makes accounts created before
+ * the backend existed (or while offline) appear on the admin board.
+ */
+function syncOwnAccount(): void {
+  const username = localStorage.getItem(STORAGE_KEY);
+  if (!username) return;
+  let profile: EvalProfile | undefined;
+  try { profile = JSON.parse(localStorage.getItem('ge_profile') || 'null') || undefined; } catch { /* ignore */ }
+  try {
+    const me = getUsers().find((u) => u.username.toLowerCase() === username.toLowerCase());
+    if (me) { void apiSyncSelf(me, profile); return; }
+  } catch { /* local store unreadable */ }
+  // Account exists only server-side — still push the profile if we have one
+  if (profile) void apiSaveProfile(username, profile);
+}
 
 const STORAGE_KEY = 'ge_username';
 type Lang = 'en' | 'es';
@@ -574,6 +608,29 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
     if (!username || !password) return;
 
     try {
+      // Prefer the central backend so accounts are visible on the admin board
+      // from any device; fall back to this browser's storage when offline.
+      try {
+        if (isSignUp) {
+          const r = await apiSignup(username.trim(), email || '', password);
+          if (!r.ok) {
+            if (r.error === 'username_taken') { setIsSignUp(false); setError(t('errTaken')); }
+            else setError(t('errUnexpected'));
+            return;
+          }
+        } else {
+          const r = await apiSignin(username.trim(), password);
+          if (!r.ok) { setError(t('errCredentials')); return; }
+        }
+        if (email) localStorage.setItem('ge_email', email);
+        localStorage.setItem(STORAGE_KEY, username);
+        onLogin(username);
+        return;
+      } catch (err) {
+        if (!(err instanceof ApiUnavailableError)) throw err;
+        // Backend unreachable — continue with device-local accounts below.
+      }
+
       let users: StoredUser[];
       try {
         users = getUsers();
@@ -1163,6 +1220,7 @@ function getSignedInUser(): { username: string; email: string } {
     const u = getUsers().find((x) => x.username.toLowerCase() === username.toLowerCase());
     email = u?.email || '';
   } catch { /* store unreadable — draft still works without email */ }
+  if (!email) email = localStorage.getItem('ge_email') || '';
   return { username, email };
 }
 
@@ -1276,6 +1334,11 @@ function EvaluatorView() {
     setCheckedSteps([false, false, false, false]);
     setExpandedStep(null);
     setDownloaded(false);
+    // Persist evaluation details so the admin board can show school/country/intention.
+    const profile = { country, institution, degree, field, purpose };
+    try { localStorage.setItem('ge_profile', JSON.stringify(profile)); } catch { /* storage full/blocked */ }
+    const username = localStorage.getItem(STORAGE_KEY);
+    if (username) void apiSaveProfile(username, profile);
     if (window.innerWidth < 1024) {
       setTimeout(() => { document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' }); }, 100);
     }
@@ -1562,8 +1625,11 @@ function EvaluatorView() {
 
 // ─── Admin Page ───────────────────────────────────────────────────────────────
 
+type AdminUser = StoredUser & EvalProfile;
+
 function AdminPage() {
-  const [users, setUsers]             = useState<StoredUser[]>([]);
+  const [users, setUsers]             = useState<AdminUser[]>([]);
+  const [serverMode, setServerMode]   = useState<boolean | null>(null);
   const [storageErr, setStorageErr]   = useState<string>('');
   const [search, setSearch]           = useState('');
   const [resetTarget, setResetTarget] = useState<StoredUser | null>(null);
@@ -1571,38 +1637,98 @@ function AdminPage() {
   const [newPassConfirm, setNewPassConfirm] = useState('');
   const [resetMsg, setResetMsg]       = useState('');
   const [deleteTarget, setDeleteTarget] = useState<StoredUser | null>(null);
+  const [needKey, setNeedKey]         = useState(false);
+  const [keyInput, setKeyInput]       = useState('');
 
-  useEffect(() => {
-    try { setUsers(getUsers()); }
-    catch (e) { setStorageErr(e instanceof Error ? e.message : String(e)); }
-  }, []);
-
-  function refresh() {
-    try { setUsers(getUsers()); setStorageErr(''); }
-    catch (e) { setStorageErr(e instanceof Error ? e.message : String(e)); }
+  function serverToStored(u: ServerUser): AdminUser {
+    // Display-only mapping; password material never leaves the server.
+    return {
+      username: u.username, email: u.email,
+      password: ''.padEnd(64, '0'), salt: u.hasSalt ? 'server' : undefined,
+      createdAt: u.createdAt,
+      country: u.country || undefined,
+      institution: u.institution || undefined,
+      degree: u.degree || undefined,
+      field: u.field || undefined,
+      purpose: u.purpose || undefined,
+    };
   }
+
+  async function refresh() {
+    // Push any accounts that exist only in this browser up to the central
+    // database, then show the central list. Fall back to device-local
+    // accounts when the backend is unreachable.
+    let local: AdminUser[] = [];
+    try { local = getUsers(); setStorageErr(''); }
+    catch (e) { setStorageErr(e instanceof Error ? e.message : String(e)); }
+    // In local mode we can at least show this device's own evaluation profile
+    try {
+      const me = localStorage.getItem(STORAGE_KEY);
+      const profile: EvalProfile | null = JSON.parse(localStorage.getItem('ge_profile') || 'null');
+      if (me && profile) local = local.map((u) => (u.username === me ? { ...u, ...profile } : u));
+    } catch { /* ignore malformed profile */ }
+    try {
+      await apiImportUsers(local).catch((e) => { if (e instanceof AdminKeyRequiredError) throw e; return 0; });
+      const server = await apiListUsers();
+      setUsers(server.map(serverToStored));
+      setServerMode(true);
+      setNeedKey(false);
+    } catch (e) {
+      if (e instanceof AdminKeyRequiredError) {
+        // Backend is up but wants the admin key before showing accounts
+        setNeedKey(true);
+        setUsers([]);
+        setServerMode(true);
+        return;
+      }
+      setUsers(local);
+      setServerMode(false);
+    }
+  }
+
+  useEffect(() => { refresh(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleResetPassword() {
     setResetMsg('');
     if (!newPass) { setResetMsg('Password cannot be empty.'); return; }
     if (newPass !== newPassConfirm) { setResetMsg('Passwords do not match.'); return; }
     if (!resetTarget) return;
-    const { hash, salt } = await hashPassword(newPass);
-    let current: StoredUser[];
-    try { current = getUsers(); }
-    catch (e) { setResetMsg(e instanceof Error ? e.message : String(e)); return; }
-    const updated = current.map((u) =>
-      u.username === resetTarget.username ? { ...u, password: hash, salt } : u,
-    );
-    saveUsers(updated);
-    setUsers(updated);
+    if (serverMode) {
+      try { await apiResetPassword(resetTarget.username, newPass); }
+      catch { setResetMsg('Could not reach the server. Try again.'); return; }
+    } else {
+      const { hash, salt } = await hashPassword(newPass);
+      let current: StoredUser[];
+      try { current = getUsers(); }
+      catch (e) { setResetMsg(e instanceof Error ? e.message : String(e)); return; }
+      const updated = current.map((u) =>
+        u.username === resetTarget.username ? { ...u, password: hash, salt } : u,
+      );
+      saveUsers(updated);
+      setUsers(updated);
+    }
     setResetMsg('✓ Password updated successfully.');
     setNewPass(''); setNewPassConfirm('');
     setTimeout(() => { setResetTarget(null); setResetMsg(''); }, 1500);
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     if (!deleteTarget) return;
+    if (serverMode) {
+      try { await apiDeleteUser(deleteTarget.username); }
+      catch { setDeleteTarget(null); return; }
+      // Also remove any device-local copy so imports don't resurrect it
+      try {
+        const local = getUsers().filter((u) => u.username !== deleteTarget.username);
+        saveUsers(local);
+      } catch { /* local store unreadable — nothing to clean */ }
+      if (localStorage.getItem(STORAGE_KEY) === deleteTarget.username) {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+      setDeleteTarget(null);
+      await refresh();
+      return;
+    }
     let current: StoredUser[];
     try { current = getUsers(); }
     catch (e) {
@@ -1642,11 +1768,41 @@ function AdminPage() {
           <div className="w-10 h-10 rounded-2xl bg-rose-900/60 border border-rose-700/50 flex items-center justify-center text-lg">🔐</div>
           <div>
             <h1 className="text-white font-extrabold text-2xl tracking-tight">Admin Dashboard</h1>
-            <p className="text-slate-400 text-xs">{users.length} registered account{users.length !== 1 ? 's' : ''}</p>
+            <p className="text-slate-400 text-xs">
+              {users.length} registered account{users.length !== 1 ? 's' : ''}
+              {serverMode !== null && (
+                <span className={`ml-2 px-2 py-0.5 rounded-md border text-[10px] font-semibold ${serverMode ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-amber-500/15 border-amber-500/30 text-amber-400'}`}>
+                  {serverMode ? '● Central database — all devices' : '⚠ This device only — backend offline'}
+                </span>
+              )}
+            </p>
           </div>
         </div>
         <button onClick={refresh} className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium self-start sm:self-auto">↻ Refresh</button>
       </div>
+
+      {/* Admin key prompt — backend requires a key before showing accounts */}
+      {needKey && (
+        <div className="glass-panel rounded-2xl p-6 mb-6 border border-indigo-500/30">
+          <h2 className="text-white font-bold text-sm mb-1">🔑 Admin key required</h2>
+          <p className="text-slate-400 text-xs mb-4">The central database is protected. Enter the admin key to view and manage accounts on this device.</p>
+          <form
+            className="flex gap-2"
+            onSubmit={(e) => { e.preventDefault(); setAdminKey(keyInput.trim()); setKeyInput(''); refresh(); }}
+          >
+            <input
+              type="password"
+              value={keyInput}
+              onChange={(e) => setKeyInput(e.target.value)}
+              className={inputCls}
+              placeholder="Admin key…"
+              autoFocus
+            />
+            <button type="submit" className="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all cursor-pointer flex-shrink-0">Unlock</button>
+          </form>
+          {getAdminKey() && <p className="text-amber-400 text-xs mt-3">The saved key was rejected — please enter it again.</p>}
+        </div>
+      )}
 
       {/* Search bar */}
       <div className="mb-6">
@@ -1725,6 +1881,21 @@ function AdminPage() {
                       ✓ Set · {secLevel}
                     </span>
                   </div>
+
+                  {/* Evaluation profile: school / country / intention */}
+                  {([
+                    ['School', user.institution],
+                    ['Country', user.country],
+                    ['Intention', user.purpose],
+                  ] as const).map(([label, value]) => (
+                    <div key={label} className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">{label}</span>
+                      {value
+                        ? <span className="text-xs text-slate-300 truncate">{value}</span>
+                        : <span className="text-xs text-slate-600 italic flex-shrink-0">Not provided yet</span>
+                      }
+                    </div>
+                  ))}
 
                   {/* Joined */}
                   <div className="flex items-center justify-between gap-2">
@@ -1821,6 +1992,10 @@ export default function App() {
     // before the user tries (and fails) to sign in.
     try { getUsers(); }
     catch (e) { setUserStoreError(e instanceof Error ? e.message : String(e)); }
+
+    // Push this browser's account + evaluation profile to the central
+    // database so the admin board sees sign-ups from every device.
+    syncOwnAccount();
   }, []);
 
   function handleLogin(user: string) {
