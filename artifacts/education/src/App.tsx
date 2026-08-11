@@ -680,10 +680,19 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
         ))}
       </div>
 
-      {/* ── Storage corruption warning ────────────────────────────────── */}
+      {/* ── Service notice (shown when user store is unreadable) ─────── */}
       {storageError && (
         <div className="max-w-md mx-auto">
-          <StorageCorruptBanner message={storageError} />
+          <div
+            role="status"
+            data-testid="banner-service-unavailable"
+            className="rounded-2xl border border-amber-500/30 bg-amber-950/40 backdrop-blur-sm px-5 py-4 text-center"
+          >
+            <p className="text-amber-300 font-semibold text-sm mb-1">🔧 Account service temporarily unavailable</p>
+            <p className="text-amber-400/80 text-xs leading-relaxed">
+              Sign-in and registration are temporarily unavailable. Please try again later or contact support.
+            </p>
+          </div>
         </div>
       )}
 
@@ -1835,14 +1844,6 @@ export default function App() {
         <div className="glow-effect top-1/3 -right-40 rounded-full" />
 
         <Navbar appView={appView} username={username} onLogout={handleLogout} />
-
-        {/* Global storage-corruption banner — shown above all routes */}
-        {userStoreError && (
-          <StorageCorruptBanner
-            message={userStoreError}
-            onDismiss={() => setUserStoreError('')}
-          />
-        )}
 
         <Switch>
           <Route path="/about">

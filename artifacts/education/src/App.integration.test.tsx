@@ -29,47 +29,42 @@ afterEach(() => {
 
 // ─── StorageCorruptBanner — application-level integration ─────────────────────
 
-describe('App — StorageCorruptBanner visibility', () => {
-  it('shows the banner when ge_users contains malformed JSON', async () => {
+describe('App — corrupt storage on public routes', () => {
+  it('shows the friendly service-unavailable notice (not the raw corruption banner) on the home page', async () => {
     localStorage.setItem(USERS_KEY, '{{bad json');
 
-    await act(async () => {
-      render(<App />);
+    await act(async () => { render(<App />); });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('banner-service-unavailable')).not.toBeNull();
     });
 
-    // App renders the banner in two places (global + AuthView), so use
-    // getAllByTestId and assert at least one is present.
-    await waitFor(() => {
-      const banners = screen.getAllByTestId('banner-storage-corrupt');
-      expect(banners.length).toBeGreaterThan(0);
-    });
+    // The actionable corruption banner must NOT be exposed to regular visitors.
+    expect(screen.queryByTestId('banner-storage-corrupt')).toBeNull();
   });
 
-  it('shows the banner when ge_users is a valid JSON object (not an array)', async () => {
+  it('shows the friendly notice when ge_users is a valid JSON object (not an array)', async () => {
     localStorage.setItem(USERS_KEY, JSON.stringify({ username: 'alice' }));
 
-    await act(async () => {
-      render(<App />);
-    });
+    await act(async () => { render(<App />); });
 
     await waitFor(() => {
-      const banners = screen.getAllByTestId('banner-storage-corrupt');
-      expect(banners.length).toBeGreaterThan(0);
+      expect(screen.queryByTestId('banner-service-unavailable')).not.toBeNull();
     });
+
+    expect(screen.queryByTestId('banner-storage-corrupt')).toBeNull();
   });
 
-  it('does NOT show the banner when ge_users is absent (first-run)', async () => {
-    // key absent — getUsers() returns [] without throwing
-    await act(async () => {
-      render(<App />);
-    });
+  it('does NOT show either banner when ge_users is absent (first-run)', async () => {
+    await act(async () => { render(<App />); });
 
     await waitFor(() => {
       expect(screen.queryByTestId('banner-storage-corrupt')).toBeNull();
+      expect(screen.queryByTestId('banner-service-unavailable')).toBeNull();
     });
   });
 
-  it('does NOT show the banner when ge_users contains a valid user list', async () => {
+  it('does NOT show either banner when ge_users contains a valid user list', async () => {
     const validUser = {
       username:  'alice',
       email:     'alice@example.com',
@@ -78,50 +73,48 @@ describe('App — StorageCorruptBanner visibility', () => {
     };
     localStorage.setItem(USERS_KEY, JSON.stringify([validUser]));
 
-    await act(async () => {
-      render(<App />);
-    });
+    await act(async () => { render(<App />); });
 
     await waitFor(() => {
       expect(screen.queryByTestId('banner-storage-corrupt')).toBeNull();
+      expect(screen.queryByTestId('banner-service-unavailable')).toBeNull();
     });
   });
 
-  it('does NOT show the banner when ge_users holds an empty array', async () => {
+  it('does NOT show either banner when ge_users holds an empty array', async () => {
     localStorage.setItem(USERS_KEY, '[]');
 
-    await act(async () => {
-      render(<App />);
-    });
+    await act(async () => { render(<App />); });
 
     await waitFor(() => {
       expect(screen.queryByTestId('banner-storage-corrupt')).toBeNull();
+      expect(screen.queryByTestId('banner-service-unavailable')).toBeNull();
     });
   });
 });
 
-// ─── StorageCorruptBanner — Clear & Reset flow ────────────────────────────────
+// ─── StorageCorruptBanner — admin route ───────────────────────────────────────
 
-describe('StorageCorruptBanner — Clear & Reset flow', () => {
-  // Preserve the real location object so we can restore it after each test.
+describe('App — StorageCorruptBanner on the admin route', () => {
+  // Preserve and restore window.location around each test.
   let originalLocation: Location;
 
-  // Seed corrupt data and stub window.location.reload before every test.
   beforeEach(() => {
     originalLocation = window.location;
     localStorage.setItem(USERS_KEY, '{{bad json');
 
-    // jsdom's location object is not configurable, so we replace the whole
-    // thing with a plain object carrying a spy for reload().
     Object.defineProperty(window, 'location', {
       configurable: true,
       writable: true,
-      value: { reload: vi.fn() },
+      value: { ...originalLocation, pathname: '/admin', reload: vi.fn() },
     });
+
+    // Navigate the jsdom history to /admin so wouter picks up the route.
+    window.history.pushState({}, '', '/admin');
   });
 
   afterEach(() => {
-    // Restore the real location so subsequent describe blocks are unaffected.
+    window.history.pushState({}, '', '/');
     Object.defineProperty(window, 'location', {
       configurable: true,
       writable: true,
@@ -129,12 +122,19 @@ describe('StorageCorruptBanner — Clear & Reset flow', () => {
     });
   });
 
-  it('shows the Clear & Reset button when ge_users is corrupt', async () => {
+  it('shows the actionable corruption banner on the admin route when ge_users is corrupt', async () => {
     await act(async () => { render(<App />); });
 
     await waitFor(() => {
-      // The banner (and its button) may appear in more than one place in the tree.
-      expect(screen.getAllByTestId('button-clear-corrupt-store').length).toBeGreaterThan(0);
+      expect(screen.queryByTestId('banner-storage-corrupt')).not.toBeNull();
+    });
+  });
+
+  it('shows the Clear & Reset button on the admin route when ge_users is corrupt', async () => {
+    await act(async () => { render(<App />); });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('button-clear-corrupt-store')).not.toBeNull();
     });
   });
 
@@ -143,28 +143,23 @@ describe('StorageCorruptBanner — Clear & Reset flow', () => {
 
     await act(async () => { render(<App />); });
 
-    // Open the confirm dialog via the first Clear & Reset button in the DOM.
     await waitFor(() => {
-      expect(screen.getAllByTestId('button-clear-corrupt-store').length).toBeGreaterThan(0);
+      expect(screen.queryByTestId('button-clear-corrupt-store')).not.toBeNull();
     });
 
     await act(async () => {
-      fireEvent.click(screen.getAllByTestId('button-clear-corrupt-store')[0]);
+      fireEvent.click(screen.getByTestId('button-clear-corrupt-store'));
     });
 
-    // Confirm dialog should now be visible.
     await waitFor(() => {
       expect(screen.getByTestId('modal-confirm-clear-store')).not.toBeNull();
     });
 
-    // Click the destructive confirm button.
     await act(async () => {
       fireEvent.click(screen.getByTestId('button-confirm-clear-store'));
     });
 
-    // localStorage.removeItem must have been called with the users key.
     expect(removeSpy).toHaveBeenCalledWith(USERS_KEY);
-    // And a reload must have been requested.
     expect(window.location.reload).toHaveBeenCalledTimes(1);
   });
 
@@ -174,28 +169,25 @@ describe('StorageCorruptBanner — Clear & Reset flow', () => {
     await act(async () => { render(<App />); });
 
     await waitFor(() => {
-      expect(screen.getAllByTestId('button-clear-corrupt-store').length).toBeGreaterThan(0);
+      expect(screen.queryByTestId('button-clear-corrupt-store')).not.toBeNull();
     });
 
     await act(async () => {
-      fireEvent.click(screen.getAllByTestId('button-clear-corrupt-store')[0]);
+      fireEvent.click(screen.getByTestId('button-clear-corrupt-store'));
     });
 
     await waitFor(() => {
       expect(screen.getByTestId('modal-confirm-clear-store')).not.toBeNull();
     });
 
-    // Click Cancel.
     await act(async () => {
       fireEvent.click(screen.getByTestId('button-cancel-clear-store'));
     });
 
-    // Dialog should be gone.
     await waitFor(() => {
       expect(screen.queryByTestId('modal-confirm-clear-store')).toBeNull();
     });
 
-    // Storage must be untouched and no reload issued.
     expect(removeSpy).not.toHaveBeenCalledWith(USERS_KEY);
     expect(window.location.reload).not.toHaveBeenCalled();
   });
