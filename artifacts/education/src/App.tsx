@@ -753,27 +753,101 @@ const JOB_BOARDS = [
   { name: 'Monster', url: 'https://www.monster.com', descKey: 'jobMonster' as const, color: 'from-violet-600 to-violet-500', initials: 'Mo' },
 ];
 
-function JobBoardsSection() {
+// Build a pre-filled job-search URL on each board for a given query
+function jobSearchUrl(boardName: string, query: string): string {
+  const q = encodeURIComponent(query);
+  switch (boardName) {
+    case 'Indeed': return `https://www.indeed.com/jobs?q=${q}`;
+    case 'LinkedIn Jobs': return `https://www.linkedin.com/jobs/search/?keywords=${q}`;
+    case 'Glassdoor': return `https://www.glassdoor.com/Job/jobs.htm?sc.keyword=${q}`;
+    case 'ZipRecruiter': return `https://www.ziprecruiter.com/jobs-search?search=${q}`;
+    case 'USAJobs': return `https://www.usajobs.gov/Search/Results?k=${q}`;
+    case 'Monster': return `https://www.monster.com/jobs/search?q=${q}`;
+    default: return '';
+  }
+}
+
+// Suggested U.S. job titles aligned with the user's field of study
+function getAlignedRoles(field: string): string[] {
+  const f = field.toLowerCase();
+  if (f.includes('account') || f.includes('finance') || f.includes('audit')) {
+    return ['Staff Accountant', 'Financial Analyst', 'Auditor', 'Tax Associate', 'Bookkeeper', 'Accounts Payable Specialist'];
+  }
+  if (f.includes('computer') || f.includes('software') || f.includes('information') || /\bit\b/.test(f) || f.includes('data science') || f.includes('cyber')) {
+    return ['Software Engineer', 'Web Developer', 'Data Analyst', 'QA Engineer', 'IT Support Specialist', 'DevOps Engineer'];
+  }
+  if (f.includes('engineer')) {
+    return [`${field} Engineer`, 'Project Engineer', 'Design Engineer', 'CAD Technician', 'Quality Engineer', 'Field Engineer'];
+  }
+  if (f.includes('nursing') || f.includes('health') || f.includes('medicine') || f.includes('medical')) {
+    return ['Registered Nurse', 'Medical Assistant', 'Patient Care Technician', 'Clinical Research Coordinator', 'Health Services Coordinator', 'Medical Technologist'];
+  }
+  if (f.includes('business') || f.includes('management') || f.includes('admin')) {
+    return ['Business Analyst', 'Operations Coordinator', 'Project Coordinator', 'Account Manager', 'Office Manager', 'Management Trainee'];
+  }
+  if (f.includes('teach') || f.includes('educat')) {
+    return ['Teacher', 'Teaching Assistant', 'Tutor', 'Instructional Aide', 'Education Coordinator', 'Curriculum Specialist'];
+  }
+  if (f.includes('law') || f.includes('legal')) {
+    return ['Paralegal', 'Legal Assistant', 'Compliance Analyst', 'Contract Administrator', 'Legal Researcher'];
+  }
+  return [`${field} Specialist`, `${field} Analyst`, `${field} Coordinator`, `${field} Assistant`, `Entry Level ${field}`];
+}
+
+function JobBoardsSection({ field }: { field?: string }) {
   const { t } = useLang();
+  const hasField = Boolean(field && field.trim());
+  const roles = hasField ? getAlignedRoles(field!.trim()) : [];
   return (
     <div className="mt-16">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <span className="text-indigo-400 text-2xl">💼</span>
-          <h2 className="text-white font-extrabold text-2xl tracking-tight">{t('jobTitle')}</h2>
+          <h2 className="text-white font-extrabold text-2xl tracking-tight">
+            {hasField ? <>Jobs Aligned with <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">{field}</span></> : t('jobTitle')}
+          </h2>
         </div>
-        <p className="text-slate-400 text-sm leading-relaxed max-w-2xl">{t('jobDesc')}</p>
+        <p className="text-slate-400 text-sm leading-relaxed max-w-2xl">
+          {hasField
+            ? `These U.S. job titles commonly align with a ${field} background. Every link below opens a live, pre-filtered search for your field — not a generic job board homepage.`
+            : t('jobDesc')}
+        </p>
       </div>
+
+      {hasField && (
+        <div className="glass-panel p-6 rounded-2xl mb-6" data-testid="aligned-roles">
+          <h3 className="text-white font-bold text-xs uppercase tracking-wider mb-4 flex items-center gap-2">
+            <span className="text-indigo-400">🎯</span> Roles That Match Your Field
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {roles.map((role) => (
+              <a
+                key={role}
+                href={jobSearchUrl('Indeed', role)}
+                target="_blank" rel="noopener noreferrer"
+                data-testid={`link-role-${role.toLowerCase().replace(/[^a-z]+/g, '-')}`}
+                className="text-xs font-semibold px-3.5 py-2 rounded-xl bg-indigo-500/10 text-indigo-300 border border-indigo-500/25 hover:bg-indigo-500/20 hover:text-white transition-all"
+              >
+                {role} ↗
+              </a>
+            ))}
+          </div>
+          <p className="text-[10px] text-slate-500 mt-3">Each role opens a live U.S. job search you can refine by city and salary.</p>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {JOB_BOARDS.map((board) => (
-          <a key={board.name} href={board.url} target="_blank" rel="noopener noreferrer" data-testid={`link-job-board-${board.name.toLowerCase().replace(/\s+/g, '-')}`} className="glass-panel p-5 rounded-2xl flex items-start gap-4 hover:border-indigo-500/40 transition-all group">
+          <a key={board.name} href={hasField ? jobSearchUrl(board.name, field!.trim()) : board.url} target="_blank" rel="noopener noreferrer" data-testid={`link-job-board-${board.name.toLowerCase().replace(/\s+/g, '-')}`} className="glass-panel p-5 rounded-2xl flex items-start gap-4 hover:border-indigo-500/40 transition-all group">
             <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${board.color} flex items-center justify-center font-black text-white text-sm flex-shrink-0 shadow-lg`}>{board.initials}</div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-white font-bold text-sm group-hover:text-indigo-300 transition-colors">{board.name}</span>
                 <svg className="w-3 h-3 text-slate-500 group-hover:text-indigo-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">{t(board.descKey)}</p>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                {hasField ? `${field} jobs — pre-filtered search` : t(board.descKey)}
+              </p>
             </div>
           </a>
         ))}
@@ -1048,6 +1122,130 @@ function exportDossier(result: EvalResult, verifyRows: { label: string; value: s
 
 // ─── Evaluator View ───────────────────────────────────────────────────────────
 
+// ─── NACES Agency Outreach ────────────────────────────────────────────────────
+// Directory of current NACES members (source: naces.org/members). Websites are
+// each agency's official public site; users contact agencies from their own
+// email address via a pre-written draft.
+const NACES_AGENCIES = [
+  { name: 'Academic Evaluation Services, Inc.', since: 'May 2008', url: 'https://aes-edu.org/' },
+  { name: 'Center for Applied Research, Evaluation & Education, Inc.', since: 'March 1987', url: 'https://www.iescaree.com/' },
+  { name: 'Center for Educational Documentation', since: 'June 2026', url: 'https://cedevaluations.com/' },
+  { name: 'Educational Credential Evaluators, Inc.', since: 'March 1987', url: 'https://www.ece.org/' },
+  { name: 'Educational Perspectives, nfp', since: 'April 2003', url: 'https://www.edperspective.org/' },
+  { name: 'Educational Records Evaluation Service, Inc.', since: 'April 1993', url: 'http://www.eres.com/' },
+  { name: 'Foreign Academic Credential Service, Inc.', since: 'March 1987', url: 'https://facsusa.com/' },
+  { name: 'Foundation for International Services, Inc.', since: 'March 1987', url: 'https://www.fis-web.com/' },
+  { name: 'Global Credential Evaluators, Inc.', since: 'March 2004', url: 'https://gceus.com/' },
+  { name: 'Globe Language Services', since: 'May 2022', url: 'https://www.globelanguage.com/' },
+  { name: 'Institute of Foreign Credential Services, Inc.', since: 'May 2022', url: 'https://ifcsevals.com/' },
+  { name: 'International Consultants of Delaware, Inc.', since: 'March 1987', url: 'https://www.icdeval.com/' },
+  { name: 'International Education Evaluations, Inc.', since: 'May 2018', url: 'https://www.myiee.org/' },
+  { name: 'International Education Research Foundation, Inc.', since: 'March 1987', url: 'https://ierf.org/' },
+  { name: 'Josef Silny and Associates, Inc. International Education Consultants', since: 'April 1989', url: 'http://www.jsilny.com/' },
+  { name: 'SpanTran: The Evaluation Company', since: 'April 1996', url: 'https://evalcompany.com/' },
+  { name: 'Transcript Research', since: 'September 2011', url: 'https://transcriptresearch.com/' },
+  { name: 'World Education Services, Inc.', since: 'March 1987', url: 'https://www.wes.org/' },
+];
+
+function getSignedInUser(): { username: string; email: string } {
+  const username = localStorage.getItem(STORAGE_KEY) || '';
+  let email = '';
+  try {
+    const u = getUsers().find((x) => x.username.toLowerCase() === username.toLowerCase());
+    email = u?.email || '';
+  } catch { /* store unreadable — draft still works without email */ }
+  return { username, email };
+}
+
+function buildAgencyDraft(agency: string, result: EvalResult, user: { username: string; email: string }) {
+  const subject = `Credential Evaluation Inquiry — ${result.degree} in ${result.field} (${result.country})`;
+  const body = [
+    `Dear ${agency} Evaluation Team,`,
+    '',
+    `My name is ${user.username}. I earned a ${result.degree} in ${result.field} from ${result.institution} in ${result.country}, and I am seeking a course-by-course credential evaluation${result.purpose ? ` for ${result.purpose.toLowerCase()}` : ''} in the United States.`,
+    '',
+    'Could you please advise me on:',
+    '• The documents required from my institution and country',
+    '• Your current fees and processing times',
+    '• Whether my documents must be sent directly by my institution',
+    '• Any translation requirements for my transcripts',
+    '',
+    `You can reach me at this email address${user.email ? ` (${user.email})` : ''}.`,
+    '',
+    'Thank you for your time and assistance.',
+    '',
+    'Sincerely,',
+    user.username,
+  ].join('\n');
+  return { subject, body };
+}
+
+function AgencyOutreach({ result }: { result: EvalResult }) {
+  const [copied, setCopied] = useState<string | null>(null);
+  const user = getSignedInUser();
+
+  async function copyDraft(agencyName: string) {
+    const { subject, body } = buildAgencyDraft(agencyName, result, user);
+    const text = `Subject: ${subject}\n\n${body}`;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for browsers without the async clipboard API
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setCopied(agencyName);
+      setTimeout(() => setCopied(null), 2000);
+    } catch {
+      // Clipboard blocked — open the draft in the mail client instead
+      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+  }
+
+  return (
+    <div className="mt-6 pt-5 border-t border-slate-800/80">
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className="text-indigo-400">✉️</span>
+        <h4 className="text-white font-bold text-xs uppercase tracking-wider">Contact NACES Agencies</h4>
+      </div>
+      <p className="text-xs text-slate-400 leading-relaxed mb-4">
+        A personalized inquiry email has been drafted for you using your evaluation details{user.email ? <> and your account email (<span className="text-slate-300 font-mono">{user.email}</span>)</> : ''}. Open it in your email app, or copy it and paste it into the contact form on the agency's website — it sends from your own address, so replies come straight back to you.
+      </p>
+      <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+        {NACES_AGENCIES.map((agency) => {
+          const { subject, body } = buildAgencyDraft(agency.name, result, user);
+          const mailto = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+          return (
+            <div key={agency.name} className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/70 border border-slate-800/70" data-testid={`agency-${agency.name.slice(0, 12).toLowerCase().replace(/[^a-z]+/g, '-')}`}>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-white font-semibold truncate">{agency.name}</p>
+                <p className="text-[10px] text-slate-500">Member since {agency.since}</p>
+              </div>
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <a href={mailto} title="Open pre-written email draft" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 hover:bg-indigo-500/25 transition-colors">✉️ Draft</a>
+                <button type="button" onClick={() => copyDraft(agency.name)} title="Copy email draft" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:text-white transition-colors cursor-pointer">
+                  {copied === agency.name ? '✓ Copied' : 'Copy'}
+                </button>
+                <a href={agency.url} target="_blank" rel="noopener noreferrer" title="Visit agency website" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:text-white transition-colors">Site ↗</a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <p className="text-[10px] text-slate-500 mt-3 leading-relaxed">
+        Tip: you do not need to contact every agency — pick 2–3 whose fees and turnaround fit your goal. Each agency's exact contact email or inquiry form is on its website.
+      </p>
+    </div>
+  );
+}
+
 function EvaluatorView() {
   const [country, setCountry] = useState('');
   const [institution, setInstitution] = useState('');
@@ -1245,6 +1443,7 @@ function EvaluatorView() {
                           <a href="https://www.naces.org/members" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
                             View all NACES member agencies →
                           </a>
+                          <AgencyOutreach result={result} />
                         </div>
                       ),
                     },
@@ -1347,7 +1546,7 @@ function EvaluatorView() {
       </div>
 
       <ContactSection />
-      <JobBoardsSection />
+      <JobBoardsSection field={result?.field} />
     </div>
   );
 }
