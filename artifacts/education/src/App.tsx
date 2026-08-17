@@ -2215,7 +2215,6 @@ function AdminPage() {
   const [deleteTarget, setDeleteTarget] = useState<StoredUser | null>(null);
   const [needKey, setNeedKey]         = useState(false);
   const [keyNotConfigured, setKeyNotConfigured] = useState(false);
-  const [keyNotConfigured, setKeyNotConfigured] = useState(false);
   const [keyInput, setKeyInput]       = useState('');
 
   function serverToStored(u: ServerUser): AdminUser {
