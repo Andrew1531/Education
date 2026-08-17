@@ -79,18 +79,24 @@ function cleanProfile(body: unknown): Partial<Record<"country" | "institution" |
   return out;
 }
 
+/** Basic email format check: something@something.tld with no whitespace. */
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 // Create account
 router.post("/auth/signup", async (req, res) => {
   const { username, email, password } = req.body ?? {};
   if (typeof username !== "string" || !username.trim() || typeof password !== "string" || !password) {
     return res.status(400).json({ error: "username and password are required" });
   }
+  if (typeof email !== "string" || !EMAIL_RE.test(email.trim())) {
+    return res.status(400).json({ error: "valid_email_required" });
+  }
   const uname = username.trim();
   const { hash, salt } = await hashPassword(password);
   // Conflict-safe insert: simultaneous signups cannot 500 on the unique index
   const inserted = await db
     .insert(usersTable)
-    .values({ username: uname, email: typeof email === "string" ? email : "", passwordHash: hash, salt })
+    .values({ username: uname, email: email.trim(), passwordHash: hash, salt })
     .onConflictDoNothing({ target: usersTable.username })
     .returning();
   if (inserted.length === 0) {

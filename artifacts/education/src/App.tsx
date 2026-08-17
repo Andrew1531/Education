@@ -156,6 +156,7 @@ const TX = {
     errLoad: 'Unable to load accounts. Please refresh and try again.',
     errTaken: 'An account with that username already exists. Enter your password to sign in.',
     errCredentials: 'Incorrect username or password.',
+    errEmail: 'Please enter a valid email address (e.g., name@example.com).',
     errUnexpected: 'An unexpected error occurred. Please refresh and try again.',
     // Service unavailable banner
     svcUnavailableTitle: '🔧 Account service temporarily unavailable',
@@ -515,6 +516,7 @@ const TX = {
     errLoad: 'No se pudieron cargar las cuentas. Por favor recargue e intente de nuevo.',
     errTaken: 'Ya existe una cuenta con ese nombre de usuario. Ingresa tu contraseña para iniciar sesión.',
     errCredentials: 'Usuario o contraseña incorrectos.',
+    errEmail: 'Por favor ingresa un correo electrónico válido (ej., nombre@ejemplo.com).',
     errUnexpected: 'Ocurrió un error inesperado. Por favor recargue e intente de nuevo.',
     // Service unavailable banner
     svcUnavailableTitle: '🔧 Servicio de cuentas temporalmente no disponible',
@@ -1094,6 +1096,9 @@ function HowItWorksPage() {
 
 // ─── Auth View ────────────────────────────────────────────────────────────────
 
+/** Basic email format check: something@something.tld with no whitespace. */
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function AuthView({ onLogin, storageError }: { onLogin: (username: string) => void; storageError?: string }) {
   const { t } = useLang();
   const [isSignUp, setIsSignUp] = useState(true);
@@ -1106,13 +1111,18 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
     e.preventDefault();
     setError('');
     if (!username || !password) return;
+    const trimmedEmail = email.trim();
+    if (isSignUp && !EMAIL_RE.test(trimmedEmail)) {
+      setError(t('errEmail'));
+      return;
+    }
 
     try {
       // Prefer the central backend so accounts are visible on the admin board
       // from any device; fall back to this browser's storage when offline.
       try {
         if (isSignUp) {
-          const r = await apiSignup(username.trim(), email || '', password);
+          const r = await apiSignup(username.trim(), trimmedEmail, password);
           if (!r.ok) {
             if (r.error === 'username_taken') { setIsSignUp(false); setError(t('errTaken')); }
             else setError(t('errUnexpected'));
@@ -1122,7 +1132,7 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
           const r = await apiSignin(username.trim(), password);
           if (!r.ok) { setError(t('errCredentials')); return; }
         }
-        if (email) localStorage.setItem('ge_email', email);
+        if (trimmedEmail) localStorage.setItem('ge_email', trimmedEmail);
         localStorage.setItem(STORAGE_KEY, username);
         onLogin(username);
         return;
@@ -1148,7 +1158,7 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
         const { hash, salt } = await hashPassword(password);
         const newUser: StoredUser = {
           username,
-          email: email || '',
+          email: trimmedEmail,
           password: hash,
           salt,
           createdAt: new Date().toISOString(),
