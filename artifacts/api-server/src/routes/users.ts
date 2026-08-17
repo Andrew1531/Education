@@ -1,7 +1,7 @@
 import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
 import { randomBytes, pbkdf2, createHash, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
-import { eq } from "drizzle-orm";
+import { eq, sql, type SQL } from "drizzle-orm";
 import { db, usersTable } from "@workspace/db";
 import { issueUserToken, verifyUserToken } from "../lib/userToken";
 
@@ -200,8 +200,9 @@ router.post("/auth/profile", async (req, res) => {
  * Sanitize a contacted-agencies map: { [agencyName]: "YYYY-MM-DD" }.
  * Returns null when the payload is not a plain object. Caps entry count and
  * string lengths so the column cannot be abused as arbitrary storage.
+ * Exported for direct unit testing.
  */
-function cleanContacted(body: unknown): Record<string, string> | null {
+export function cleanContacted(body: unknown): Record<string, string> | null {
   if (!body || typeof body !== "object" || Array.isArray(body)) return null;
   const out: Record<string, string> = {};
   let count = 0;
@@ -226,8 +227,23 @@ router.get("/auth/contacted", async (req, res) => {
   return res.json({ contacted: user.contactedAgencies ?? {} });
 });
 
-// Save the signed-in user's contacted-agency checkmarks (full replace, so
-// un-checking an agency syncs too)
+// Save the signed-in user's contacted-agency checkmarks.
+//
+// Uses a single atomic PostgreSQL JSONB merge expression so concurrent saves
+// from two devices can never erase each other's checkmarks — there is no
+// separate read before the write, so the TOCTOU race is eliminated entirely:
+//
+//   SET contacted_agencies =
+//     COALESCE(contacted_agencies, '{}') || $incoming::jsonb [- $key ...]
+//
+// The `||` operator is applied by PostgreSQL inside the UPDATE, which holds a
+// row-level lock for the duration. A second concurrent UPDATE waits for the
+// first to commit, then reads the already-committed value.
+//
+// Explicit removals (agencies the user deliberately un-checked on this device)
+// are subtracted after the union using the jsonb `-` operator so that an
+// un-check propagates even when the server still has the agency from another
+// device's earlier save.
 router.post("/auth/contacted", async (req, res) => {
   const { username } = req.body ?? {};
   if (typeof username !== "string" || !username.trim()) {
@@ -236,11 +252,28 @@ router.post("/auth/contacted", async (req, res) => {
   if (!verifyUserToken(username, req.header("x-auth-token"))) {
     return res.status(401).json({ error: "unauthorized" });
   }
-  const contacted = cleanContacted(req.body?.contacted);
-  if (contacted === null) return res.status(400).json({ error: "contacted must be an object" });
+  const incoming = cleanContacted(req.body?.contacted);
+  if (incoming === null) return res.status(400).json({ error: "contacted must be an object" });
+
+  // Optional list of agency names explicitly un-checked by this device.
+  const removals: string[] = Array.isArray(req.body?.removals)
+    ? (req.body.removals as unknown[])
+        .filter((k): k is string => typeof k === "string" && k.trim().length > 0)
+        .slice(0, 100)
+    : [];
+
+  // Build atomic JSONB merge expression. Start with the column || incoming,
+  // then subtract each explicitly removed key via the jsonb `-` operator.
+  // This is a single SQL expression evaluated atomically inside the UPDATE.
+  const incomingJson = JSON.stringify(incoming);
+  let mergeExpr: SQL = sql`COALESCE(${usersTable.contactedAgencies}, '{}') || ${incomingJson}::jsonb`;
+  for (const key of removals) {
+    mergeExpr = sql`${mergeExpr} - ${key}`;
+  }
+
   const [updated] = await db
     .update(usersTable)
-    .set({ contactedAgencies: contacted })
+    .set({ contactedAgencies: mergeExpr })
     .where(eq(usersTable.username, username.trim()))
     .returning();
   if (!updated) return res.status(404).json({ error: "not_found" });

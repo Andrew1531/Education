@@ -153,17 +153,26 @@ export async function apiSaveProfile(username: string, profile: EvalProfile): Pr
 }
 
 /**
- * Save the signed-in user's contacted-agency checkmarks. Full replace so
- * un-checking syncs too. Best-effort: errors are swallowed, localStorage
- * remains the source of truth.
+ * Save the signed-in user's contacted-agency checkmarks.
+ *
+ * The server performs a union merge (not a full replace) so concurrent saves
+ * from two devices can't silently wipe each other's checkmarks. Explicit
+ * `removals` (agencies the user deliberately un-checked on this device) are
+ * sent separately so the server can apply them after the union.
+ *
+ * Best-effort: errors are swallowed, localStorage remains the source of truth.
  */
-export async function apiSaveContacted(username: string, contacted: Record<string, string>): Promise<void> {
+export async function apiSaveContacted(
+  username: string,
+  contacted: Record<string, string>,
+  removals: string[] = [],
+): Promise<void> {
   const token = getUserToken(username);
   if (!token) return; // not authenticated with the backend yet — local-only
   try {
     await apiFetch('/auth/contacted', {
       method: 'POST',
-      body: JSON.stringify({ username, contacted }),
+      body: JSON.stringify({ username, contacted, removals }),
       headers: { 'x-auth-token': token },
     });
   } catch { /* best-effort */ }

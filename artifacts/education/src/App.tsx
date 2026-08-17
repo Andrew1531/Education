@@ -30,6 +30,7 @@ import {
   apiFetchRoadmapSteps,
   type EvalProfile,
 } from './api';
+import { contactedStorageKey, loadContacted, mergeContacted } from './contactedSync';
 
 /**
  * Best-effort push of this visitor's own account + evaluation profile to the
@@ -1781,19 +1782,6 @@ function buildAgencyDraft(agency: string, result: EvalResult, user: { username: 
   return { subject, body };
 }
 
-function contactedStorageKey(username: string): string {
-  return `ge_agencies_contacted_${username.toLowerCase() || 'anon'}`;
-}
-
-function loadContacted(username: string): Record<string, string> {
-  try {
-    const raw = localStorage.getItem(contactedStorageKey(username));
-    const parsed = raw ? JSON.parse(raw) : null;
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed as Record<string, string>;
-  } catch { /* corrupted entry — start fresh */ }
-  return {};
-}
-
 function AgencyOutreach({ result }: { result: EvalResult }) {
   const { lang, t } = useLang();
   const [copied, setCopied] = useState<string | null>(null);
@@ -1807,10 +1795,10 @@ function AgencyOutreach({ result }: { result: EvalResult }) {
     if (!user.username) return;
     let cancelled = false;
     void apiFetchContacted(user.username).then((remote) => {
-      if (cancelled || !remote || Object.keys(remote).length === 0) return;
+      if (cancelled || !remote) return;
       setContacted((prev) => {
-        const merged = { ...remote, ...prev };
-        if (Object.keys(merged).length === Object.keys(prev).length) return prev;
+        const merged = mergeContacted(remote, prev);
+        if (merged === null) return prev;
         try { localStorage.setItem(contactedStorageKey(user.username), JSON.stringify(merged)); } catch { /* storage full/unavailable */ }
         void apiSaveContacted(user.username, merged);
         return merged;
@@ -1823,13 +1811,17 @@ function AgencyOutreach({ result }: { result: EvalResult }) {
   function toggleContacted(agencyName: string) {
     setContacted((prev) => {
       const next = { ...prev };
+      const removals: string[] = [];
       if (next[agencyName]) {
         delete next[agencyName];
+        // Tell the server to remove this key explicitly, so the union merge
+        // on the server side doesn't keep it from a stale entry.
+        removals.push(agencyName);
       } else {
         next[agencyName] = new Date().toISOString().slice(0, 10);
       }
       try { localStorage.setItem(contactedStorageKey(user.username), JSON.stringify(next)); } catch { /* storage full/unavailable */ }
-      if (user.username) void apiSaveContacted(user.username, next);
+      if (user.username) void apiSaveContacted(user.username, next, removals);
       return next;
     });
   }
