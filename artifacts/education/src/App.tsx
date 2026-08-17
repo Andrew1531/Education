@@ -23,6 +23,8 @@ import {
   apiResetPassword,
   apiSyncSelf,
   apiSaveProfile,
+  apiSaveContacted,
+  apiFetchContacted,
   type EvalProfile,
 } from './api';
 
@@ -1786,6 +1788,26 @@ function AgencyOutreach({ result }: { result: EvalResult }) {
   const user = getSignedInUser();
   const [contacted, setContacted] = useState<Record<string, string>>(() => loadContacted(user.username));
 
+  // Restore checkmarks from the central database (best-effort). Server entries
+  // fill in agencies not marked locally; local marks always win, so offline
+  // behavior is unchanged. If the merge added anything, persist and push back.
+  useEffect(() => {
+    if (!user.username) return;
+    let cancelled = false;
+    void apiFetchContacted(user.username).then((remote) => {
+      if (cancelled || !remote || Object.keys(remote).length === 0) return;
+      setContacted((prev) => {
+        const merged = { ...remote, ...prev };
+        if (Object.keys(merged).length === Object.keys(prev).length) return prev;
+        try { localStorage.setItem(contactedStorageKey(user.username), JSON.stringify(merged)); } catch { /* storage full/unavailable */ }
+        void apiSaveContacted(user.username, merged);
+        return merged;
+      });
+    });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user.username]);
+
   function toggleContacted(agencyName: string) {
     setContacted((prev) => {
       const next = { ...prev };
@@ -1795,6 +1817,7 @@ function AgencyOutreach({ result }: { result: EvalResult }) {
         next[agencyName] = new Date().toISOString().slice(0, 10);
       }
       try { localStorage.setItem(contactedStorageKey(user.username), JSON.stringify(next)); } catch { /* storage full/unavailable */ }
+      if (user.username) void apiSaveContacted(user.username, next);
       return next;
     });
   }

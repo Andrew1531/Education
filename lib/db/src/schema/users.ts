@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -14,6 +14,8 @@ export const usersTable = pgTable("users", {
   degree: text("degree"),
   field: text("field"),
   purpose: text("purpose"),
+  // NACES agencies the user has marked as contacted: { [agencyName]: "YYYY-MM-DD" }
+  contactedAgencies: jsonb("contacted_agencies").$type<Record<string, string>>(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

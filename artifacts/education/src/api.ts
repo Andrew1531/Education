@@ -45,6 +45,7 @@ export class AdminKeyRequiredError extends Error {
   }
 }
 
+const AUTH_TOKEN_PREFIX = 'ge_auth_token_';
 const ADMIN_KEY_STORAGE = 'ge_admin_api_key';
 export function getAdminKey(): string { return localStorage.getItem(ADMIN_KEY_STORAGE) || ''; }
 export function setAdminKey(key: string): void { localStorage.setItem(ADMIN_KEY_STORAGE, key); }
@@ -98,14 +99,22 @@ async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
 
 export async function apiSignup(username: string, email: string, password: string, profile?: EvalProfile): Promise<{ ok: true } | { ok: false; error: string }> {
   const res = await apiFetch('/auth/signup', { method: 'POST', body: JSON.stringify({ username, email, password, profile }) });
-  if (res.status === 201) return { ok: true };
+  if (res.status === 201) {
+    const data = await res.json().catch(() => ({}));
+    saveUserToken(username, data.token);
+    return { ok: true };
+  }
   const data = await res.json().catch(() => ({}));
   return { ok: false, error: data.error || 'signup_failed' };
 }
 
 export async function apiSignin(username: string, password: string): Promise<{ ok: true } | { ok: false; error: string }> {
   const res = await apiFetch('/auth/signin', { method: 'POST', body: JSON.stringify({ username, password }) });
-  if (res.ok) return { ok: true };
+  if (res.ok) {
+    const data = await res.json().catch(() => ({}));
+    saveUserToken(username, data.token);
+    return { ok: true };
+  }
   const data = await res.json().catch(() => ({}));
   return { ok: false, error: data.error || 'signin_failed' };
 }
@@ -118,7 +127,11 @@ export async function apiSignin(username: string, password: string): Promise<{ o
  */
 export async function apiSyncSelf(user: StoredUser, profile?: EvalProfile): Promise<void> {
   try {
-    await apiFetch('/auth/sync', { method: 'POST', body: JSON.stringify({ ...user, profile }) });
+    const res = await apiFetch('/auth/sync', { method: 'POST', body: JSON.stringify({ ...user, profile }) });
+    if (res.ok) {
+      const data = await res.json().catch(() => ({}));
+      saveUserToken(user.username, data.token);
+    }
   } catch { /* offline / backend not published yet */ }
 }
 
@@ -129,6 +142,22 @@ export async function apiSaveProfile(username: string, profile: EvalProfile): Pr
   } catch { /* best-effort */ }
 }
 
+/**
+ * Save the signed-in user's contacted-agency checkmarks. Full replace so
+ * un-checking syncs too. Best-effort: errors are swallowed, localStorage
+ * remains the source of truth.
+ */
+export async function apiSaveContacted(username: string, contacted: Record<string, string>): Promise<void> {
+  const token = getUserToken(username);
+  if (!token) return; // not authenticated with the backend yet — local-only
+  try {
+    await apiFetch('/auth/contacted', {
+      method: 'POST',
+      body: JSON.stringify({ username, contacted }),
+      headers: { 'x-auth-token': token },
+    });
+  } catch { /* best-effort */ }
+}
 export async function apiListUsers(): Promise<ServerUser[]> {
   const res = await apiFetch('/users', { headers: adminHeaders() });
   throwIfAdminRejected(res);
@@ -157,4 +186,33 @@ export async function apiResetPassword(username: string, password: string): Prom
   const res = await apiFetch(`/users/${encodeURIComponent(username)}/password`, { method: 'PATCH', body: JSON.stringify({ password }), headers: adminHeaders() });
   throwIfAdminRejected(res);
   if (!res.ok) throw new ApiUnavailableError();
+}
+
+/**
+ * Fetch the user's contacted-agency checkmarks from the central database.
+ * Returns null when the backend is unavailable or the account is unknown.
+ */
+export async function apiFetchContacted(username: string): Promise<Record<string, string> | null> {
+  const token = getUserToken(username);
+  if (!token) return null; // not authenticated with the backend yet
+  try {
+    const res = await apiFetch(`/auth/contacted?username=${encodeURIComponent(username)}`, { headers: { 'x-auth-token': token } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data && typeof data.contacted === 'object' && data.contacted !== null && !Array.isArray(data.contacted)) {
+      return data.contacted as Record<string, string>;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export function getUserToken(username: string): string {
+  try { return localStorage.getItem(AUTH_TOKEN_PREFIX + username.trim().toLowerCase()) || ''; } catch { return ''; }
+}
+
+function saveUserToken(username: string, token: unknown): void {
+  if (typeof token !== 'string' || !token) return;
+  try { localStorage.setItem(AUTH_TOKEN_PREFIX + username.trim().toLowerCase(), token); } catch { /* storage unavailable */ }
 }

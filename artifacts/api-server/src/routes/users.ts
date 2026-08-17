@@ -3,6 +3,7 @@ import { randomBytes, pbkdf2, createHash, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
 import { eq } from "drizzle-orm";
 import { db, usersTable } from "@workspace/db";
+import { issueUserToken, verifyUserToken } from "../lib/userToken";
 
 const pbkdf2Async = promisify(pbkdf2);
 const router: IRouter = Router();
@@ -103,7 +104,7 @@ router.post("/auth/signup", async (req, res) => {
   if (inserted.length === 0) {
     return res.status(409).json({ error: "username_taken" });
   }
-  return res.status(201).json({ user: publicUser(inserted[0]!) });
+  return res.status(201).json({ user: publicUser(inserted[0]!), token: issueUserToken(uname) });
 });
 
 // Sign in — supports records imported from browsers that stored older
@@ -131,7 +132,7 @@ router.post("/auth/signin", async (req, res) => {
     }
   }
   if (!valid) return res.status(401).json({ error: "invalid_credentials" });
-  return res.json({ user: publicUser(user) });
+  return res.json({ user: publicUser(user), token: issueUserToken(user.username) });
 });
 
 // Self-sync: a visitor's browser pushes its own locally-stored account (and
@@ -169,7 +170,13 @@ router.post("/auth/sync", async (req, res) => {
       }
     }
   }
-  return res.json({ ok: true });
+  // Issue a token when the caller proved knowledge of the stored password
+  // hash (it either just created the record, or sent a matching hash).
+  const [row] = inserted.length > 0
+    ? inserted
+    : await db.select().from(usersTable).where(eq(usersTable.username, username.trim()));
+  const token = row && safeEqual(row.passwordHash, password) ? issueUserToken(row.username) : null;
+  return res.json({ ok: true, token });
 });
 
 // Save the signed-in user's evaluation profile (school, country, intention…)
@@ -187,6 +194,57 @@ router.post("/auth/profile", async (req, res) => {
     .returning();
   if (!updated) return res.status(404).json({ error: "not_found" });
   return res.json({ user: publicUser(updated) });
+});
+
+/**
+ * Sanitize a contacted-agencies map: { [agencyName]: "YYYY-MM-DD" }.
+ * Returns null when the payload is not a plain object. Caps entry count and
+ * string lengths so the column cannot be abused as arbitrary storage.
+ */
+function cleanContacted(body: unknown): Record<string, string> | null {
+  if (!body || typeof body !== "object" || Array.isArray(body)) return null;
+  const out: Record<string, string> = {};
+  let count = 0;
+  for (const [k, v] of Object.entries(body as Record<string, unknown>)) {
+    if (typeof v !== "string" || !k.trim()) continue;
+    out[k.slice(0, 200)] = v.slice(0, 40);
+    if (++count >= 100) break;
+  }
+  return out;
+}
+
+// Fetch the signed-in user's contacted-agency checkmarks (restores them on a new device).
+// Requires the caller's x-auth-token to match the requested username.
+router.get("/auth/contacted", async (req, res) => {
+  const username = typeof req.query.username === "string" ? req.query.username.trim() : "";
+  if (!username) return res.status(400).json({ error: "username is required" });
+  if (!verifyUserToken(username, req.header("x-auth-token"))) {
+    return res.status(401).json({ error: "unauthorized" });
+  }
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.username, username));
+  if (!user) return res.status(404).json({ error: "not_found" });
+  return res.json({ contacted: user.contactedAgencies ?? {} });
+});
+
+// Save the signed-in user's contacted-agency checkmarks (full replace, so
+// un-checking an agency syncs too)
+router.post("/auth/contacted", async (req, res) => {
+  const { username } = req.body ?? {};
+  if (typeof username !== "string" || !username.trim()) {
+    return res.status(400).json({ error: "username is required" });
+  }
+  if (!verifyUserToken(username, req.header("x-auth-token"))) {
+    return res.status(401).json({ error: "unauthorized" });
+  }
+  const contacted = cleanContacted(req.body?.contacted);
+  if (contacted === null) return res.status(400).json({ error: "contacted must be an object" });
+  const [updated] = await db
+    .update(usersTable)
+    .set({ contactedAgencies: contacted })
+    .where(eq(usersTable.username, username.trim()))
+    .returning();
+  if (!updated) return res.status(404).json({ error: "not_found" });
+  return res.json({ ok: true });
 });
 
 // Admin: list all users (no password material exposed)

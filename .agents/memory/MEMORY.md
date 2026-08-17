@@ -1,1 +1,2 @@
 - [Hybrid backend/local account sync](hybrid-backend-sync.md) — static Pages frontend + optional Replit API; non-JSON 404 = backend unavailable; pre-backend visitor data is unrecoverable.
+- [Per-user sync auth & schema deploys](per-user-sync-auth.md) — per-user endpoints need the HMAC user token, and new columns need an idempotent startup migration (deploys never run db push).
