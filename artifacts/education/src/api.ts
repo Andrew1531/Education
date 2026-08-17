@@ -36,7 +36,13 @@ export class ApiUnavailableError extends Error {
 }
 
 export class AdminKeyRequiredError extends Error {
-  constructor() { super('Admin key required'); this.name = 'AdminKeyRequiredError'; }
+  /** True when the server itself has no admin key configured yet (needs republish). */
+  readonly notConfigured: boolean;
+  constructor(notConfigured = false) {
+    super('Admin key required');
+    this.name = 'AdminKeyRequiredError';
+    this.notConfigured = notConfigured;
+  }
 }
 
 const ADMIN_KEY_STORAGE = 'ge_admin_api_key';
@@ -49,7 +55,8 @@ function adminHeaders(): Record<string, string> {
 }
 
 function throwIfAdminRejected(res: Response): void {
-  if (res.status === 401 || res.status === 503) throw new AdminKeyRequiredError();
+  if (res.status === 401) throw new AdminKeyRequiredError();
+  if (res.status === 503) throw new AdminKeyRequiredError(true);
 }
 
 /**

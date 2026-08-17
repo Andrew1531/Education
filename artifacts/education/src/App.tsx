@@ -339,6 +339,7 @@ const TX = {
     adminKeyPlaceholder: 'Admin key…',
     adminKeyBtn: 'Unlock',
     adminKeyRejected: 'The saved key was rejected — please enter it again.',
+    adminKeyNotConfigured: "The server doesn't have an admin key loaded yet — it needs to be republished on Replit after the key is saved. Until then, no key will be accepted.",
     adminFieldSchool: 'School',
     adminFieldCountry: 'Country',
     adminFieldIntention: 'Intention',
@@ -699,6 +700,7 @@ const TX = {
     adminKeyPlaceholder: 'Clave de administrador…',
     adminKeyBtn: 'Desbloquear',
     adminKeyRejected: 'La clave guardada fue rechazada — ingrésala de nuevo.',
+    adminKeyNotConfigured: 'El servidor aún no tiene una clave de administrador cargada — debe republicarse en Replit después de guardar la clave. Hasta entonces, ninguna clave será aceptada.',
     adminFieldSchool: 'Institución',
     adminFieldCountry: 'País',
     adminFieldIntention: 'Intención',
@@ -2212,6 +2214,8 @@ function AdminPage() {
   const [resetMsg, setResetMsg]       = useState('');
   const [deleteTarget, setDeleteTarget] = useState<StoredUser | null>(null);
   const [needKey, setNeedKey]         = useState(false);
+  const [keyNotConfigured, setKeyNotConfigured] = useState(false);
+  const [keyNotConfigured, setKeyNotConfigured] = useState(false);
   const [keyInput, setKeyInput]       = useState('');
 
   function serverToStored(u: ServerUser): AdminUser {
@@ -2250,6 +2254,7 @@ function AdminPage() {
     } catch (e) {
       if (e instanceof AdminKeyRequiredError) {
         setNeedKey(true);
+        setKeyNotConfigured(e.notConfigured);
         setUsers([]);
         setServerMode(true);
         return;
@@ -2359,7 +2364,9 @@ function AdminPage() {
       {needKey && (
         <div className="glass-panel rounded-2xl p-6 mb-6 border border-indigo-500/30">
           <h2 className="text-white font-bold text-sm mb-1">{t('adminKeyTitle')}</h2>
-          <p className="text-slate-400 text-xs mb-4">{t('adminKeyDesc')}</p>
+          <p className={`text-xs mb-4 ${keyNotConfigured ? 'text-amber-400' : 'text-slate-400'}`}>
+            {keyNotConfigured ? t('adminKeyNotConfigured') : t('adminKeyDesc')}
+          </p>
           <form
             className="flex gap-2"
             onSubmit={(e) => { e.preventDefault(); setAdminKey(keyInput.trim()); setKeyInput(''); refresh(); }}
@@ -2374,7 +2381,7 @@ function AdminPage() {
             />
             <button type="submit" className="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all cursor-pointer flex-shrink-0">{t('adminKeyBtn')}</button>
           </form>
-          {getAdminKey() && <p className="text-amber-400 text-xs mt-3">{t('adminKeyRejected')}</p>}
+          {!keyNotConfigured && getAdminKey() && <p className="text-amber-400 text-xs mt-3">{t('adminKeyRejected')}</p>}
         </div>
       )}
 
