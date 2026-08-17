@@ -1149,6 +1149,7 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
           const r = await apiSignup(username.trim(), trimmedEmail, password, signupProfile);
           if (!r.ok) {
             if (r.error === 'username_taken') { setIsSignUp(false); setError(t('errTaken')); }
+            else if (r.error === 'valid_email_required') { setError(t('errEmail')); }
             else setError(t('errUnexpected'));
             return;
           }
