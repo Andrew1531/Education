@@ -10,16 +10,20 @@ describe('isUnavailableResponse', () => {
     expect(isUnavailableResponse(fakeRes(404, 'text/html; charset=utf-8'))).toBe(true);
   });
 
-  it('treats gateway errors without JSON as backend-unavailable', () => {
+  it('treats any non-JSON error (gateway, cold start, rate limit) as backend-unavailable', () => {
     expect(isUnavailableResponse(fakeRes(502, 'text/html'))).toBe(true);
     expect(isUnavailableResponse(fakeRes(503, null))).toBe(true);
     expect(isUnavailableResponse(fakeRes(504, 'text/plain'))).toBe(true);
+    expect(isUnavailableResponse(fakeRes(500, 'text/html'))).toBe(true);
+    expect(isUnavailableResponse(fakeRes(429, 'text/html'))).toBe(true);
   });
 
   it('keeps real API responses, including JSON 404s and auth failures', () => {
     expect(isUnavailableResponse(fakeRes(404, 'application/json'))).toBe(false);
     expect(isUnavailableResponse(fakeRes(401, 'application/json'))).toBe(false);
     expect(isUnavailableResponse(fakeRes(409, 'application/json'))).toBe(false);
+    expect(isUnavailableResponse(fakeRes(400, 'application/json'))).toBe(false);
     expect(isUnavailableResponse(fakeRes(200, 'application/json'))).toBe(false);
+    expect(isUnavailableResponse(fakeRes(200, 'text/html'))).toBe(false);
   });
 });

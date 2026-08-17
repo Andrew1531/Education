@@ -66,7 +66,11 @@ function throwIfAdminRejected(res: Response): void {
  * device-local fallback, not be mistaken for an auth failure.
  */
 export function isUnavailableResponse(res: { status: number; headers: { get(name: string): string | null } }): boolean {
-  if ([404, 502, 503, 504].includes(res.status)) {
+  // The real API always answers JSON. Any error response without JSON is
+  // infrastructure (SPA 404 page, gateway error, hosting cold-start page…)
+  // and should trigger the device-local fallback instead of surfacing as a
+  // confusing auth error.
+  if (res.status >= 400) {
     const ct = res.headers.get('content-type') || '';
     return !ct.includes('application/json');
   }
