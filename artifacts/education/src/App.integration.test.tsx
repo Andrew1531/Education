@@ -325,3 +325,71 @@ describe('App — sign-up rejects duplicate username', () => {
     expect(stored).toHaveLength(2);
   });
 });
+
+// ─── Sign-up email validation ──────────────────────────────────────────────────
+
+describe('App — sign-up rejects invalid email', () => {
+  async function renderAndSubmitSignUp(username: string, password: string, email: string) {
+    await act(async () => { render(<App />); });
+
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('input-username'), { target: { value: username } });
+      fireEvent.change(screen.getByTestId('input-password'), { target: { value: password } });
+      fireEvent.change(screen.getByTestId('input-email'),    { target: { value: email } });
+    });
+
+    await act(async () => {
+      fireEvent.submit(screen.getByTestId('form-auth'));
+    });
+  }
+
+  it('shows the email error message when email is empty', async () => {
+    await renderAndSubmitSignUp('carol', 'anypassword', '');
+
+    await waitFor(() => {
+      expect(screen.queryByText(/valid email address/i)).not.toBeNull();
+    });
+  });
+
+  it('shows the email error message when email is malformed (no @)', async () => {
+    await renderAndSubmitSignUp('carol', 'anypassword', 'notanemail');
+
+    await waitFor(() => {
+      expect(screen.queryByText(/valid email address/i)).not.toBeNull();
+    });
+  });
+
+  it('shows the email error message when email is malformed (no TLD)', async () => {
+    await renderAndSubmitSignUp('carol', 'anypassword', 'user@nodomain');
+
+    await waitFor(() => {
+      expect(screen.queryByText(/valid email address/i)).not.toBeNull();
+    });
+  });
+
+  it('does not create an account when email is empty', async () => {
+    await renderAndSubmitSignUp('carol', 'anypassword', '');
+
+    await waitFor(() => {
+      expect(screen.queryByText(/valid email address/i)).not.toBeNull();
+    });
+
+    // User must not be logged in
+    expect(screen.queryByTestId('nav-user-badge')).toBeNull();
+    // Nothing written to the store
+    const stored = JSON.parse(localStorage.getItem(USERS_KEY) ?? '[]') as unknown[];
+    expect(stored).toHaveLength(0);
+  });
+
+  it('does not create an account when email is malformed', async () => {
+    await renderAndSubmitSignUp('carol', 'anypassword', 'bad@@email');
+
+    await waitFor(() => {
+      expect(screen.queryByText(/valid email address/i)).not.toBeNull();
+    });
+
+    expect(screen.queryByTestId('nav-user-badge')).toBeNull();
+    const stored = JSON.parse(localStorage.getItem(USERS_KEY) ?? '[]') as unknown[];
+    expect(stored).toHaveLength(0);
+  });
+});
