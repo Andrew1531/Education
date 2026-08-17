@@ -71,7 +71,9 @@ export function isUnavailableResponse(res: { status: number; headers: { get(name
   // infrastructure (SPA 404 page, gateway error, hosting cold-start page…)
   // and should trigger the device-local fallback instead of surfacing as a
   // confusing auth error.
-  if (res.status >= 400) {
+  // 401/403/429 are deliberate rejections and must surface as errors, never
+  // silently fall back to device-local accounts.
+  if (res.status === 404 || res.status >= 500) {
     const ct = res.headers.get('content-type') || '';
     return !ct.includes('application/json');
   }

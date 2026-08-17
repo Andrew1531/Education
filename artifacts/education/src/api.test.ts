@@ -16,7 +16,12 @@ describe('isUnavailableResponse', () => {
     expect(isUnavailableResponse(fakeRes(503, null))).toBe(true);
     expect(isUnavailableResponse(fakeRes(504, 'text/plain'))).toBe(true);
     expect(isUnavailableResponse(fakeRes(500, 'text/html'))).toBe(true);
-    expect(isUnavailableResponse(fakeRes(429, 'text/html'))).toBe(true);
+  });
+
+  it('never treats deliberate rejections as outages, even without JSON', () => {
+    expect(isUnavailableResponse(fakeRes(401, 'text/html'))).toBe(false);
+    expect(isUnavailableResponse(fakeRes(403, 'text/html'))).toBe(false);
+    expect(isUnavailableResponse(fakeRes(429, 'text/html'))).toBe(false);
   });
 
   it('keeps real API responses, including JSON 404s and auth failures', () => {
