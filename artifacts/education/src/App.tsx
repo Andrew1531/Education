@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, useMemo, createContext, useContext } from 'react';
 import { Link, Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { hashPassword, verifyAndMigratePassword } from './auth';
 import {
@@ -1905,12 +1905,17 @@ function AgencyOutreach({ result }: { result: EvalResult }) {
 
 function EvaluatorView() {
   const { lang, t } = useLang();
-  const [country, setCountry] = useState('');
-  const [institution, setInstitution] = useState('');
-  const [degree, setDegree] = useState('');
-  const [field, setField] = useState('');
+  // Prefill from what the user already told us (sign-up questions or a
+  // previous evaluation) — never ask the same question twice.
+  const saved = useMemo<EvalProfile>(() => {
+    try { return JSON.parse(localStorage.getItem('ge_profile') || 'null') || {}; } catch { return {}; }
+  }, []);
+  const [country, setCountry] = useState(saved.country || '');
+  const [institution, setInstitution] = useState(saved.institution || '');
+  const [degree, setDegree] = useState(saved.degree || '');
+  const [field, setField] = useState(saved.field || '');
   const [credits, setCredits] = useState('');
-  const [purpose, setPurpose] = useState('');
+  const [purpose, setPurpose] = useState(saved.purpose || '');
   const [result, setResult] = useState<EvalResult | null>(null);
   const [checkedSteps, setCheckedSteps] = useState<boolean[]>([false, false, false, false]);
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
