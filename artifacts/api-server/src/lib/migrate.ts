@@ -10,5 +10,8 @@ export async function ensureSchema(): Promise<void> {
   await pool.query(
     "ALTER TABLE users ADD COLUMN IF NOT EXISTS contacted_agencies jsonb",
   );
-  logger.info("Schema ensured (contacted_agencies)");
+  await pool.query(
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS roadmap_steps jsonb",
+  );
+  logger.info("Schema ensured (contacted_agencies, roadmap_steps)");
 }

@@ -26,6 +26,8 @@ import {
   apiSaveProfile,
   apiSaveContacted,
   apiFetchContacted,
+  apiSaveRoadmapSteps,
+  apiFetchRoadmapSteps,
   type EvalProfile,
 } from './api';
 
@@ -1927,9 +1929,39 @@ function EvaluatorView() {
   const [credits, setCredits] = useState('');
   const [purpose, setPurpose] = useState(saved.purpose || '');
   const [result, setResult] = useState<EvalResult | null>(null);
-  const [checkedSteps, setCheckedSteps] = useState<boolean[]>([false, false, false, false]);
+  const evalUser = getSignedInUser();
+  const roadmapStepsKey = `ge_roadmap_steps_${evalUser.username.toLowerCase() || 'anon'}`;
+  const [checkedSteps, setCheckedSteps] = useState<boolean[]>(() => {
+    try {
+      const raw = localStorage.getItem(roadmapStepsKey);
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(parsed)) return [Boolean(parsed[0]), Boolean(parsed[1]), Boolean(parsed[2]), Boolean(parsed[3])];
+    } catch { /* corrupted — start fresh */ }
+    return [false, false, false, false];
+  });
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
   const [downloaded, setDownloaded] = useState(false);
+
+  // Restore roadmap step checkmarks from the central database (best-effort).
+  // Server entries fill in steps not checked locally; local marks always win.
+  // If the merge added anything, persist locally and push back.
+  useEffect(() => {
+    if (!evalUser.username) return;
+    let cancelled = false;
+    void apiFetchRoadmapSteps(evalUser.username).then((remote) => {
+      if (cancelled || !Array.isArray(remote) || remote.length === 0) return;
+      setCheckedSteps((prev) => {
+        const merged: boolean[] = prev.map((local, i) => local || Boolean(remote[i]));
+        const anyNew = merged.some((v, i) => v && !prev[i]);
+        if (!anyNew) return prev;
+        try { localStorage.setItem(roadmapStepsKey, JSON.stringify(merged)); } catch { /* storage full/unavailable */ }
+        void apiSaveRoadmapSteps(evalUser.username, merged);
+        return merged;
+      });
+    });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [evalUser.username]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -1937,7 +1969,8 @@ function EvaluatorView() {
     // at render time from the active language, so toggling language after submission
     // always shows text in the current locale without re-submitting the form.
     setResult({ country, institution, degree, field, purpose });
-    setCheckedSteps([false, false, false, false]);
+    const resetSteps: boolean[] = [false, false, false, false];
+    setCheckedSteps(resetSteps);
     setExpandedStep(null);
     setDownloaded(false);
     // Persist evaluation details so the admin board can show school/country/intention.
@@ -1945,6 +1978,9 @@ function EvaluatorView() {
     try { localStorage.setItem('ge_profile', JSON.stringify(profile)); } catch { /* storage full/blocked */ }
     const username = localStorage.getItem(STORAGE_KEY);
     if (username) void apiSaveProfile(username, profile);
+    // Reset roadmap steps on new evaluation (new inputs = fresh progress)
+    try { localStorage.setItem(roadmapStepsKey, JSON.stringify(resetSteps)); } catch { /* storage full/blocked */ }
+    if (username) void apiSaveRoadmapSteps(username, resetSteps);
     if (window.innerWidth < 1024) {
       setTimeout(() => { document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' }); }, 100);
     }
@@ -1952,7 +1988,12 @@ function EvaluatorView() {
 
   function toggleStep(i: number) {
     const next = !checkedSteps[i];
-    setCheckedSteps((prev) => prev.map((v, idx) => (idx === i ? next : v)));
+    setCheckedSteps((prev) => {
+      const updated = prev.map((v, idx) => (idx === i ? next : v));
+      try { localStorage.setItem(roadmapStepsKey, JSON.stringify(updated)); } catch { /* storage full/unavailable */ }
+      if (evalUser.username) void apiSaveRoadmapSteps(evalUser.username, updated);
+      return updated;
+    });
     setExpandedStep(next ? i : (expandedStep === i ? null : expandedStep));
   }
 

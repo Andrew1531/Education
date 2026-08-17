@@ -16,6 +16,8 @@ export const usersTable = pgTable("users", {
   purpose: text("purpose"),
   // NACES agencies the user has marked as contacted: { [agencyName]: "YYYY-MM-DD" }
   contactedAgencies: jsonb("contacted_agencies").$type<Record<string, string>>(),
+  // Roadmap step checkboxes: boolean[] indexed by step position
+  roadmapSteps: jsonb("roadmap_steps").$type<boolean[]>(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

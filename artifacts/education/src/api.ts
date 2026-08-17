@@ -199,6 +199,41 @@ export async function apiResetPassword(username: string, password: string): Prom
 }
 
 /**
+ * Save the signed-in user's roadmap step checkmarks. Full replace so
+ * un-checking syncs too. Best-effort: errors are swallowed, localStorage
+ * remains the source of truth.
+ */
+export async function apiSaveRoadmapSteps(username: string, steps: boolean[]): Promise<void> {
+  const token = getUserToken(username);
+  if (!token) return; // not authenticated with the backend yet — local-only
+  try {
+    await apiFetch('/auth/roadmap-steps', {
+      method: 'POST',
+      body: JSON.stringify({ username, roadmapSteps: steps }),
+      headers: { 'x-auth-token': token },
+    });
+  } catch { /* best-effort */ }
+}
+
+/**
+ * Fetch the user's roadmap step checkmarks from the central database.
+ * Returns null when the backend is unavailable or the account is unknown.
+ */
+export async function apiFetchRoadmapSteps(username: string): Promise<boolean[] | null> {
+  const token = getUserToken(username);
+  if (!token) return null; // not authenticated with the backend yet
+  try {
+    const res = await apiFetch(`/auth/roadmap-steps?username=${encodeURIComponent(username)}`, { headers: { 'x-auth-token': token } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (Array.isArray(data?.roadmapSteps)) return data.roadmapSteps as boolean[];
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetch the user's contacted-agency checkmarks from the central database.
  * Returns null when the backend is unavailable or the account is unknown.
  */

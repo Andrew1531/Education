@@ -247,6 +247,48 @@ router.post("/auth/contacted", async (req, res) => {
   return res.json({ ok: true });
 });
 
+/**
+ * Sanitize a roadmap-steps array: boolean[] of up to 20 elements.
+ * Returns null when the payload is not an array.
+ */
+function cleanRoadmapSteps(body: unknown): boolean[] | null {
+  if (!Array.isArray(body)) return null;
+  return body.slice(0, 20).map((v) => Boolean(v));
+}
+
+// Fetch the signed-in user's roadmap step checkmarks (restores them on a new device).
+// Requires the caller's x-auth-token to match the requested username.
+router.get("/auth/roadmap-steps", async (req, res) => {
+  const username = typeof req.query.username === "string" ? req.query.username.trim() : "";
+  if (!username) return res.status(400).json({ error: "username is required" });
+  if (!verifyUserToken(username, req.header("x-auth-token"))) {
+    return res.status(401).json({ error: "unauthorized" });
+  }
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.username, username));
+  if (!user) return res.status(404).json({ error: "not_found" });
+  return res.json({ roadmapSteps: user.roadmapSteps ?? [] });
+});
+
+// Save the signed-in user's roadmap step checkmarks (full replace).
+router.post("/auth/roadmap-steps", async (req, res) => {
+  const { username } = req.body ?? {};
+  if (typeof username !== "string" || !username.trim()) {
+    return res.status(400).json({ error: "username is required" });
+  }
+  if (!verifyUserToken(username, req.header("x-auth-token"))) {
+    return res.status(401).json({ error: "unauthorized" });
+  }
+  const roadmapSteps = cleanRoadmapSteps(req.body?.roadmapSteps);
+  if (roadmapSteps === null) return res.status(400).json({ error: "roadmapSteps must be an array" });
+  const [updated] = await db
+    .update(usersTable)
+    .set({ roadmapSteps })
+    .where(eq(usersTable.username, username.trim()))
+    .returning();
+  if (!updated) return res.status(404).json({ error: "not_found" });
+  return res.json({ ok: true });
+});
+
 // Admin: list all users (no password material exposed)
 router.get("/users", adminGuard, async (_req, res) => {
   const rows = await db.select().from(usersTable);
