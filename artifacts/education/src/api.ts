@@ -85,8 +85,8 @@ async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
   return res;
 }
 
-export async function apiSignup(username: string, email: string, password: string): Promise<{ ok: true } | { ok: false; error: string }> {
-  const res = await apiFetch('/auth/signup', { method: 'POST', body: JSON.stringify({ username, email, password }) });
+export async function apiSignup(username: string, email: string, password: string, profile?: EvalProfile): Promise<{ ok: true } | { ok: false; error: string }> {
+  const res = await apiFetch('/auth/signup', { method: 'POST', body: JSON.stringify({ username, email, password, profile }) });
   if (res.status === 201) return { ok: true };
   const data = await res.json().catch(() => ({}));
   return { ok: false, error: data.error || 'signup_failed' };

@@ -1105,7 +1105,25 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [country, setCountry] = useState('');
+  const [purpose, setPurpose] = useState('');
   const [error, setError] = useState('');
+
+  /** Merge the sign-up answers into the saved eval profile (without clobbering
+   *  anything the evaluator already captured) so the admin board and later
+   *  syncs see them even if the user never runs the evaluator. */
+  function saveSignupProfile(): void {
+    const trimmed = { country: country.trim(), purpose };
+    if (!trimmed.country && !trimmed.purpose) return;
+    let existing: EvalProfile = {};
+    try { existing = JSON.parse(localStorage.getItem('ge_profile') || 'null') || {}; } catch { /* ignore */ }
+    const merged: EvalProfile = {
+      ...existing,
+      ...(trimmed.country && !existing.country ? { country: trimmed.country } : {}),
+      ...(trimmed.purpose && !existing.purpose ? { purpose: trimmed.purpose } : {}),
+    };
+    localStorage.setItem('ge_profile', JSON.stringify(merged));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -1122,12 +1140,15 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
       // from any device; fall back to this browser's storage when offline.
       try {
         if (isSignUp) {
-          const r = await apiSignup(username.trim(), trimmedEmail, password);
+          const signupProfile: EvalProfile | undefined =
+            country.trim() || purpose ? { ...(country.trim() ? { country: country.trim() } : {}), ...(purpose ? { purpose } : {}) } : undefined;
+          const r = await apiSignup(username.trim(), trimmedEmail, password, signupProfile);
           if (!r.ok) {
             if (r.error === 'username_taken') { setIsSignUp(false); setError(t('errTaken')); }
             else setError(t('errUnexpected'));
             return;
           }
+          saveSignupProfile();
         } else {
           const r = await apiSignin(username.trim(), password);
           if (!r.ok) { setError(t('errCredentials')); return; }
@@ -1164,6 +1185,7 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
           createdAt: new Date().toISOString(),
         };
         saveUsers([...users, newUser]);
+        saveSignupProfile();
       } else {
         const user = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
         if (!user) {
@@ -1302,6 +1324,28 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('lEmail')}</label>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="input-email" className={iCls} placeholder={t('pEmail')} required />
               </div>
+            )}
+            {isSignUp && (
+              <>
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                    {t('evalLCountry')} <span className="text-slate-600 normal-case">{t('evalLCreditsOpt')}</span>
+                  </label>
+                  <input value={country} onChange={(e) => setCountry(e.target.value)} data-testid="input-signup-country" className={iCls} placeholder={t('evalPCountry')} />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                    {t('evalLGoal')} <span className="text-slate-600 normal-case">{t('evalLCreditsOpt')}</span>
+                  </label>
+                  <select value={purpose} onChange={(e) => setPurpose(e.target.value)} data-testid="select-signup-goal" className={iCls}>
+                    <option value="">{t('evalOptGoal')}</option>
+                    <option value="University Admission">{t('evalGoal1')}</option>
+                    <option value="Employment & HR">{t('evalGoal2')}</option>
+                    <option value="Professional Licensing">{t('evalGoal3')}</option>
+                    <option value="Immigration (USCIS)">{t('evalGoal4')}</option>
+                  </select>
+                </div>
+              </>
             )}
             {error && (
               <p className="text-red-400 text-xs font-medium bg-red-900/20 border border-red-500/30 rounded-lg px-3 py-2">{error}</p>

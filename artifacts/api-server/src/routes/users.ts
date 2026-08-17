@@ -92,11 +92,12 @@ router.post("/auth/signup", async (req, res) => {
     return res.status(400).json({ error: "valid_email_required" });
   }
   const uname = username.trim();
+  const profile = cleanProfile(req.body?.profile);
   const { hash, salt } = await hashPassword(password);
   // Conflict-safe insert: simultaneous signups cannot 500 on the unique index
   const inserted = await db
     .insert(usersTable)
-    .values({ username: uname, email: email.trim(), passwordHash: hash, salt })
+    .values({ username: uname, email: email.trim(), passwordHash: hash, salt, ...profile })
     .onConflictDoNothing({ target: usersTable.username })
     .returning();
   if (inserted.length === 0) {
