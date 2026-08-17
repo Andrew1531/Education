@@ -9,6 +9,7 @@ import {
 } from './userStore';
 import { StorageCorruptBanner } from './StorageCorruptBanner';
 import { jobSearchUrl, getAlignedRoles } from './jobRoles';
+import { CountryPicker } from './CountryPicker';
 import {
   type ServerUser,
   ApiUnavailableError,
@@ -1344,7 +1345,7 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
                     {t('evalLCountry')} <span className="text-slate-600 normal-case">{t('evalLCreditsOpt')}</span>
                   </label>
-                  <input value={country} onChange={(e) => setCountry(e.target.value)} data-testid="input-signup-country" className={iCls} placeholder={t('evalPCountry')} />
+                  <CountryPicker value={country} onChange={setCountry} data-testid="input-signup-country" className={iCls} placeholder={t('evalPCountry')} />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
@@ -1982,7 +1983,7 @@ function EvaluatorView() {
             <form onSubmit={handleSubmit} className="space-y-5" data-testid="form-eval">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLCountry')}</label>
-                <input value={country} onChange={(e) => setCountry(e.target.value)} data-testid="input-country" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPCountry')} required />
+                <CountryPicker value={country} onChange={setCountry} data-testid="input-country" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPCountry')} required />
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLInstitution')}</label>
