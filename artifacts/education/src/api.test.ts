@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { isUnavailableResponse, apiSaveContacted, apiFetchContacted, apiSignin } from './api';
+import { isUnavailableResponse, apiSaveContacted, apiFetchContacted, apiSignin, apiSignup } from './api';
 
 function fakeRes(status: number, contentType: string | null) {
   return { status, headers: { get: (n: string) => (n.toLowerCase() === 'content-type' ? contentType : null) } };
@@ -68,5 +68,59 @@ describe('contacted-agency sync auth', () => {
     localStorage.setItem('ge_auth_token_bob', 'tok-bob');
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(jsonResponse(401, { error: 'unauthorized' }));
     expect(await apiFetchContacted('bob')).toBeNull();
+  });
+});
+
+describe('apiSignup — profile forwarding (country + goal)', () => {
+  const jsonResponse = (status: number, body: unknown) =>
+    new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+
+  beforeEach(() => localStorage.clear());
+  afterEach(() => vi.restoreAllMocks());
+
+  it('sends country and purpose nested under a profile key in the request body', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      jsonResponse(201, { user: {}, token: 'tok-alice' }),
+    );
+
+    await apiSignup('alice', 'alice@example.com', 'pw', { country: 'Nigeria', purpose: 'Employment & HR' });
+
+    const body = JSON.parse((fetchSpy.mock.calls[0]![1] as RequestInit).body as string) as Record<string, unknown>;
+    expect((body.profile as Record<string, string>).country).toBe('Nigeria');
+    expect((body.profile as Record<string, string>).purpose).toBe('Employment & HR');
+  });
+
+  it('omits the profile key entirely when no profile object is passed', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      jsonResponse(201, { user: {}, token: 'tok-bob' }),
+    );
+
+    await apiSignup('bob', 'bob@example.com', 'pw');
+
+    const body = JSON.parse((fetchSpy.mock.calls[0]![1] as RequestInit).body as string) as Record<string, unknown>;
+    expect(body.profile).toBeUndefined();
+  });
+
+  it('returns ok:true and stores the auth token on success', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      jsonResponse(201, { user: {}, token: 'tok-carol' }),
+    );
+
+    const result = await apiSignup('carol', 'carol@example.com', 'pw', { country: 'Brazil' });
+
+    expect(result.ok).toBe(true);
+    // Token must be saved for the username (case-insensitive key)
+    expect(localStorage.getItem('ge_auth_token_carol')).toBe('tok-carol');
+  });
+
+  it('returns ok:false with username_taken when the server responds 409', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      jsonResponse(409, { error: 'username_taken' }),
+    );
+
+    const result = await apiSignup('alice', 'alice@example.com', 'pw', { country: 'India' });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toBe('username_taken');
   });
 });

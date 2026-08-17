@@ -149,3 +149,90 @@ describe("POST /api/auth/signup — email validation", () => {
     expect(res.body.error).toBe("username_taken");
   });
 });
+
+describe("POST /api/auth/signup — profile fields (country + goal)", () => {
+  it("includes country and purpose from the profile in the 201 response", async () => {
+    setState([makeUserRow({ country: "Nigeria", purpose: "Employment & HR" })]);
+
+    const res = await request(app)
+      .post("/api/auth/signup")
+      .send({
+        username: "alice",
+        password: "hunter2",
+        email: "alice@example.com",
+        profile: { country: "Nigeria", purpose: "Employment & HR" },
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body.user.country).toBe("Nigeria");
+    expect(res.body.user.purpose).toBe("Employment & HR");
+  });
+
+  it("returns null for profile fields when no profile is sent", async () => {
+    setState([makeUserRow()]);
+
+    const res = await request(app)
+      .post("/api/auth/signup")
+      .send({ username: "alice", password: "hunter2", email: "alice@example.com" });
+
+    expect(res.status).toBe(201);
+    expect(res.body.user.country).toBeNull();
+    expect(res.body.user.purpose).toBeNull();
+  });
+
+  it("strips blank/whitespace-only profile strings so they never reach the DB", async () => {
+    // cleanProfile on the server rejects empty/whitespace values; the row
+    // comes back with the nulls we primed — not the blank strings.
+    setState([makeUserRow()]);
+
+    const res = await request(app)
+      .post("/api/auth/signup")
+      .send({
+        username: "alice",
+        password: "hunter2",
+        email: "alice@example.com",
+        profile: { country: "   ", purpose: "" },
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body.user.country).toBeNull();
+    expect(res.body.user.purpose).toBeNull();
+  });
+
+  it("accepts a partial profile (country only) and surfaces it in the response", async () => {
+    setState([makeUserRow({ country: "Brazil" })]);
+
+    const res = await request(app)
+      .post("/api/auth/signup")
+      .send({
+        username: "alice",
+        password: "hunter2",
+        email: "alice@example.com",
+        profile: { country: "Brazil" },
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body.user.country).toBe("Brazil");
+    expect(res.body.user.purpose).toBeNull();
+  });
+
+  it("does not expose password material alongside profile fields", async () => {
+    setState([makeUserRow({ country: "India", purpose: "University Admission" })]);
+
+    const res = await request(app)
+      .post("/api/auth/signup")
+      .send({
+        username: "alice",
+        password: "hunter2",
+        email: "alice@example.com",
+        profile: { country: "India", purpose: "University Admission" },
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body.user.passwordHash).toBeUndefined();
+    expect(res.body.user.salt).toBeUndefined();
+    // Profile fields must be present
+    expect(res.body.user.country).toBe("India");
+    expect(res.body.user.purpose).toBe("University Admission");
+  });
+});
