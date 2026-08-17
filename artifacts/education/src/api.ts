@@ -110,12 +110,20 @@ export async function apiSignup(username: string, email: string, password: strin
   return { ok: false, error: data.error || 'signup_failed' };
 }
 
-export async function apiSignin(username: string, password: string): Promise<{ ok: true } | { ok: false; error: string }> {
+export async function apiSignin(username: string, password: string): Promise<{ ok: true; profile?: EvalProfile } | { ok: false; error: string }> {
   const res = await apiFetch('/auth/signin', { method: 'POST', body: JSON.stringify({ username, password }) });
   if (res.ok) {
     const data = await res.json().catch(() => ({}));
     saveUserToken(username, data.token);
-    return { ok: true };
+    // Carry the user's saved evaluation details back so the evaluator can be
+    // prefilled on any device they sign in from.
+    const u = (data.user || {}) as Record<string, unknown>;
+    const profile: EvalProfile = {};
+    for (const k of ['country', 'institution', 'degree', 'field', 'purpose'] as const) {
+      const v = u[k];
+      if (typeof v === 'string' && v) profile[k] = v;
+    }
+    return { ok: true, profile: Object.keys(profile).length ? profile : undefined };
   }
   const data = await res.json().catch(() => ({}));
   return { ok: false, error: data.error || 'signin_failed' };

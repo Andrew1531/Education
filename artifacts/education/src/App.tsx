@@ -1157,6 +1157,14 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
         } else {
           const r = await apiSignin(username.trim(), password);
           if (!r.ok) { setError(t('errCredentials')); return; }
+          // Remember this user's saved answers on this device so the
+          // evaluator comes prefilled — fill only fields not already set here.
+          if (r.profile) {
+            let existing: EvalProfile = {};
+            try { existing = JSON.parse(localStorage.getItem('ge_profile') || 'null') || {}; } catch { /* ignore */ }
+            const merged = { ...r.profile, ...Object.fromEntries(Object.entries(existing).filter(([, v]) => v)) };
+            try { localStorage.setItem('ge_profile', JSON.stringify(merged)); } catch { /* storage full/blocked */ }
+          }
         }
         if (trimmedEmail) localStorage.setItem('ge_email', trimmedEmail);
         localStorage.setItem(STORAGE_KEY, username);
