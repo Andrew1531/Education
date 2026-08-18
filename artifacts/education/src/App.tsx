@@ -2762,6 +2762,11 @@ export default function App() {
     try { getUsers(); }
     catch (e) { setUserStoreError(e instanceof Error ? e.message : String(e)); }
 
+    // Remove the legacy device-local admin password (ge_admin_pass) if it
+    // exists from a previous version. Admin auth is now server-only, so this
+    // entry serves no purpose and could mislead future changes.
+    localStorage.removeItem('ge_admin_pass');
+
     // Push this browser's account + evaluation profile to the central
     // database so the admin board sees sign-ups from every device.
     syncOwnAccount();
