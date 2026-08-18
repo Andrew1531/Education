@@ -355,10 +355,12 @@ router.post("/users/import", adminGuard, async (req, res) => {
 // Admin: update a user's email
 router.patch("/users/:username/email", adminGuard, async (req, res) => {
   const { email } = req.body ?? {};
-  if (typeof email !== "string") return res.status(400).json({ error: "email is required" });
+  if (typeof email !== "string" || !EMAIL_RE.test(email.trim())) {
+    return res.status(400).json({ error: "valid_email_required" });
+  }
   const [updated] = await db
     .update(usersTable)
-    .set({ email })
+    .set({ email: email.trim() })
     .where(eq(usersTable.username, String(req.params.username)))
     .returning();
   if (!updated) return res.status(404).json({ error: "not_found" });
