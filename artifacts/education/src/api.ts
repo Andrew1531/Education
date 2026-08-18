@@ -207,7 +207,7 @@ export async function apiListUsers(): Promise<ServerUser[]> {
 }
 
 /** Upload accounts that exist only in this browser so they appear on the central admin board. */
-export async function apiImportUsers(users: StoredUser[]): Promise<number> {
+export async function apiImportUsers(users: Array<StoredUser & Partial<EvalProfile>>): Promise<number> {
   if (users.length === 0) return 0;
   const res = await apiFetch('/users/import', { method: 'POST', body: JSON.stringify({ users }), headers: adminHeaders() });
   throwIfAdminRejected(res);

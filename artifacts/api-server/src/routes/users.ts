@@ -344,11 +344,14 @@ router.get("/users", adminGuard, async (_req, res) => {
 
 // Admin: import accounts that exist only in a browser's localStorage.
 // Accepts already-hashed records from the frontend store; skips duplicates.
+// Profile fields (country, institution, degree, field, purpose) are preserved
+// when present so the admin board shows them for pre-backend accounts.
 router.post("/users/import", adminGuard, async (req, res) => {
   const list = Array.isArray(req.body?.users) ? req.body.users : [];
   let imported = 0;
   for (const u of list) {
     if (typeof u?.username !== "string" || !u.username.trim() || typeof u?.password !== "string") continue;
+    const profile = cleanProfile(u);
     const inserted = await db
       .insert(usersTable)
       .values({
@@ -357,6 +360,7 @@ router.post("/users/import", adminGuard, async (req, res) => {
         passwordHash: u.password,
         salt: typeof u.salt === "string" ? u.salt : "",
         createdAt: u.createdAt && !Number.isNaN(Date.parse(u.createdAt)) ? new Date(u.createdAt) : new Date(),
+        ...profile,
       })
       .onConflictDoNothing({ target: usersTable.username })
       .returning();
