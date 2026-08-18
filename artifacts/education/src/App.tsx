@@ -795,6 +795,14 @@ type TKey = keyof typeof TX.en;
 const LangCtx = createContext<{ lang: Lang; toggleLang: () => void; t: (k: TKey) => string }>({
   lang: 'en', toggleLang: () => {}, t: (k) => TX.en[k],
 });
+
+/** Maps the canonical English goal value (stored in localStorage / DB) to its TX key. */
+const GOAL_TX_KEYS: Partial<Record<string, TKey>> = {
+  'University Admission': 'evalGoal1',
+  'Employment & HR': 'evalGoal2',
+  'Professional Licensing': 'evalGoal3',
+  'Immigration (USCIS)': 'evalGoal4',
+};
 function useLang() { return useContext(LangCtx); }
 type AppView = 'auth' | 'app';
 
@@ -2093,7 +2101,7 @@ function EvaluatorView() {
                   <span className="px-3.5 py-1.5 rounded-xl bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-xs font-bold">🎓 {usLevel}</span>
                   <span className="px-3.5 py-1.5 rounded-xl bg-slate-900 text-slate-300 border border-slate-800 text-xs font-bold">📚 {result.field}</span>
                   <span className="px-3.5 py-1.5 rounded-xl bg-slate-900 text-slate-300 border border-slate-800 text-xs font-bold">📍 {result.country}</span>
-                  {result.purpose && <span className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 text-xs font-bold">🎯 {result.purpose}</span>}
+                  {result.purpose && <span className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 text-xs font-bold">🎯 {GOAL_TX_KEYS[result.purpose] ? t(GOAL_TX_KEYS[result.purpose]!) : result.purpose}</span>}
                 </div>
               </div>
 
