@@ -265,6 +265,125 @@ describe('App sign-up — offline path saves country + goal to ge_profile', () =
   });
 });
 
+// ─── Sign-in — cross-device profile prefill ───────────────────────────────────
+
+describe('App sign-in — server profile seeds ge_profile on a fresh device', () => {
+  /** Fill and submit the sign-in form. */
+  async function submitSignIn(username: string, password: string) {
+    await act(async () => { render(<App />); });
+
+    // Switch to sign-in mode
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('button-toggle-auth'));
+    });
+
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('input-username'), { target: { value: username } });
+      fireEvent.change(screen.getByTestId('input-password'), { target: { value: password } });
+    });
+
+    await act(async () => {
+      fireEvent.submit(screen.getByTestId('form-auth'));
+    });
+  }
+
+  it('seeds ge_profile from server values when the device has no local profile', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      jsonResponse(200, {
+        user: { country: 'India', institution: 'IIT Delhi', degree: 'B.Tech', field: 'Computer Science', purpose: 'Employment & HR' },
+        token: 'tok-alice',
+      }),
+    );
+
+    await submitSignIn('alice', 'hunter2');
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('nav-user-badge')).not.toBeNull();
+    });
+
+    const profile = JSON.parse(localStorage.getItem('ge_profile') ?? 'null') as Record<string, string> | null;
+    expect(profile?.country).toBe('India');
+    expect(profile?.institution).toBe('IIT Delhi');
+    expect(profile?.degree).toBe('B.Tech');
+    expect(profile?.field).toBe('Computer Science');
+    expect(profile?.purpose).toBe('Employment & HR');
+  });
+
+  it('does not overwrite existing local ge_profile values with older server values', async () => {
+    // User previously ran the evaluator on this device and saved different answers.
+    const localProfile = {
+      country: 'Brazil',
+      institution: 'USP',
+      degree: 'M.Sc',
+      field: 'Physics',
+      purpose: 'University Admission',
+    };
+    localStorage.setItem('ge_profile', JSON.stringify(localProfile));
+
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      jsonResponse(200, {
+        user: { country: 'Nigeria', institution: 'UI', degree: 'B.Sc', field: 'Biology', purpose: 'Professional Licensing' },
+        token: 'tok-bob',
+      }),
+    );
+
+    await submitSignIn('bob', 'hunter2');
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('nav-user-badge')).not.toBeNull();
+    });
+
+    const profile = JSON.parse(localStorage.getItem('ge_profile') ?? 'null') as Record<string, string> | null;
+    // Local values must win.
+    expect(profile?.country).toBe('Brazil');
+    expect(profile?.institution).toBe('USP');
+    expect(profile?.degree).toBe('M.Sc');
+    expect(profile?.field).toBe('Physics');
+    expect(profile?.purpose).toBe('University Admission');
+  });
+
+  it('fills only the missing fields when the local profile is partial', async () => {
+    // Only country is already known locally.
+    localStorage.setItem('ge_profile', JSON.stringify({ country: 'Mexico' }));
+
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      jsonResponse(200, {
+        user: { country: 'Nigeria', institution: 'OAU', degree: 'B.Sc', field: 'Chemistry', purpose: 'Employment & HR' },
+        token: 'tok-carol',
+      }),
+    );
+
+    await submitSignIn('carol', 'hunter2');
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('nav-user-badge')).not.toBeNull();
+    });
+
+    const profile = JSON.parse(localStorage.getItem('ge_profile') ?? 'null') as Record<string, string> | null;
+    // Local country wins; server fills the rest.
+    expect(profile?.country).toBe('Mexico');
+    expect(profile?.institution).toBe('OAU');
+    expect(profile?.degree).toBe('B.Sc');
+    expect(profile?.field).toBe('Chemistry');
+    expect(profile?.purpose).toBe('Employment & HR');
+  });
+
+  it('leaves ge_profile unchanged when the server returns no profile fields', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      jsonResponse(200, { user: {}, token: 'tok-dave' }),
+    );
+
+    await submitSignIn('dave', 'hunter2');
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('nav-user-badge')).not.toBeNull();
+    });
+
+    // ge_profile should not be created when there is nothing to seed.
+    expect(localStorage.getItem('ge_profile')).toBeNull();
+  });
+});
+
 // ─── syncOwnAccount — next-load sync pushes ge_profile to the server ──────────
 
 describe('syncOwnAccount — pushes saved ge_profile to the backend on page load', () => {

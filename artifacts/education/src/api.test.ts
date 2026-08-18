@@ -71,6 +71,77 @@ describe('contacted-agency sync auth', () => {
   });
 });
 
+describe('apiSignin — cross-device profile prefill', () => {
+  const jsonResponse = (status: number, body: unknown) =>
+    new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+
+  beforeEach(() => localStorage.clear());
+  afterEach(() => vi.restoreAllMocks());
+
+  it('returns the full profile when the server user has all fields set', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      jsonResponse(200, {
+        user: { country: 'India', institution: 'IIT Delhi', degree: 'B.Tech', field: 'Computer Science', purpose: 'Employment & HR' },
+        token: 'tok-alice',
+      }),
+    );
+
+    const result = await apiSignin('alice', 'pw');
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.profile).toEqual({
+        country: 'India',
+        institution: 'IIT Delhi',
+        degree: 'B.Tech',
+        field: 'Computer Science',
+        purpose: 'Employment & HR',
+      });
+    }
+  });
+
+  it('returns partial profile when only some fields are filled on the server', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      jsonResponse(200, {
+        user: { country: 'Nigeria', institution: null, degree: null, field: null, purpose: 'Professional Licensing' },
+        token: 'tok-bob',
+      }),
+    );
+
+    const result = await apiSignin('bob', 'pw');
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.profile).toEqual({ country: 'Nigeria', purpose: 'Professional Licensing' });
+    }
+  });
+
+  it('returns no profile when the server user has no profile fields', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      jsonResponse(200, { user: {}, token: 'tok-carol' }),
+    );
+
+    const result = await apiSignin('carol', 'pw');
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.profile).toBeUndefined();
+    }
+  });
+
+  it('omits fields that are empty strings on the server', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      jsonResponse(200, {
+        user: { country: 'Brazil', institution: '', degree: '', field: '', purpose: '' },
+        token: 'tok-dave',
+      }),
+    );
+
+    const result = await apiSignin('dave', 'pw');
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.profile).toEqual({ country: 'Brazil' });
+    }
+  });
+});
+
 describe('apiSignup — profile forwarding (country + goal)', () => {
   const jsonResponse = (status: number, body: unknown) =>
     new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
