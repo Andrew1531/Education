@@ -188,11 +188,16 @@ router.post("/auth/sync", async (req, res) => {
   return res.json({ ok: true, token });
 });
 
-// Save the signed-in user's evaluation profile (school, country, intention…)
+// Save the signed-in user's evaluation profile (school, country, intention…).
+// Requires the caller's x-auth-token to match the requested username, the same
+// as /auth/contacted and /auth/roadmap-steps, so only the owner can update it.
 router.post("/auth/profile", async (req, res) => {
   const { username } = req.body ?? {};
   if (typeof username !== "string" || !username.trim()) {
     return res.status(400).json({ error: "username is required" });
+  }
+  if (!verifyUserToken(username, req.header("x-auth-token"))) {
+    return res.status(401).json({ error: "unauthorized" });
   }
   const profile = cleanProfile(req.body?.profile);
   if (Object.keys(profile).length === 0) return res.json({ ok: true });

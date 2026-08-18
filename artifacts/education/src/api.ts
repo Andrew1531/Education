@@ -162,8 +162,14 @@ export async function apiVerifyAdminKey(key: string): Promise<AdminKeyCheck> {
 
 /** Save the signed-in user's evaluation details (school, country, intention…). */
 export async function apiSaveProfile(username: string, profile: EvalProfile): Promise<void> {
+  const token = getUserToken(username);
+  if (!token) return; // not authenticated with the backend yet — local-only
   try {
-    await apiFetch('/auth/profile', { method: 'POST', body: JSON.stringify({ username, profile }) });
+    await apiFetch('/auth/profile', {
+      method: 'POST',
+      body: JSON.stringify({ username, profile }),
+      headers: { 'x-auth-token': token },
+    });
   } catch { /* best-effort */ }
 }
 

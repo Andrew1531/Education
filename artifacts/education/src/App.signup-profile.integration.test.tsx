@@ -421,6 +421,9 @@ describe('syncOwnAccount — pushes saved ge_profile to the backend on page load
 
   it('pushes ge_profile even when the user has no local store entry (server-only account)', async () => {
     // ge_username is set but the local user store is empty (account lives on server).
+    // Seed the auth token so apiSaveProfile can authenticate the request.
+    const juliaToken = 'b65a2915809ebbca98831b394d40f2e74f1f8c317a6947568154fc497da3af1a'; // HMAC-SHA256("test-session-secret","julia")
+    localStorage.setItem('ge_auth_token_julia', juliaToken);
     localStorage.setItem(USERS_KEY, JSON.stringify([]));
     localStorage.setItem('ge_username', 'julia');
     localStorage.setItem('ge_profile', JSON.stringify({ country: 'Germany', purpose: 'University Admission' }));

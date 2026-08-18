@@ -340,3 +340,76 @@ describe("POST /api/auth/sync — legacy blank-email behavior (intentional)", ()
     expect(res.body.error).toBe("username and password are required");
   });
 });
+
+describe("POST /api/auth/profile — evaluator fields reach the server", () => {
+  // Tokens: HMAC-SHA256("test-session-secret", username)
+  const ALICE_TOKEN = "2937e51f9fb99c40bfe3363d84a52f7bf515cb0efba6d000609132a615ec702a";
+  const GHOST_TOKEN = "e413b105a7413a20dab456e1ab791df19008adc7899a1b230b9af78040d3d0f1";
+
+  it("returns 200 with the updated user when country and purpose are provided", async () => {
+    setState([makeUserRow({ country: "Brazil", purpose: "Employment & HR" })]);
+    const res = await request(app)
+      .post("/api/auth/profile")
+      .set("x-auth-token", ALICE_TOKEN)
+      .send({ username: "alice", profile: { country: "Brazil", purpose: "Employment & HR" } });
+    expect(res.status).toBe(200);
+    expect(res.body.user.country).toBe("Brazil");
+    expect(res.body.user.purpose).toBe("Employment & HR");
+    expect(res.body.user.passwordHash).toBeUndefined();
+    expect(res.body.user.salt).toBeUndefined();
+  });
+
+  it("returns 200 with ok:true when profile is empty (no-op)", async () => {
+    const res = await request(app)
+      .post("/api/auth/profile")
+      .set("x-auth-token", ALICE_TOKEN)
+      .send({ username: "alice", profile: {} });
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+  });
+
+  it("returns 400 when username is missing", async () => {
+    const res = await request(app)
+      .post("/api/auth/profile")
+      .set("x-auth-token", ALICE_TOKEN)
+      .send({ profile: { country: "India" } });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("username is required");
+  });
+
+  it("returns 401 when no auth token is provided", async () => {
+    const res = await request(app)
+      .post("/api/auth/profile")
+      .send({ username: "alice", profile: { country: "India" } });
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe("unauthorized");
+  });
+
+  it("returns 401 when a wrong auth token is provided", async () => {
+    const res = await request(app)
+      .post("/api/auth/profile")
+      .set("x-auth-token", "definitely-wrong-token")
+      .send({ username: "alice", profile: { country: "India" } });
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe("unauthorized");
+  });
+
+  it("returns 404 when the username does not exist in the DB", async () => {
+    setState([]); // update returns no rows
+    const res = await request(app)
+      .post("/api/auth/profile")
+      .set("x-auth-token", GHOST_TOKEN)
+      .send({ username: "ghost", profile: { country: "India" } });
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe("not_found");
+  });
+
+  it("strips whitespace-only profile values before writing (no-op)", async () => {
+    const res = await request(app)
+      .post("/api/auth/profile")
+      .set("x-auth-token", ALICE_TOKEN)
+      .send({ username: "alice", profile: { country: "   ", purpose: "" } });
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+  });
+});
