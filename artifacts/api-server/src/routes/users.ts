@@ -33,9 +33,10 @@ function safeEqual(a: string, b: string): boolean {
  * closed.
  */
 function adminGuard(req: Request, res: Response, next: NextFunction) {
+  // Fail closed in EVERY environment: without a configured key, no admin
+  // access — never an open dev backdoor.
   const configured = process.env.ADMIN_API_KEY;
   if (!configured) {
-    if (process.env.NODE_ENV !== "production") return next();
     return res.status(503).json({ error: "admin_key_not_configured" });
   }
   const provided = req.header("x-admin-key") || "";

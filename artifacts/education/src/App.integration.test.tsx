@@ -114,7 +114,25 @@ describe('App — StorageCorruptBanner on the admin route', () => {
     window.history.pushState({}, '', '/admin');
   });
 
+  /**
+   * These tests exercise the corrupt-store banner behind the gate, not the
+   * gate itself — the gate only opens on server-side verification, so stub
+   * the server to accept the key, then unlock through the UI.
+   */
+  async function renderUnlocked() {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(
+      JSON.stringify([]),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    )));
+    await act(async () => { render(<App />); });
+    await waitFor(() => expect(screen.queryByPlaceholderText(/admin password/i)).not.toBeNull());
+    fireEvent.change(screen.getByPlaceholderText(/admin password/i), { target: { value: 'test-admin-key' } });
+    await act(async () => { fireEvent.click(screen.getByText('Enter')); });
+    await waitFor(() => expect(screen.queryByPlaceholderText(/admin password/i)).toBeNull());
+  }
+
   afterEach(() => {
+    vi.unstubAllGlobals();
     window.history.pushState({}, '', '/');
     Object.defineProperty(window, 'location', {
       configurable: true,
@@ -124,7 +142,7 @@ describe('App — StorageCorruptBanner on the admin route', () => {
   });
 
   it('shows the actionable corruption banner on the admin route when ge_users is corrupt', async () => {
-    await act(async () => { render(<App />); });
+    await renderUnlocked();
 
     await waitFor(() => {
       expect(screen.queryByTestId('banner-storage-corrupt')).not.toBeNull();
@@ -132,7 +150,7 @@ describe('App — StorageCorruptBanner on the admin route', () => {
   });
 
   it('shows the Clear & Reset button on the admin route when ge_users is corrupt', async () => {
-    await act(async () => { render(<App />); });
+    await renderUnlocked();
 
     await waitFor(() => {
       expect(screen.queryByTestId('button-clear-corrupt-store')).not.toBeNull();
@@ -142,7 +160,7 @@ describe('App — StorageCorruptBanner on the admin route', () => {
   it('clicking Confirm calls localStorage.removeItem and triggers a reload', async () => {
     const removeSpy = vi.spyOn(Storage.prototype, 'removeItem');
 
-    await act(async () => { render(<App />); });
+    await renderUnlocked();
 
     await waitFor(() => {
       expect(screen.queryByTestId('button-clear-corrupt-store')).not.toBeNull();
@@ -167,7 +185,7 @@ describe('App — StorageCorruptBanner on the admin route', () => {
   it('clicking Cancel closes the dialog without touching storage or reloading', async () => {
     const removeSpy = vi.spyOn(Storage.prototype, 'removeItem');
 
-    await act(async () => { render(<App />); });
+    await renderUnlocked();
 
     await waitFor(() => {
       expect(screen.queryByTestId('button-clear-corrupt-store')).not.toBeNull();
@@ -391,5 +409,130 @@ describe('App — sign-up rejects invalid email', () => {
     expect(screen.queryByTestId('nav-user-badge')).toBeNull();
     const stored = JSON.parse(localStorage.getItem(USERS_KEY) ?? '[]') as unknown[];
     expect(stored).toHaveLength(0);
+  });
+});
+
+// ─── Admin password gate ──────────────────────────────────────────────────────
+
+describe('App — admin password gate', () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+    localStorage.clear();
+    window.history.pushState({}, '', '/admin');
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    window.history.pushState({}, '', '/');
+    sessionStorage.clear();
+    localStorage.clear();
+    cleanup();
+  });
+
+  it('shows the password gate instead of the dashboard', async () => {
+    await act(async () => { render(<App />); });
+    await waitFor(() => {
+      expect(screen.queryByPlaceholderText(/admin password/i)).not.toBeNull();
+    });
+    expect(screen.queryByText(/registered account/i)).toBeNull();
+  });
+
+  it('ignores forged client-storage flags — the gate stays closed', async () => {
+    // A visitor setting flags in devtools must not unlock the dashboard.
+    sessionStorage.setItem('ge_admin_unlocked', '1');
+    localStorage.setItem('ge_admin_unlocked', '1');
+
+    await act(async () => { render(<App />); });
+
+    await waitFor(() => {
+      expect(screen.queryByPlaceholderText(/admin password/i)).not.toBeNull();
+    });
+    expect(screen.queryByText(/registered account/i)).toBeNull();
+  });
+
+  it('does not unlock from a stored admin key the server rejects', async () => {
+    localStorage.setItem('ge_admin_api_key', 'forged-key');
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(
+      JSON.stringify({ error: 'unauthorized' }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } },
+    )));
+
+    await act(async () => { render(<App />); });
+
+    // Auto-revalidation runs against the (mocked) server and is rejected.
+    await waitFor(() => {
+      expect(screen.queryByPlaceholderText(/admin password/i)).not.toBeNull();
+    });
+    expect(screen.queryByText(/registered account/i)).toBeNull();
+  });
+
+  it('rejects a wrong password and keeps the gate closed', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(
+      JSON.stringify({ error: 'unauthorized' }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } },
+    )));
+
+    await act(async () => { render(<App />); });
+    await waitFor(() => expect(screen.queryByPlaceholderText(/admin password/i)).not.toBeNull());
+
+    fireEvent.change(screen.getByPlaceholderText(/admin password/i), { target: { value: 'not-the-password' } });
+    await act(async () => { fireEvent.click(screen.getByText('Enter')); });
+
+    await waitFor(() => {
+      expect(screen.queryByText(/incorrect password/i)).not.toBeNull();
+    });
+    expect(screen.queryByText(/registered account/i)).toBeNull();
+  });
+
+  it('unlocks when the server accepts the submitted key', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(
+      JSON.stringify([]),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    )));
+
+    await act(async () => { render(<App />); });
+    await waitFor(() => expect(screen.queryByPlaceholderText(/admin password/i)).not.toBeNull());
+
+    fireEvent.change(screen.getByPlaceholderText(/admin password/i), { target: { value: 'the-real-admin-key' } });
+    await act(async () => { fireEvent.click(screen.getByText('Enter')); });
+
+    await waitFor(() => {
+      expect(screen.queryByPlaceholderText(/admin password/i)).toBeNull();
+    });
+    // The server-validated key is stored for the admin API calls.
+    expect(localStorage.getItem('ge_admin_api_key')).toBe('the-real-admin-key');
+  });
+
+  it('fails closed when the server cannot be reached — no offline bypass', async () => {
+    // jsdom fetch to a relative URL fails → ApiUnavailableError. Even the
+    // old local default password must NOT unlock anything.
+    await act(async () => { render(<App />); });
+    await waitFor(() => expect(screen.queryByPlaceholderText(/admin password/i)).not.toBeNull());
+
+    fireEvent.change(screen.getByPlaceholderText(/admin password/i), { target: { value: 'verifed2026' } });
+    await act(async () => { fireEvent.click(screen.getByText('Enter')); });
+
+    await waitFor(() => {
+      expect(screen.queryByText(/cannot be reached/i)).not.toBeNull();
+    });
+    expect(screen.queryByPlaceholderText(/admin password/i)).not.toBeNull();
+    expect(screen.queryByText(/registered account/i)).toBeNull();
+  });
+
+  it('ignores a forged local admin credential record', async () => {
+    // An attacker overwriting the device-local PBKDF2 record gains nothing:
+    // authorization comes only from the server.
+    localStorage.setItem('ge_admin_pass', JSON.stringify({ hash: 'attacker', salt: 'attacker' }));
+
+    await act(async () => { render(<App />); });
+    await waitFor(() => expect(screen.queryByPlaceholderText(/admin password/i)).not.toBeNull());
+
+    fireEvent.change(screen.getByPlaceholderText(/admin password/i), { target: { value: 'anything' } });
+    await act(async () => { fireEvent.click(screen.getByText('Enter')); });
+
+    await waitFor(() => {
+      expect(screen.queryByText(/cannot be reached/i)).not.toBeNull();
+    });
+    expect(screen.queryByText(/registered account/i)).toBeNull();
   });
 });

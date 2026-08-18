@@ -145,6 +145,21 @@ export async function apiSyncSelf(user: StoredUser, profile?: EvalProfile): Prom
   } catch { /* offline / backend not published yet */ }
 }
 
+export type AdminKeyCheck = 'ok' | 'rejected' | 'not_configured';
+
+/**
+ * Verify an admin key against the server (server-side comparison with the
+ * ADMIN_API_KEY secret). Throws ApiUnavailableError when the backend is
+ * unreachable so callers can decide how to degrade.
+ */
+export async function apiVerifyAdminKey(key: string): Promise<AdminKeyCheck> {
+  const res = await apiFetch('/users', { headers: { 'x-admin-key': key } });
+  if (res.ok) return 'ok';
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 503 || data.error === 'admin_key_not_configured') return 'not_configured';
+  return 'rejected';
+}
+
 /** Save the signed-in user's evaluation details (school, country, intention…). */
 export async function apiSaveProfile(username: string, profile: EvalProfile): Promise<void> {
   try {

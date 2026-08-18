@@ -19,6 +19,7 @@ import {
   apiSignup,
   apiSignin,
   apiListUsers,
+  apiVerifyAdminKey,
   apiImportUsers,
   apiDeleteUser,
   apiResetPassword,
@@ -346,6 +347,12 @@ const TX = {
     adminKeyBtn: 'Unlock',
     adminKeyRejected: 'The saved key was rejected — please enter it again.',
     adminKeyNotConfigured: "The server doesn't have an admin key loaded yet — it needs to be republished on Replit after the key is saved. Until then, no key will be accepted.",
+    adminGateTitle: '🔐 Admin access',
+    adminGateDesc: 'This area is for administrators only. Enter the admin password to continue.',
+    adminGatePlaceholder: 'Admin password…',
+    adminGateBtn: 'Enter',
+    adminGateWrong: 'Incorrect password.',
+    adminGateOffline: 'The server cannot be reached to verify the password. Admin access stays locked — try again when you are back online.',
     adminFieldSchool: 'School',
     adminFieldCountry: 'Country',
     adminFieldIntention: 'Intention',
@@ -707,6 +714,12 @@ const TX = {
     adminKeyBtn: 'Desbloquear',
     adminKeyRejected: 'La clave guardada fue rechazada — ingrésala de nuevo.',
     adminKeyNotConfigured: 'El servidor aún no tiene una clave de administrador cargada — debe republicarse en Replit después de guardar la clave. Hasta entonces, ninguna clave será aceptada.',
+    adminGateTitle: '🔐 Acceso de administrador',
+    adminGateDesc: 'Esta área es solo para administradores. Ingresa la contraseña de administrador para continuar.',
+    adminGatePlaceholder: 'Contraseña de administrador…',
+    adminGateBtn: 'Entrar',
+    adminGateWrong: 'Contraseña incorrecta.',
+    adminGateOffline: 'No se puede contactar el servidor para verificar la contraseña. El acceso de administrador permanece bloqueado — inténtalo de nuevo cuando tengas conexión.',
     adminFieldSchool: 'Institución',
     adminFieldCountry: 'País',
     adminFieldIntention: 'Intención',
@@ -2273,6 +2286,93 @@ function EvaluatorView() {
 type AdminUser = StoredUser & EvalProfile;
 
 // Merged: server-mode API functionality (from main) + full i18n via t() (from task-21)
+/**
+ * Password gate in front of the admin dashboard.
+ *
+ * Authorization is server-backed: the submitted password is verified by the
+ * API against the ADMIN_API_KEY secret, and only a server "ok" unlocks the
+ * dashboard. No client-storage flag is trusted as authorization evidence —
+ * on reload, a previously stored key is re-validated with the server before
+ * anything is shown. Only when the backend is unreachable (device-local mode,
+ * where the board can show at most this browser's own localStorage data) does
+ * the gate fall back to the locally stored PBKDF2 admin credential.
+ */
+function AdminGate() {
+  const { t } = useLang();
+  const [unlocked, setUnlocked] = useState(false);
+  const [pass, setPass] = useState('');
+  const [msg, setMsg] = useState<'' | 'wrong' | 'notConfigured' | 'offline'>('');
+  const [busy, setBusy] = useState(false);
+
+  // Re-validate a previously stored admin key with the server on mount.
+  useEffect(() => {
+    const stored = getAdminKey();
+    if (!stored) return;
+    let alive = true;
+    apiVerifyAdminKey(stored)
+      .then((r) => { if (alive && r === 'ok') setUnlocked(true); })
+      .catch(() => { /* backend unreachable — require manual entry */ });
+    return () => { alive = false; };
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!pass || busy) return;
+    setBusy(true);
+    setMsg('');
+    try {
+      try {
+        const r = await apiVerifyAdminKey(pass);
+        if (r === 'ok') {
+          setAdminKey(pass); // reused by AdminPage for all admin API calls
+          setUnlocked(true);
+        } else if (r === 'not_configured') {
+          setMsg('notConfigured');
+        } else {
+          setMsg('wrong');
+        }
+      } catch {
+        // Backend unreachable — FAIL CLOSED. Server verification is the only
+        // authorization evidence; no local fallback.
+        setMsg('offline');
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (unlocked) return <AdminPage />;
+
+  return (
+    <main className="relative z-10 max-w-md mx-auto px-6 pt-24 pb-32 flex-grow w-full">
+      <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6">
+        <h2 className="text-white font-bold text-sm mb-1">{t('adminGateTitle')}</h2>
+        <p className="text-slate-400 text-xs mb-4">{t('adminGateDesc')}</p>
+        <form onSubmit={handleSubmit} className="flex gap-2">
+          <input
+            type="password"
+            value={pass}
+            onChange={(e) => { setPass(e.target.value); setMsg(''); }}
+            placeholder={t('adminGatePlaceholder')}
+            autoFocus
+            className="flex-grow bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+          />
+          <button
+            type="submit"
+            disabled={busy || !pass}
+            className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors"
+          >
+            {t('adminGateBtn')}
+          </button>
+        </form>
+        {msg === 'wrong' && <p className="text-red-400 text-xs mt-3">{t('adminGateWrong')}</p>}
+        {msg === 'notConfigured' && <p className="text-amber-400 text-xs mt-3">{t('adminKeyNotConfigured')}</p>}
+        {msg === 'offline' && <p className="text-amber-400 text-xs mt-3">{t('adminGateOffline')}</p>}
+      </div>
+    </main>
+  );
+}
+
 function AdminPage() {
   const { lang, t } = useLang();
   const [users, setUsers]             = useState<AdminUser[]>([]);
@@ -2676,7 +2776,7 @@ export default function App() {
             <HowItWorksPage />
           </Route>
           <Route path="/admin">
-            <AdminPage />
+            <AdminGate />
           </Route>
           <Route>
             <main className="relative z-10 max-w-6xl mx-auto px-6 pt-16 pb-24 flex-grow w-full">
