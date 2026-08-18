@@ -20,8 +20,14 @@ vi.mock("@workspace/db", () => {
   const values = vi.fn(() => ({ onConflictDoNothing }));
   const insert = vi.fn(() => ({ values }));
 
+  // update().set().where().returning() — used by the admin PATCH routes.
+  const updateReturning = vi.fn(() => Promise.resolve(_state.rows));
+  const where = vi.fn(() => ({ returning: updateReturning }));
+  const set = vi.fn(() => ({ where }));
+  const update = vi.fn(() => ({ set }));
+
   return {
-    db: { insert },
+    db: { insert, update },
     usersTable: {},
     // Internal test helper — lets individual tests prime what the DB returns.
     __setState: (rows: Record<string, unknown>[]) => { _state.rows = rows; },
@@ -58,6 +64,7 @@ const setState: (rows: Record<string, unknown>[]) => void =
 
 beforeEach(() => {
   process.env.SESSION_SECRET = "test-session-secret";
+  process.env.ADMIN_API_KEY = "test-admin-key";
   // Default: DB insert returns no rows (conflict / overrideable per test).
   setState([]);
 });
@@ -234,5 +241,61 @@ describe("POST /api/auth/signup — profile fields (country + goal)", () => {
     // Profile fields must be present
     expect(res.body.user.country).toBe("India");
     expect(res.body.user.purpose).toBe("University Admission");
+  });
+});
+
+describe("PATCH /api/users/:username/email — admin email validation", () => {
+  const KEY = { "x-admin-key": "test-admin-key" };
+
+  it("returns 400 valid_email_required when email is missing", async () => {
+    const res = await request(app).patch("/api/users/alice/email").set(KEY).send({});
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("valid_email_required");
+  });
+
+  it("returns 400 valid_email_required for a blank email", async () => {
+    const res = await request(app).patch("/api/users/alice/email").set(KEY).send({ email: "" });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("valid_email_required");
+  });
+
+  it("returns 400 valid_email_required for a malformed email", async () => {
+    const res = await request(app).patch("/api/users/alice/email").set(KEY).send({ email: "notanemail" });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("valid_email_required");
+  });
+
+  it("returns 400 valid_email_required for an email without a TLD", async () => {
+    const res = await request(app).patch("/api/users/alice/email").set(KEY).send({ email: "alice@nodomain" });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("valid_email_required");
+  });
+
+  it("returns 400 valid_email_required for an email containing whitespace", async () => {
+    const res = await request(app).patch("/api/users/alice/email").set(KEY).send({ email: "ali ce@example.com" });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("valid_email_required");
+  });
+
+  it("returns 200 with the updated user for a valid email", async () => {
+    setState([makeUserRow({ email: "new@example.com" })]);
+    const res = await request(app).patch("/api/users/alice/email").set(KEY).send({ email: "new@example.com" });
+    expect(res.status).toBe(200);
+    expect(res.body.user.email).toBe("new@example.com");
+    expect(res.body.user.passwordHash).toBeUndefined();
+    expect(res.body.user.salt).toBeUndefined();
+  });
+
+  it("returns 404 not_found when the user does not exist", async () => {
+    setState([]);
+    const res = await request(app).patch("/api/users/ghost/email").set(KEY).send({ email: "ok@example.com" });
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe("not_found");
+  });
+
+  it("still requires the admin key even with a valid email", async () => {
+    const res = await request(app).patch("/api/users/alice/email").send({ email: "ok@example.com" });
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe("unauthorized");
   });
 });
