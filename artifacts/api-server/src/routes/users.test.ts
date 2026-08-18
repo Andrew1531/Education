@@ -299,3 +299,44 @@ describe("PATCH /api/users/:username/email — admin email validation", () => {
     expect(res.body.error).toBe("unauthorized");
   });
 });
+
+describe("POST /api/auth/sync — legacy blank-email behavior (intentional)", () => {
+  // /auth/sync deliberately accepts a blank email so accounts created before
+  // email was required can still be rescued into the central DB. These tests
+  // lock that decision in — see the route comment in users.ts.
+
+  it("accepts a legacy record with an empty-string email (ok:true)", async () => {
+    setState([makeUserRow({ email: "", passwordHash: "somehash" })]);
+    const res = await request(app)
+      .post("/api/auth/sync")
+      .send({ username: "legacyuser", password: "somehash", salt: "s", email: "" });
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+  });
+
+  it("accepts a legacy record with no email field at all (ok:true)", async () => {
+    setState([makeUserRow({ email: "", passwordHash: "somehash" })]);
+    const res = await request(app)
+      .post("/api/auth/sync")
+      .send({ username: "legacyuser", password: "somehash", salt: "s" });
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+  });
+
+  it("stores a provided email verbatim when the record has one", async () => {
+    setState([makeUserRow({ email: "kept@example.com", passwordHash: "somehash" })]);
+    const res = await request(app)
+      .post("/api/auth/sync")
+      .send({ username: "user1", password: "somehash", salt: "s", email: "kept@example.com" });
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+  });
+
+  it("still requires username and password — blank email is not a blank check", async () => {
+    const res = await request(app)
+      .post("/api/auth/sync")
+      .send({ email: "" });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("username and password are required");
+  });
+});

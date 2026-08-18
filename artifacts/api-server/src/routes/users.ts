@@ -140,6 +140,14 @@ router.post("/auth/signin", async (req, res) => {
 // evaluation profile) so it appears on the central admin board. Insert is
 // conflict-safe; profile fields are only filled in when currently empty, and
 // only updated freely by the account owner via /auth/profile below.
+//
+// INTENTIONAL: unlike /auth/signup, a blank email is accepted here. This path
+// exists to rescue accounts created in old app versions before email was
+// required — rejecting them would silently lose those leads entirely. The
+// admin board flags a missing email with "⚠ Still needed" so it is visible,
+// not hidden. New signups can never take this path with a blank email: the
+// current frontend requires a valid email before an account exists locally.
+// Locked in by tests in users.test.ts — do not flip without updating them.
 router.post("/auth/sync", async (req, res) => {
   const { username, email, password, salt, createdAt } = req.body ?? {};
   if (typeof username !== "string" || !username.trim() || typeof password !== "string") {
