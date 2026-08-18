@@ -9,7 +9,7 @@ import {
 } from './userStore';
 import { StorageCorruptBanner } from './StorageCorruptBanner';
 import { jobSearchUrl, getAlignedRoles } from './jobRoles';
-import { CountryPicker } from './CountryPicker';
+import { CountryPicker, isValidCountry } from './CountryPicker';
 import {
   type ServerUser,
   ApiUnavailableError,
@@ -164,6 +164,7 @@ const TX = {
     errTaken: 'An account with that username already exists. Enter your password to sign in.',
     errCredentials: 'Incorrect username or password.',
     errEmail: 'Please enter a valid email address (e.g., name@example.com).',
+    errCountry: 'Please select a country from the list (e.g., India, Nigeria, Brazil).',
     errUnexpected: 'An unexpected error occurred. Please refresh and try again.',
     // Service unavailable banner
     svcUnavailableTitle: '🔧 Account service temporarily unavailable',
@@ -531,6 +532,7 @@ const TX = {
     errTaken: 'Ya existe una cuenta con ese nombre de usuario. Ingresa tu contraseña para iniciar sesión.',
     errCredentials: 'Usuario o contraseña incorrectos.',
     errEmail: 'Por favor ingresa un correo electrónico válido (ej., nombre@ejemplo.com).',
+    errCountry: 'Por favor selecciona un país de la lista (ej., India, Nigeria, Brasil).',
     errUnexpected: 'Ocurrió un error inesperado. Por favor recargue e intente de nuevo.',
     // Service unavailable banner
     svcUnavailableTitle: '🔧 Servicio de cuentas temporalmente no disponible',
@@ -1161,6 +1163,10 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
     const trimmedEmail = email.trim();
     if (isSignUp && !EMAIL_RE.test(trimmedEmail)) {
       setError(t('errEmail'));
+      return;
+    }
+    if (isSignUp && country.trim() && !isValidCountry(country)) {
+      setError(t('errCountry'));
       return;
     }
 
@@ -1942,6 +1948,7 @@ function EvaluatorView() {
   const [credits, setCredits] = useState('');
   const [purpose, setPurpose] = useState(saved.purpose || '');
   const [result, setResult] = useState<EvalResult | null>(null);
+  const [countryErr, setCountryErr] = useState('');
   const evalUser = getSignedInUser();
   const roadmapStepsKey = `ge_roadmap_steps_${evalUser.username.toLowerCase() || 'anon'}`;
   const [checkedSteps, setCheckedSteps] = useState<boolean[]>(() => {
@@ -1978,6 +1985,11 @@ function EvaluatorView() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!isValidCountry(country)) {
+      setCountryErr(t('errCountry'));
+      return;
+    }
+    setCountryErr('');
     // Store only raw inputs — derived strings (usLevel, insight, roadmap) are computed
     // at render time from the active language, so toggling language after submission
     // always shows text in the current locale without re-submitting the form.
@@ -2037,7 +2049,8 @@ function EvaluatorView() {
             <form onSubmit={handleSubmit} className="space-y-5" data-testid="form-eval">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLCountry')}</label>
-                <CountryPicker value={country} onChange={setCountry} data-testid="input-country" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPCountry')} required />
+                <CountryPicker value={country} onChange={(v) => { setCountry(v); if (countryErr) setCountryErr(''); }} data-testid="input-country" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPCountry')} required />
+                {countryErr && <p className="mt-1.5 text-red-400 text-xs font-medium" data-testid="error-country">{countryErr}</p>}
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLInstitution')}</label>

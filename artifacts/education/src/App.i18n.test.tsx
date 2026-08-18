@@ -162,7 +162,7 @@ describe('Evaluator — language-aware results', () => {
     });
 
     await submitEvaluator({
-      country: 'México',
+      country: 'Mexico',
       institution: 'UNAM',
       degree: 'Licenciatura',
       field: 'Contabilidad',
@@ -175,7 +175,7 @@ describe('Evaluator — language-aware results', () => {
     // Summary includes institution and country
     const summary = screen.getByTestId('text-summary');
     expect(summary.textContent).toContain('UNAM');
-    expect(summary.textContent).toContain('México');
+    expect(summary.textContent).toContain('Mexico');
 
     // Insight should use the Spanish accounting pathway text
     const insight = screen.getByTestId('text-insight');
@@ -225,7 +225,7 @@ describe('Evaluator — language-aware results', () => {
     });
 
     await submitEvaluator({
-      country: 'España',
+      country: 'Spain',
       institution: 'Universidad de Madrid',
       degree: 'Bachelor',
       field: 'Accounting',
@@ -264,7 +264,7 @@ describe('Evaluator — Spanish field-name classifiers', () => {
 
     await toggleLanguage();
     await submitEvaluator({
-      country: 'México',
+      country: 'Mexico',
       institution: 'UNAM',
       degree: 'Licenciatura',
       field: 'Contabilidad',
@@ -333,7 +333,7 @@ describe('Evaluator — Spanish field-name classifiers', () => {
 
     // Submit in English to check EN result too
     await submitEvaluator({
-      country: 'México',
+      country: 'Mexico',
       institution: 'Tec de Monterrey',
       degree: 'Bachelor',
       field: 'Finanzas',
@@ -386,7 +386,7 @@ describe('Dossier export — Spanish HTML output', () => {
 
     // Submit the evaluator
     await submitEvaluator({
-      country: 'México',
+      country: 'Mexico',
       institution: 'UNAM',
       degree: 'Licenciatura',
       field: 'Contabilidad',

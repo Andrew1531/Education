@@ -51,6 +51,12 @@ export const COUNTRIES: readonly string[] = [
   'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe',
 ];
 
+/** True when `v` is a recognised canonical country name (case-insensitive). */
+export function isValidCountry(v: string): boolean {
+  const normalised = v.trim().toLowerCase();
+  return normalised.length > 0 && COUNTRIES.some((c) => c.toLowerCase() === normalised);
+}
+
 interface CountryPickerProps {
   value: string;
   onChange: (value: string) => void;
