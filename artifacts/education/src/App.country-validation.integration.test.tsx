@@ -104,6 +104,21 @@ describe('AuthView sign-up — country validation', () => {
     await act(async () => { fireEvent.click(screen.getByTestId('button-auth-submit')); });
     await waitFor(() => expect(screen.queryByText(ERR_EN)).toBeNull());
   });
+
+  it('shows the Spanish country error on the sign-up form when UI language is Spanish', async () => {
+    await renderSignUp();
+    // Toggle language to Spanish
+    const langBtns = screen.getAllByTestId('button-lang-toggle');
+    await act(async () => { fireEvent.click(langBtns[0]); });
+    // Wait for Spanish UI to render (hero heading switches language)
+    await waitFor(() => expect(screen.queryByText(/Reconocida en EE\.UU\./i)).not.toBeNull());
+    fireEvent.change(screen.getByTestId('input-username'), { target: { value: 'alice' } });
+    fireEvent.change(screen.getByTestId('input-password'), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByTestId('input-email'), { target: { value: 'alice@example.com' } });
+    fireEvent.change(screen.getByTestId('input-signup-country'), { target: { value: 'north pole' } });
+    await act(async () => { fireEvent.click(screen.getByTestId('button-auth-submit')); });
+    await waitFor(() => expect(screen.queryByText(ERR_ES)).not.toBeNull());
+  });
 });
 
 // ── EvaluatorView — country validation ───────────────────────────────────────
