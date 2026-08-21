@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { isUnavailableResponse, apiSaveContacted, apiFetchContacted, apiSignin, apiSignup } from './api';
+import { isUnavailableResponse, apiSaveContacted, apiFetchContacted, apiSignin, apiSignup, apiListUsers } from './api';
 
 function fakeRes(status: number, contentType: string | null) {
   return { status, headers: { get: (n: string) => (n.toLowerCase() === 'content-type' ? contentType : null) } };
@@ -31,6 +31,38 @@ describe('isUnavailableResponse', () => {
     expect(isUnavailableResponse(fakeRes(400, 'application/json'))).toBe(false);
     expect(isUnavailableResponse(fakeRes(200, 'application/json'))).toBe(false);
     expect(isUnavailableResponse(fakeRes(200, 'text/html'))).toBe(false);
+  });
+});
+
+describe('admin cold-start recovery', () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(() => vi.restoreAllMocks());
+
+  it('retries the central user list once after an infrastructure failure', async () => {
+    localStorage.setItem('ge_admin_api_key', 'test-admin-key');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch')
+      .mockRejectedValueOnce(new TypeError('deployment is waking'))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        users: [{
+          username: 'alice',
+          email: 'alice@example.com',
+          hasSalt: true,
+          createdAt: '2026-08-17T18:06:56.596Z',
+          country: 'Nigeria',
+          institution: 'University of Lagos',
+          degree: 'BSc',
+          field: 'Computer Science',
+          purpose: 'Employment & HR',
+        }],
+      }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+
+    const users = await apiListUsers();
+
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    expect(users).toHaveLength(1);
+    expect(users[0]?.username).toBe('alice');
+    const retryHeaders = (fetchSpy.mock.calls[1]![1] as RequestInit).headers as Record<string, string>;
+    expect(retryHeaders['x-admin-key']).toBe('test-admin-key');
   });
 });
 

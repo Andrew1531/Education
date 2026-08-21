@@ -80,9 +80,9 @@ export function isUnavailableResponse(res: { status: number; headers: { get(name
   return false;
 }
 
-async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
+async function apiFetch(path: string, init?: RequestInit, timeoutMs = 5000): Promise<Response> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 5000);
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   let res: Response;
   try {
     res = await fetch(`${API_BASE}${path}`, {
@@ -97,6 +97,20 @@ async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
   }
   if (isUnavailableResponse(res)) throw new ApiUnavailableError();
   return res;
+}
+
+/**
+ * Admin reads are often the first requests after an autoscale deployment has
+ * gone idle. Give the server time to wake and retry one infrastructure failure
+ * before telling the dashboard that the central database is unavailable.
+ */
+async function apiAdminRead(path: string, init?: RequestInit): Promise<Response> {
+  try {
+    return await apiFetch(path, init, 10_000);
+  } catch (error) {
+    if (!(error instanceof ApiUnavailableError)) throw error;
+    return apiFetch(path, init, 10_000);
+  }
 }
 
 export async function apiSignup(username: string, email: string, password: string, profile?: EvalProfile): Promise<{ ok: true } | { ok: false; error: string }> {
@@ -153,7 +167,7 @@ export type AdminKeyCheck = 'ok' | 'rejected' | 'not_configured';
  * unreachable so callers can decide how to degrade.
  */
 export async function apiVerifyAdminKey(key: string): Promise<AdminKeyCheck> {
-  const res = await apiFetch('/users', { headers: { 'x-admin-key': key } });
+  const res = await apiAdminRead('/users', { headers: { 'x-admin-key': key } });
   if (res.ok) return 'ok';
   const data = await res.json().catch(() => ({}));
   if (res.status === 503 || data.error === 'admin_key_not_configured') return 'not_configured';
@@ -199,7 +213,7 @@ export async function apiSaveContacted(
   } catch { /* best-effort */ }
 }
 export async function apiListUsers(): Promise<ServerUser[]> {
-  const res = await apiFetch('/users', { headers: adminHeaders() });
+  const res = await apiAdminRead('/users', { headers: adminHeaders() });
   throwIfAdminRejected(res);
   if (!res.ok) throw new ApiUnavailableError();
   const data = await res.json();

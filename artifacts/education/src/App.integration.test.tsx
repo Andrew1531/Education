@@ -503,6 +503,33 @@ describe('App — admin password gate', () => {
     expect(localStorage.getItem('ge_admin_api_key')).toBe('the-real-admin-key');
   });
 
+  it('does not claim there are zero registrations when the central list is temporarily unavailable', async () => {
+    const fetchMock = vi.fn()
+      // The gate verifies the submitted key successfully.
+      .mockResolvedValueOnce(new Response(
+        JSON.stringify({ users: [] }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      ))
+      // The dashboard list retries once, then reports a connection problem.
+      .mockRejectedValueOnce(new TypeError('deployment is waking'))
+      .mockRejectedValueOnce(new TypeError('deployment is still waking'));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await act(async () => { render(<App />); });
+    await waitFor(() => expect(screen.queryByPlaceholderText(/admin password/i)).not.toBeNull());
+
+    fireEvent.change(screen.getByPlaceholderText(/admin password/i), { target: { value: 'the-real-admin-key' } });
+    await act(async () => { fireEvent.click(screen.getByText('Enter')); });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('admin-connection-error')).not.toBeNull();
+    });
+    expect(screen.queryByText(/^No users have registered yet\.$/i)).toBeNull();
+    expect(screen.queryByText(/Account count temporarily unavailable/i)).not.toBeNull();
+    expect(screen.queryAllByText(/saved accounts have not been deleted/i).length).toBeGreaterThan(0);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
   it('fails closed when the server cannot be reached — no offline bypass', async () => {
     // jsdom fetch to a relative URL fails → ApiUnavailableError. Even the
     // old local default password must NOT unlock anything.

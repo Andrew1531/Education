@@ -317,6 +317,9 @@ const TX = {
     adminSearchPlaceholder: 'Search by username or email…',
     adminNoUsers: 'No users have registered yet.',
     adminNoResults: 'No results match your search.',
+    adminConnecting: 'Connecting to the central database…',
+    adminConnectionFailed: 'The central database could not be reached. Your saved accounts have not been deleted. Refresh to reconnect.',
+    adminCountUnavailable: 'Account count temporarily unavailable',
     adminFieldEmail: 'Email',
     adminFieldPassword: 'Password',
     adminFieldJoined: 'Joined',
@@ -685,6 +688,9 @@ const TX = {
     adminSearchPlaceholder: 'Buscar por usuario o correo…',
     adminNoUsers: 'Aún no hay usuarios registrados.',
     adminNoResults: 'Ningún resultado coincide con tu búsqueda.',
+    adminConnecting: 'Conectando con la base de datos central…',
+    adminConnectionFailed: 'No se pudo conectar con la base de datos central. Tus cuentas guardadas no se eliminaron. Actualiza para volver a conectar.',
+    adminCountUnavailable: 'Recuento de cuentas temporalmente no disponible',
     adminFieldEmail: 'Correo',
     adminFieldPassword: 'Contraseña',
     adminFieldJoined: 'Registro',
@@ -2408,6 +2414,8 @@ function AdminPage() {
   const [needKey, setNeedKey]         = useState(false);
   const [keyNotConfigured, setKeyNotConfigured] = useState(false);
   const [keyInput, setKeyInput]       = useState('');
+  const [refreshing, setRefreshing]   = useState(true);
+  const [connectionErr, setConnectionErr] = useState(false);
 
   function serverToStored(u: ServerUser): AdminUser {
     // Display-only mapping; password material never leaves the server.
@@ -2427,6 +2435,8 @@ function AdminPage() {
     // Push any accounts that exist only in this browser up to the central
     // database, then show the central list. Fall back to device-local
     // accounts when the backend is unreachable.
+    setRefreshing(true);
+    setConnectionErr(false);
     let local: AdminUser[] = [];
     try { local = getUsers(); setStorageErr(''); }
     catch (e) { setStorageErr(e instanceof Error ? e.message : String(e)); }
@@ -2442,6 +2452,7 @@ function AdminPage() {
       setUsers(server.map(serverToStored));
       setServerMode(true);
       setNeedKey(false);
+      setConnectionErr(false);
     } catch (e) {
       if (e instanceof AdminKeyRequiredError) {
         setNeedKey(true);
@@ -2450,8 +2461,13 @@ function AdminPage() {
         setServerMode(true);
         return;
       }
-      setUsers(local);
+      // Do not erase a central list that was already visible merely because a
+      // later refresh hit a temporary cold-start/network failure.
+      setUsers((current) => current.length > 0 ? current : local);
       setServerMode(false);
+      setConnectionErr(true);
+    } finally {
+      setRefreshing(false);
     }
   }
 
@@ -2539,7 +2555,9 @@ function AdminPage() {
           <div>
             <h1 className="text-white font-extrabold text-2xl tracking-tight">{t('adminTitle')}</h1>
             <p className="text-slate-400 text-xs">
-              {users.length} {users.length !== 1 ? t('adminAccountPlural') : t('adminAccountSingular')}
+              {serverMode !== true && users.length === 0
+                ? t('adminCountUnavailable')
+                : `${users.length} ${users.length !== 1 ? t('adminAccountPlural') : t('adminAccountSingular')}`}
               {serverMode !== null && (
                 <span className={`ml-2 px-2 py-0.5 rounded-md border text-[10px] font-semibold ${serverMode ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-amber-500/15 border-amber-500/30 text-amber-400'}`}>
                   {serverMode ? t('adminModeServer') : t('adminModeLocal')}
@@ -2548,7 +2566,13 @@ function AdminPage() {
             </p>
           </div>
         </div>
-        <button onClick={refresh} className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium self-start sm:self-auto">{t('adminRefresh')}</button>
+        <button
+          onClick={refresh}
+          disabled={refreshing}
+          className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium self-start sm:self-auto disabled:opacity-60 disabled:cursor-wait"
+        >
+          {refreshing ? t('adminConnecting') : t('adminRefresh')}
+        </button>
       </div>
 
       {/* Admin key prompt — backend requires a key before showing accounts */}
@@ -2576,6 +2600,16 @@ function AdminPage() {
         </div>
       )}
 
+      {connectionErr && (
+        <div
+          data-testid="admin-connection-error"
+          className="mb-6 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-5 py-4 text-sm text-amber-200"
+          role="status"
+        >
+          {t('adminConnectionFailed')}
+        </div>
+      )}
+
       {/* Search bar */}
       <div className="mb-6">
         <input
@@ -2590,7 +2624,11 @@ function AdminPage() {
       {/* User Grid */}
       {filtered.length === 0 ? (
         <div className="glass-panel rounded-2xl p-16 text-center text-slate-500 text-sm">
-          {users.length === 0 ? t('adminNoUsers') : t('adminNoResults')}
+          {refreshing && serverMode === null
+            ? t('adminConnecting')
+            : connectionErr && users.length === 0
+              ? t('adminConnectionFailed')
+              : users.length === 0 ? t('adminNoUsers') : t('adminNoResults')}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -2692,7 +2730,13 @@ function AdminPage() {
         </div>
       )}
 
-      <button onClick={refresh} className="mt-6 text-xs text-slate-500 hover:text-slate-300 transition-colors cursor-pointer bg-transparent border-none">{t('adminRefreshList')}</button>
+      <button
+        onClick={refresh}
+        disabled={refreshing}
+        className="mt-6 text-xs text-slate-500 hover:text-slate-300 transition-colors cursor-pointer bg-transparent border-none disabled:opacity-60 disabled:cursor-wait"
+      >
+        {refreshing ? t('adminConnecting') : t('adminRefreshList')}
+      </button>
 
       {/* Reset Password Modal */}
       {resetTarget && (
