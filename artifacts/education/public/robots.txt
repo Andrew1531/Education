@@ -1,2 +1,37 @@
+# VerifED Global crawler policy
+# Public educational and marketing content is open to search and AI discovery.
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api/
+
+# Google AI discovery
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+# OpenAI search and user-requested retrieval
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+# Anthropic discovery
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+# Perplexity discovery
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://verifed.xyz/sitemap.xml

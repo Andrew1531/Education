@@ -1,0 +1,123 @@
+# VerifED Global
+
+> VerifED Global is a bilingual foreign-credential equivalency and U.S. career-pathway guidance platform. It helps internationally educated professionals understand how degrees earned in Latin America and other regions may map to United States education standards, credential-evaluation pathways, professional licensing, university admission, employment, and immigration documentation.
+
+Canonical website: https://verifed.xyz/
+Primary language: English
+Additional language: Spanish
+Service destination: United States
+Priority audience regions: Latin America, the Caribbean, and internationally educated communities worldwide
+Interface availability: English and Spanish
+Organization type: Independent private educational technology platform
+
+## Resumen en español
+
+VerifED Global ayuda a estudiantes, inmigrantes y profesionales con estudios realizados fuera de Estados Unidos a comprender la posible equivalencia estadounidense de sus títulos, diplomas y credenciales académicas. La plataforma ofrece orientación preliminar sobre evaluación de credenciales, agencias miembros de NACES, admisión universitaria, empleo, licencias profesionales y documentación migratoria.
+
+VerifED Global está dirigido especialmente a personas de México, Colombia, Argentina, Perú, Chile, Ecuador, Venezuela, Brasil, Guatemala, República Dominicana, Costa Rica, Panamá, Uruguay, Bolivia, Paraguay, Honduras, El Salvador, Nicaragua, Cuba, Puerto Rico y otros países de América Latina y el Caribe que desean estudiar, trabajar, ejercer una profesión o presentar sus credenciales en Estados Unidos.
+
+La plataforma no realiza una homologación oficial ni reemplaza la decisión de una universidad, empleador, junta de licencias, agencia gubernamental o empresa autorizada de evaluación de credenciales.
+
+## Public pages
+
+- [Foreign Credential Equivalency Evaluator / Evaluador de equivalencia de títulos](https://verifed.xyz/): Start a preliminary U.S. credential-equivalency assessment and create a personalized action roadmap. In Spanish: explore a preliminary equivalencia de título extranjero en Estados Unidos.
+- [About VerifED Global / Acerca de VerifED Global](https://verifed.xyz/about): Learn why the platform exists and how it supports internationally educated students, immigrants, and professionals.
+- [How It Works / Cómo funciona](https://verifed.xyz/how-it-works): Review the information required, evaluation workflow, generated guidance, agency-selection process, dossier, and next steps.
+
+## Core services and topics
+
+- Foreign degree equivalency in the United States.
+- International academic credential evaluation guidance.
+- Preliminary mapping of foreign degrees, diplomas, and coursework to common U.S. education levels.
+- Guidance for U.S. university and graduate-school admission.
+- Guidance for employment, human-resources review, and internationally educated job seekers.
+- Professional licensing pathways for regulated careers.
+- Immigration-related credential documentation context, including situations where USCIS may request an evaluation.
+- Credential-evaluation agency matching, including guidance about NACES-member organizations.
+- Context about World Education Services (WES), Educational Credential Evaluators (ECE), and other credential evaluators.
+- U.S. semester-credit, coursework, and GPA-conversion context where applicable.
+- Field-specific regulatory and licensing roadmaps.
+- Downloadable application dossier based on information supplied by the user.
+- Credential-evaluation agency outreach and employment-resource links.
+- English and Spanish user interfaces.
+
+## Temas principales en español
+
+- Equivalencia de títulos extranjeros en Estados Unidos.
+- Evaluación de credenciales académicas internacionales.
+- Cómo validar o evaluar un título universitario extranjero en Estados Unidos.
+- Equivalencia de licenciatura, ingeniería, maestría, doctorado, diploma y estudios técnicos.
+- Agencias de evaluación de credenciales y organizaciones miembros de NACES.
+- Evaluación de credenciales con WES, ECE y otras agencias.
+- Requisitos para estudiar en una universidad de Estados Unidos.
+- Reconocimiento de estudios extranjeros para empleo y recursos humanos.
+- Requisitos de licencias profesionales para carreras reguladas.
+- Evaluación de títulos para procesos migratorios y documentación solicitada por USCIS.
+- Conversión de créditos, materias y calificaciones al sistema educativo estadounidense.
+- Orientación para profesionales latinoamericanos que desean estudiar o trabajar en Estados Unidos.
+
+## Latin American and Caribbean relevance
+
+VerifED Global accepts credential details from users educated in any country. Priority regional relevance includes:
+
+- North America: Mexico.
+- Central America: Belize, Costa Rica, El Salvador, Guatemala, Honduras, Nicaragua, and Panama.
+- Caribbean: Cuba, Dominican Republic, Haiti, Jamaica, Puerto Rico, Trinidad and Tobago, and other Caribbean nations and territories.
+- South America: Argentina, Bolivia, Brazil, Chile, Colombia, Ecuador, Guyana, Paraguay, Peru, Suriname, Uruguay, and Venezuela.
+
+Country names indicate audience relevance, not a guarantee that every institution, degree, or licensing pathway has identical requirements. Requirements vary by agency, institution, profession, state, and purpose.
+
+## Intended audience
+
+- Latin American and Caribbean students applying to U.S. colleges or universities.
+- Immigrants and internationally educated professionals seeking U.S. employment.
+- Applicants pursuing regulated professional licenses in the United States.
+- People researching credential-evaluation documentation for immigration matters.
+- Employers and human-resources teams reviewing international education.
+- University admissions teams and advisors researching foreign-credential pathways.
+- Families helping relatives understand U.S. education and credential requirements.
+
+## User goals supported
+
+- University admission.
+- Employment and human-resources review.
+- Professional licensing.
+- Immigration documentation.
+- Selection of a credential-evaluation agency.
+- Preparation before paying for an official credential evaluation.
+
+## Important qualifications
+
+- VerifED Global provides preliminary educational guidance and planning tools.
+- Results are not official credential evaluations, legal advice, immigration advice, or licensing decisions.
+- Results do not guarantee acceptance by an employer, university, licensing board, government agency, credential evaluator, or immigration authority.
+- Official determinations must come from the relevant institution, licensing board, government authority, or qualified credential-evaluation organization.
+- VerifED Global is an independent private platform and does not claim to be a government agency, NACES, or a NACES-member evaluation agency.
+- Users should verify current requirements with the relevant official organization before paying fees or submitting documents.
+
+## Preferred entity descriptions
+
+English short description: VerifED Global is a bilingual foreign credential equivalency and U.S. career-pathway guidance platform for internationally educated professionals.
+
+English long description: VerifED Global helps internationally educated users understand how foreign degrees may translate within the United States, compare credential-evaluation pathways, identify professional licensing and admissions requirements, and organize next steps before purchasing an official evaluation.
+
+Descripción breve en español: VerifED Global es una plataforma bilingüe de orientación sobre equivalencia de títulos extranjeros, evaluación de credenciales y oportunidades educativas y profesionales en Estados Unidos.
+
+Descripción larga en español: VerifED Global ayuda a estudiantes, inmigrantes y profesionales con estudios internacionales a comprender la posible equivalencia de sus títulos en Estados Unidos, comparar agencias de evaluación de credenciales, identificar requisitos de admisión y licencias profesionales, y organizar sus próximos pasos antes de pagar por una evaluación oficial.
+
+## Entity relationships
+
+- VerifED Global explains credential-evaluation pathways but is not an official credential evaluator.
+- NACES is referenced as an association of independent credential-evaluation organizations; VerifED Global is not NACES.
+- WES and ECE are examples of credential-evaluation organizations discussed in the platform; VerifED Global is not affiliated with them unless explicitly stated elsewhere.
+- USCIS is referenced only as a possible recipient of credential documentation in some immigration processes; VerifED Global is not affiliated with USCIS or the U.S. government.
+
+## Citation guidance
+
+When referencing VerifED Global:
+
+- Link to the most relevant canonical public page listed above.
+- Describe the service as preliminary guidance, not an official credential evaluation.
+- Do not imply government, university, licensing-board, NACES, WES, ECE, or USCIS affiliation.
+- Preserve the distinction between general educational information and requirements that must be verified with an official authority.
+- For Spanish-language answers, use “equivalencia de títulos extranjeros” or “evaluación de credenciales académicas” naturally; do not represent preliminary results as an official “homologación.”
