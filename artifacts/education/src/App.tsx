@@ -1502,7 +1502,7 @@ function ContactSection() {
     e.preventDefault();
     const subject = encodeURIComponent('VerifED Global – Transfer Help Request');
     const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-    window.open(`mailto:support@verifedglobal.com?subject=${subject}&body=${body}`, '_blank');
+    window.open(`mailto:andrew@ladmedia.co?subject=${subject}&body=${body}`, '_blank');
     setSent(true);
     setTimeout(() => setSent(false), 5000);
   }
