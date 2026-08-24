@@ -137,8 +137,6 @@ const TX = {
     contactC2: 'Help gathering documents from your home country',
     contactC3: 'Advice on field-specific U.S. licensing requirements',
     contactC4: 'Support navigating USCIS credential recognition',
-    contactSent: 'Message Ready to Send',
-    contactSentSub: "Your email client should have opened. We'll get back to you within 24 hours.",
     contactLName: 'Your Name', contactLEmail: 'Email Address', contactLMsg: 'How Can We Help?',
     contactPName: 'Full name', contactPMsg: "Describe your credential, country, field, and what you're trying to achieve in the U.S. ...",
     contactBtn: 'Send Message',
@@ -508,8 +506,6 @@ const TX = {
     contactC2: 'Ayuda para recopilar documentos de tu país de origen',
     contactC3: 'Asesoría sobre requisitos de licencia en EE.UU. por campo',
     contactC4: 'Apoyo para navegar el reconocimiento de credenciales del USCIS',
-    contactSent: 'Mensaje Listo Para Enviar',
-    contactSentSub: 'Tu cliente de correo debería haberse abierto. Te responderemos en 24 horas.',
     contactLName: 'Tu Nombre', contactLEmail: 'Dirección de Correo', contactLMsg: '¿Cómo Podemos Ayudarte?',
     contactPName: 'Nombre completo', contactPMsg: 'Describe tu credencial, país, campo y lo que intentas lograr en EE.UU. ...',
     contactBtn: 'Enviar Mensaje',
@@ -1496,16 +1492,6 @@ function ContactSection() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const [sent, setSent] = useState(false);
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const subject = encodeURIComponent('VerifED Global – Transfer Help Request');
-    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-    window.open(`mailto:andrew@ladmedia.co?subject=${subject}&body=${body}`, '_blank');
-    setSent(true);
-    setTimeout(() => setSent(false), 5000);
-  }
 
   return (
     <div className="mt-12">
@@ -1528,32 +1514,26 @@ function ContactSection() {
             </ul>
           </div>
           <div>
-            {sent ? (
-              <div className="flex flex-col items-center justify-center h-full text-center py-8">
-                <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl mb-4">✅</div>
-                <p className="text-white font-bold text-lg mb-1">{t('contactSent')}</p>
-                <p className="text-slate-400 text-sm">{t('contactSentSub')}</p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4" data-testid="form-contact">
+              <form action="https://api.web3forms.com/submit" method="POST" className="space-y-4" data-testid="form-contact">
+                <input type="hidden" name="access_key" value="83776d97-1345-4e6c-80d8-8222dbe8eaaf" />
+                <input type="hidden" name="subject" value="VerifED Global – Transfer Help Request" />
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('contactLName')}</label>
-                  <input value={name} onChange={(e) => setName(e.target.value)} data-testid="input-contact-name" required placeholder={t('contactPName')} className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                  <input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} data-testid="input-contact-name" required placeholder={t('contactPName')} className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('contactLEmail')}</label>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="input-contact-email" required placeholder="name@example.com" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                  <input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="input-contact-email" required placeholder="name@example.com" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('contactLMsg')}</label>
-                  <textarea value={message} onChange={(e) => setMessage(e.target.value)} data-testid="input-contact-message" required rows={4} placeholder={t('contactPMsg')} className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none" />
+                  <textarea name="message" value={message} onChange={(e) => setMessage(e.target.value)} data-testid="input-contact-message" required rows={4} placeholder={t('contactPMsg')} className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none" />
                 </div>
                 <button type="submit" data-testid="button-contact-submit" className="w-full bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
                   <span>{t('contactBtn')}</span>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </button>
               </form>
-            )}
           </div>
         </div>
       </div>
