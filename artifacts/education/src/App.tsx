@@ -137,8 +137,10 @@ const TX = {
     contactC2: 'Help gathering documents from your home country',
     contactC3: 'Advice on field-specific U.S. licensing requirements',
     contactC4: 'Support navigating USCIS credential recognition',
-    contactSent: 'Message Ready to Send',
-    contactSentSub: "Your email client should have opened. We'll get back to you within 24 hours.",
+    contactSending: 'Sending...',
+    contactSent: 'Message Sent Successfully',
+    contactSentSub: "Thanks for reaching out. We'll get back to you within 24 hours.",
+    contactError: "We couldn't send your message. Please try again.",
     contactLName: 'Your Name', contactLEmail: 'Email Address', contactLMsg: 'How Can We Help?',
     contactPName: 'Full name', contactPMsg: "Describe your credential, country, field, and what you're trying to achieve in the U.S. ...",
     contactBtn: 'Send Message',
@@ -508,8 +510,10 @@ const TX = {
     contactC2: 'Ayuda para recopilar documentos de tu país de origen',
     contactC3: 'Asesoría sobre requisitos de licencia en EE.UU. por campo',
     contactC4: 'Apoyo para navegar el reconocimiento de credenciales del USCIS',
-    contactSent: 'Mensaje Listo Para Enviar',
-    contactSentSub: 'Tu cliente de correo debería haberse abierto. Te responderemos en 24 horas.',
+    contactSending: 'Enviando...',
+    contactSent: 'Mensaje Enviado Correctamente',
+    contactSentSub: 'Gracias por escribirnos. Te responderemos en 24 horas.',
+    contactError: 'No pudimos enviar tu mensaje. Inténtalo de nuevo.',
     contactLName: 'Tu Nombre', contactLEmail: 'Dirección de Correo', contactLMsg: '¿Cómo Podemos Ayudarte?',
     contactPName: 'Nombre completo', contactPMsg: 'Describe tu credencial, país, campo y lo que intentas lograr en EE.UU. ...',
     contactBtn: 'Enviar Mensaje',
@@ -1496,15 +1500,34 @@ function ContactSection() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [sendError, setSendError] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const subject = encodeURIComponent('VerifED Global – Transfer Help Request');
-    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-    window.open(`mailto:andrew@ladmedia.co?subject=${subject}&body=${body}`, '_blank');
-    setSent(true);
-    setTimeout(() => setSent(false), 5000);
+    setSending(true);
+    setSendError(false);
+    const formData = new FormData(e.currentTarget);
+    formData.append('access_key', 'cc575078-c613-4a00-82ab-e5067f30c8d8');
+    formData.append('subject', 'VerifED Global – Transfer Help Request');
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json().catch(() => ({ success: false }));
+      if (!response.ok || data.success !== true) throw new Error('Contact form submission failed');
+      setName('');
+      setEmail('');
+      setMessage('');
+      setSent(true);
+    } catch {
+      setSendError(true);
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -1538,18 +1561,23 @@ function ContactSection() {
               <form onSubmit={handleSubmit} className="space-y-4" data-testid="form-contact">
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('contactLName')}</label>
-                  <input value={name} onChange={(e) => setName(e.target.value)} data-testid="input-contact-name" required placeholder={t('contactPName')} className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                  <input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} data-testid="input-contact-name" required placeholder={t('contactPName')} className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('contactLEmail')}</label>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="input-contact-email" required placeholder="name@example.com" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                  <input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="input-contact-email" required placeholder="name@example.com" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('contactLMsg')}</label>
-                  <textarea value={message} onChange={(e) => setMessage(e.target.value)} data-testid="input-contact-message" required rows={4} placeholder={t('contactPMsg')} className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none" />
+                  <textarea name="message" value={message} onChange={(e) => setMessage(e.target.value)} data-testid="input-contact-message" required rows={4} placeholder={t('contactPMsg')} className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none" />
                 </div>
-                <button type="submit" data-testid="button-contact-submit" className="w-full bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
-                  <span>{t('contactBtn')}</span>
+                {sendError && (
+                  <p role="alert" className="text-red-400 text-xs font-medium bg-red-900/20 border border-red-500/30 rounded-lg px-3 py-2">
+                    {t('contactError')}
+                  </p>
+                )}
+                <button type="submit" data-testid="button-contact-submit" disabled={sending} className="w-full bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
+                  <span>{sending ? t('contactSending') : t('contactBtn')}</span>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </button>
               </form>
