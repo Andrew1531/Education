@@ -1912,7 +1912,7 @@ function AgencyOutreach({ result }: { result: EvalResult }) {
       setCopied(agencyName);
       setTimeout(() => setCopied(null), 2000);
     } catch {
-      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      setCopied(null);
     }
   }
 
@@ -1927,8 +1927,6 @@ function AgencyOutreach({ result }: { result: EvalResult }) {
       </p>
       <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
         {NACES_AGENCIES.map((agency) => {
-          const { subject, body } = buildAgencyDraft(agency.name, result, user);
-          const mailto = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
           const contactedDate = contacted[agency.name];
           const slug = agency.name.slice(0, 12).toLowerCase().replace(/[^a-z]+/g, '-');
           return (
@@ -1951,7 +1949,7 @@ function AgencyOutreach({ result }: { result: EvalResult }) {
                 >
                   {contactedDate ? t('agencyContacted') : t('agencyMark')}
                 </button>
-                <a href={mailto} title="Open pre-written email draft" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 hover:bg-indigo-500/25 transition-colors">{t('agencyDraft')}</a>
+                <button type="button" onClick={() => copyDraft(agency.name)} title="Copy pre-written email draft" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 hover:bg-indigo-500/25 transition-colors cursor-pointer">{t('agencyDraft')}</button>
                 <button type="button" onClick={() => copyDraft(agency.name)} title="Copy email draft" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:text-white transition-colors cursor-pointer">
                   {copied === agency.name ? t('agencyCopied') : t('agencyCopy')}
                 </button>
