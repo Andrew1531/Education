@@ -1979,7 +1979,20 @@ function EvaluatorView() {
   const [field, setField] = useState(saved.field || '');
   const [credits, setCredits] = useState('');
   const [purpose, setPurpose] = useState(saved.purpose || '');
-  const [result, setResult] = useState<EvalResult | null>(null);
+  // A saved profile is also enough to rebuild the deterministic evaluation
+  // result. Rehydrate it immediately so restored roadmap checkmarks are visible
+  // after a reload or after signing in on another browser.
+  const [result, setResult] = useState<EvalResult | null>(() => (
+    saved.country && isValidCountry(saved.country)
+      ? {
+          country: saved.country,
+          institution: saved.institution || '',
+          degree: saved.degree || '',
+          field: saved.field || '',
+          purpose: saved.purpose || '',
+        }
+      : null
+  ));
   const [countryErr, setCountryErr] = useState('');
   const evalUser = getSignedInUser();
   const roadmapStepsKey = `ge_roadmap_steps_${evalUser.username.toLowerCase() || 'anon'}`;

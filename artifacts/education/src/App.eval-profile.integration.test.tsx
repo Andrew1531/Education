@@ -185,6 +185,33 @@ describe('EvaluatorView submit — repeated submissions update the profile', () 
   });
 });
 
+describe('EvaluatorView restore — saved roadmap remains visible after reload', () => {
+  it('rebuilds the saved evaluation and restores checked roadmap steps', async () => {
+    seedLoggedIn();
+    localStorage.setItem('ge_profile', JSON.stringify({
+      country: 'Nigeria',
+      institution: 'University of Lagos',
+      degree: 'B.Sc',
+      field: 'Computer Science',
+      purpose: 'Employment & HR',
+    }));
+    localStorage.setItem(
+      `ge_roadmap_steps_${VALID_USER.username}`,
+      JSON.stringify([true, false, true, false]),
+    );
+
+    await act(async () => { render(<App />); });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('results-container')).not.toBeNull();
+      expect(screen.queryByTestId('roadmap-step-0')).not.toBeNull();
+    });
+    expect(screen.getByTestId('roadmap-step-0').className).toContain('border-indigo-500/40');
+    expect(screen.getByTestId('roadmap-step-1').className).toContain('border-slate-800/80');
+    expect(screen.getByTestId('roadmap-step-2').className).toContain('border-indigo-500/40');
+  });
+});
+
 // ─── 4 · No /auth/profile call when user is not signed in ────────────────────
 
 describe('EvaluatorView submit — no profile push without a signed-in user', () => {

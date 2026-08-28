@@ -1,6 +1,15 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { isUnavailableResponse, apiSaveContacted, apiFetchContacted, apiSignin, apiSignup, apiListUsers } from './api';
+import {
+  isUnavailableResponse,
+  apiSaveContacted,
+  apiFetchContacted,
+  apiSaveRoadmapSteps,
+  apiFetchRoadmapSteps,
+  apiSignin,
+  apiSignup,
+  apiListUsers,
+} from './api';
 
 function fakeRes(status: number, contentType: string | null) {
   return { status, headers: { get: (n: string) => (n.toLowerCase() === 'content-type' ? contentType : null) } };
@@ -100,6 +109,55 @@ describe('contacted-agency sync auth', () => {
     localStorage.setItem('ge_auth_token_bob', 'tok-bob');
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(jsonResponse(401, { error: 'unauthorized' }));
     expect(await apiFetchContacted('bob')).toBeNull();
+  });
+});
+
+describe('roadmap progress sync auth', () => {
+  const jsonResponse = (status: number, body: unknown) =>
+    new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+
+  beforeEach(() => localStorage.clear());
+  afterEach(() => vi.restoreAllMocks());
+
+  it('does not call the backend without an auth token', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    await apiSaveRoadmapSteps('alice', [true, false, true, false]);
+    expect(await apiFetchRoadmapSteps('alice')).toBeNull();
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('sends and restores roadmap state with the signed-in user token', async () => {
+    localStorage.setItem('ge_auth_token_alice', 'tok-alice');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(jsonResponse(200, { ok: true }))
+      .mockResolvedValueOnce(jsonResponse(200, {
+        roadmapSteps: [true, false, true, false],
+      }));
+
+    await apiSaveRoadmapSteps('Alice', [true, false, true, false]);
+    expect(await apiFetchRoadmapSteps('Alice')).toEqual([
+      true, false, true, false,
+    ]);
+
+    expect(fetchSpy.mock.calls[0]?.[0]).toBe('/api/auth/roadmap-steps');
+    expect(fetchSpy.mock.calls[1]?.[0]).toBe('/api/auth/roadmap-steps?username=Alice');
+    const save = fetchSpy.mock.calls[0]?.[1] as RequestInit;
+    const restore = fetchSpy.mock.calls[1]?.[1] as RequestInit;
+    expect(save.headers).toMatchObject({ 'x-auth-token': 'tok-alice' });
+    expect(restore.headers).toMatchObject({ 'x-auth-token': 'tok-alice' });
+    expect(JSON.parse(save.body as string)).toEqual({
+      username: 'Alice',
+      roadmapSteps: [true, false, true, false],
+    });
+  });
+
+  it('does not expose progress when the server rejects the token', async () => {
+    localStorage.setItem('ge_auth_token_alice', 'tok-for-another-user');
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      jsonResponse(401, { error: 'unauthorized' }),
+    );
+
+    expect(await apiFetchRoadmapSteps('alice')).toBeNull();
   });
 });
 
