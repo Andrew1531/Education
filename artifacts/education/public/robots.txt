@@ -1,5 +1,6 @@
 # VerifED Global crawler policy
 # Public educational and marketing content is open to search and AI discovery.
+# Canonical HTTPS host: https://verifed.co/
 User-agent: *
 Allow: /
 Disallow: /admin

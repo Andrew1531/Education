@@ -3,6 +3,7 @@
 > VerifED Global is a bilingual foreign-credential equivalency and U.S. career-pathway guidance platform. It helps internationally educated professionals understand how degrees earned in Latin America and other regions may map to United States education standards, credential-evaluation pathways, professional licensing, university admission, employment, and immigration documentation.
 
 Canonical website: https://verifed.co/
+Last updated: 2026-08-28
 Primary language: English
 Additional language: Spanish
 Service destination: United States
