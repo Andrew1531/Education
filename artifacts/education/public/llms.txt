@@ -2,7 +2,7 @@
 
 > VerifED Global is a bilingual foreign-credential equivalency and U.S. career-pathway guidance platform. It helps internationally educated professionals understand how degrees earned in Latin America and other regions may map to United States education standards, credential-evaluation pathways, professional licensing, university admission, employment, and immigration documentation.
 
-Canonical website: https://verifed.xyz/
+Canonical website: https://verifed.co/
 Primary language: English
 Additional language: Spanish
 Service destination: United States
@@ -20,9 +20,9 @@ La plataforma no realiza una homologación oficial ni reemplaza la decisión de 
 
 ## Public pages
 
-- [Foreign Credential Equivalency Evaluator / Evaluador de equivalencia de títulos](https://verifed.xyz/): Start a preliminary U.S. credential-equivalency assessment and create a personalized action roadmap. In Spanish: explore a preliminary equivalencia de título extranjero en Estados Unidos.
-- [About VerifED Global / Acerca de VerifED Global](https://verifed.xyz/about): Learn why the platform exists and how it supports internationally educated students, immigrants, and professionals.
-- [How It Works / Cómo funciona](https://verifed.xyz/how-it-works): Review the information required, evaluation workflow, generated guidance, agency-selection process, dossier, and next steps.
+- [Foreign Credential Equivalency Evaluator / Evaluador de equivalencia de títulos](https://verifed.co/): Start a preliminary U.S. credential-equivalency assessment and create a personalized action roadmap. In Spanish: explore a preliminary equivalencia de título extranjero en Estados Unidos.
+- [About VerifED Global / Acerca de VerifED Global](https://verifed.co/about): Learn why the platform exists and how it supports internationally educated students, immigrants, and professionals.
+- [How It Works / Cómo funciona](https://verifed.co/how-it-works): Review the information required, evaluation workflow, generated guidance, agency-selection process, dossier, and next steps.
 
 ## Core services and topics
 

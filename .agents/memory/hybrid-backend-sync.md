@@ -3,7 +3,7 @@ name: Hybrid backend/local account sync
 description: How VerifED's GitHub Pages frontend + Replit backend split works and its constraints
 ---
 
-The education site is static (GitHub Pages, verifed.xyz) with an optional central API backend (api-server artifact + Replit PostgreSQL).
+The education site is static (GitHub Pages, verifed.co) with an optional central API backend (api-server artifact + Replit PostgreSQL).
 
 **Rules:**
 - Frontend tries the API first and falls back to device-local localStorage; the API base is `VITE_API_URL` (GitHub repo variable, baked at build) or same-origin `/api` in Replit dev.

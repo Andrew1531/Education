@@ -34,4 +34,4 @@ Allow: /
 Disallow: /admin
 Disallow: /api/
 
-Sitemap: https://verifed.xyz/sitemap.xml
+Sitemap: https://verifed.co/sitemap.xml
