@@ -44,7 +44,6 @@ export function jobSearchUrl(boardName: string, query: string, location?: string
     default: return '';
   }
 }
-}
 
 // Suggested U.S. job titles aligned with the user's field of study
 export function getAlignedRoles(field: string): string[] {
