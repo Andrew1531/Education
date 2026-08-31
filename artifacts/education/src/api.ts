@@ -5,6 +5,7 @@
 //    yet, or offline) → accounts stay in this browser's localStorage exactly
 //    as before.
 import type { StoredUser } from './userStore';
+import { z } from 'zod';
 
 // VITE_API_URL is baked in at build time (GitHub Actions sets it to the
 // published backend URL). In the Replit dev environment the API is served
@@ -12,34 +13,59 @@ import type { StoredUser } from './userStore';
 const API_BASE: string = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') || '/api';
 
 
-export interface School {
-  id: string;
-  name: string;
-  city: string;
-  state: string;
-  url?: string;
-  priceCalculatorUrl?: string;
-}
+export const SchoolSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  city: z.string().nullable(),
+  state: z.string().nullable(),
+  website: z.string().nullable().optional(),
+  priceCalculator: z.string().nullable().optional(),
+  studentSize: z.number().nullable().optional(),
+  ownership: z.union([z.string(), z.number()]).nullable(),
+  predominantDegree: z.union([z.string(), z.number()]).nullable(),
+  highestDegree: z.union([z.string(), z.number()]).nullable(),
+  onlineOnly: z.boolean(),
+  degreeFields: z.array(z.string()),
+  matchedCip: z.string().nullable().optional(),
+  programs: z.array(z.object({
+    cip4: z.string(),
+    cip6: z.string().nullable(),
+    title: z.string().nullable(),
+    credentialLevel: z.union([z.string(), z.number()]).nullable(),
+  })).optional(),
+});
+export type School = z.infer<typeof SchoolSchema>;
 
-export interface SchoolSearchResult {
-  schools: School[];
-  total: number;
-  page: number;
-}
+export const SchoolSourceSchema = z.object({
+  name: z.string(),
+  url: z.string(),
+  retrievedAt: z.string(),
+});
+export type SchoolSource = z.infer<typeof SchoolSourceSchema>;
+
+export const SchoolSearchResultSchema = z.object({
+  schools: z.array(SchoolSchema),
+  source: SchoolSourceSchema,
+});
+export type SchoolSearchResult = z.infer<typeof SchoolSearchResultSchema>;
 
 export interface Opportunity {
   id: string;
-  type: 'job' | 'school';
+  kind: 'job' | 'school';
   title: string;
   organization: string;
   location?: string;
   url?: string;
-  savedAt: string;
-  status: 'saved' | 'applied' | 'interviewing' | 'rejected' | 'accepted';
-  deadline?: string;
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceRetrievedAt?: string;
+  status: 'saved' | 'researching' | 'applying' | 'applied' | 'accepted' | 'rejected' | 'closed';
+  deadline: string | null;
   notes?: string;
   nextAction?: string;
-  readinessChecks?: Record<string, boolean>;
+  readinessChecks: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface EvalProfile {
@@ -329,11 +355,31 @@ export async function apiFetchContacted(username: string): Promise<Record<string
 }
 
 
-export async function apiSearchSchools(cip: string, state: string, degree: string, online: string, page: number = 1): Promise<SchoolSearchResult> {
-  const q = new URLSearchParams({ cip, state, degree, online, page: String(page) });
+export async function apiSearchSchools(cip: string, state: string, degree: string, online: string, page: number = 0): Promise<SchoolSearchResult> {
+  const params: Record<string, string> = { cip, page: String(page) };
+  if (state && state !== 'all') params.state = state;
+  if (degree && degree !== 'all') params.degree = degree;
+  if (online && online !== 'all') params.online = online;
+  
+  const q = new URLSearchParams(params);
   const res = await apiFetch(`/schools/search?${q.toString()}`);
-  if (!res.ok) throw new Error('School search failed');
-  return res.json();
+  if (!res.ok) {
+    if (res.status === 503) {
+      const errData = await res.json().catch(() => ({}));
+      if (errData.error === 'college_scorecard_api_key_not_configured') {
+        throw new Error('setup_unavailable');
+      }
+      throw new Error('source_unavailable');
+    }
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || 'School search failed');
+  }
+  const data = await res.json();
+  const parsed = SchoolSearchResultSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new Error('Malformed school search response');
+  }
+  return parsed.data;
 }
 
 export async function apiFetchOpportunities(username: string): Promise<Opportunity[] | null> {
@@ -351,14 +397,17 @@ export async function apiFetchOpportunities(username: string): Promise<Opportuni
 
 export async function apiSaveOpportunities(username: string, opportunities: Opportunity[]): Promise<void> {
   const token = getUserToken(username);
-  if (!token) return;
-  try {
-    await apiFetch('/auth/opportunities', {
-      method: 'PUT',
-      body: JSON.stringify({ username, opportunities }),
-      headers: { 'x-auth-token': token },
-    });
-  } catch { /* best-effort */ }
+  if (!token) throw new Error('Not authenticated');
+  const res = await apiFetch('/auth/opportunities', {
+    method: 'PUT',
+    body: JSON.stringify({ username, opportunities }),
+    headers: { 'x-auth-token': token },
+  });
+  if (!res.ok) {
+    if (res.status === 503) throw new Error('DOE source unavailable (503)');
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || 'Failed to save opportunities');
+  }
 }
 
 export function getUserToken(username: string): string {
@@ -368,4 +417,134 @@ export function getUserToken(username: string): string {
 function saveUserToken(username: string, token: unknown): void {
   if (typeof token !== 'string' || !token) return;
   try { localStorage.setItem(AUTH_TOKEN_PREFIX + username.trim().toLowerCase(), token); } catch { /* storage unavailable */ }
+}
+
+export const SchoolContactRecipientSchema = z.object({
+  email: z.string(),
+  sourceUrl: z.string().optional(),
+});
+export type SchoolContactRecipient = z.infer<typeof SchoolContactRecipientSchema>;
+
+export const SchoolContactSchema = z.object({
+  schoolId: z.string(),
+  schoolName: z.string().nullable(),
+  status: z.enum(['verified', 'fallback', 'unavailable']),
+  recipients: z.array(SchoolContactRecipientSchema).optional().default([]),
+  fallbackUrl: z.string().nullable().optional(),
+  error: z.string().optional(),
+});
+export type SchoolContact = z.infer<typeof SchoolContactSchema>;
+
+export async function apiFetchSchoolContacts(username: string, schoolIds: string[]): Promise<SchoolContact[]> {
+  const token = getUserToken(username);
+  if (!token) throw new Error('Not authenticated');
+  const res = await apiFetch('/auth/schools/contacts', {
+    method: 'POST',
+    body: JSON.stringify({ username, schoolIds }),
+    headers: { 'x-auth-token': token },
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    if (res.status === 503 && errData.error === 'college_scorecard_api_key_not_configured') {
+      throw new Error('setup_unavailable');
+    }
+    if (res.status === 503) throw new Error('source_unavailable');
+    throw new Error(errData.error || 'Failed to fetch school contacts');
+  }
+  const data = await res.json();
+  const parsed = z.array(SchoolContactSchema).safeParse(data.contacts || []);
+  if (!parsed.success) {
+    throw new Error('Malformed school contacts response');
+  }
+  return parsed.data;
+}
+
+export const OutreachResultSchema = z.object({
+  schoolId: z.string(),
+  result: z.enum(['sent', 'failed']),
+  providerMessageId: z.string().nullable().optional(),
+});
+export type OutreachResult = z.infer<typeof OutreachResultSchema>;
+
+export async function apiSendSchoolOutreach(
+  username: string, 
+  requestId: string,
+  schools: { schoolId: string; email: string }[], 
+  consent: boolean
+): Promise<OutreachResult[]> {
+  const token = getUserToken(username);
+  if (!token) throw new Error('Not authenticated');
+  const res = await apiFetch('/auth/school-outreach', {
+    method: 'POST',
+    body: JSON.stringify({ username, requestId, schools, consent }),
+    headers: { 'x-auth-token': token },
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    if (res.status === 503 && errData.error === 'college_scorecard_api_key_not_configured') {
+      throw new Error('setup_unavailable');
+    }
+    if (res.status === 503) throw new Error('source_unavailable');
+    throw new Error(errData.error || 'Failed to send outreach');
+  }
+  const data = await res.json();
+  const parsed = z.array(OutreachResultSchema).safeParse(data.results || []);
+  if (!parsed.success) {
+    throw new Error('Malformed school outreach response');
+  }
+  return parsed.data;
+}
+
+export interface OutreachHistoryItem {
+  packageVersion?: string;
+  schoolId: string;
+  schoolName: string;
+  recipient?: string;
+  recipientSourceUrl?: string;
+  result: 'sent' | 'failed';
+  providerMessageId?: string | null;
+  sentAt: string;
+}
+
+export async function apiFetchSchoolOutreachHistory(username: string): Promise<OutreachHistoryItem[]> {
+  const token = getUserToken(username);
+  if (!token) return [];
+  const res = await apiFetch(`/auth/school-outreach-history?username=${encodeURIComponent(username)}`, {
+    headers: { 'x-auth-token': token },
+  });
+  if (!res.ok) {
+    if (res.status === 503) throw new Error('DOE source unavailable (503)');
+    return [];
+  }
+  const data = await res.json();
+  return data.history || [];
+}
+
+export async function apiUpsertSchoolOpportunity(username: string, opportunity: Opportunity): Promise<void> {
+  const token = getUserToken(username);
+  if (!token) throw new Error('Not authenticated');
+  const res = await apiFetch(`/auth/opportunities/${encodeURIComponent(opportunity.id)}`, {
+    method: 'PUT',
+    body: JSON.stringify({ username, opportunity }),
+    headers: { 'x-auth-token': token },
+  });
+  if (!res.ok) {
+    if (res.status === 503) throw new Error('source_unavailable');
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || 'Failed to save school opportunity');
+  }
+}
+
+export async function apiDeleteSchoolOpportunity(username: string, id: string): Promise<void> {
+  const token = getUserToken(username);
+  if (!token) throw new Error('Not authenticated');
+  const res = await apiFetch(`/auth/opportunities/${encodeURIComponent(id)}?username=${encodeURIComponent(username)}`, {
+    method: 'DELETE',
+    headers: { 'x-auth-token': token },
+  });
+  if (!res.ok) {
+    if (res.status === 503) throw new Error('source_unavailable');
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || 'Failed to delete school opportunity');
+  }
 }

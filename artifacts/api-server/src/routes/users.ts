@@ -312,6 +312,69 @@ router.put("/auth/opportunities", async (req, res): Promise<void> => {
   res.json({ opportunities: updated.opportunities ?? opportunities });
 });
 
+// Per-school mutations use one PostgreSQL JSONB expression, avoiding the
+// read/modify/write race inherent in the legacy full-replace endpoint.
+router.put("/auth/opportunities/:id", async (req, res): Promise<void> => {
+  const username = typeof req.body?.username === "string" ? req.body.username.trim() : "";
+  const rawId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  const id = typeof rawId === "string" ? rawId.trim() : "";
+  if (!username || !id || id.length > 200) {
+    res.status(400).json({ error: "invalid_school_opportunity" });
+    return;
+  }
+  if (!verifyUserToken(username, req.header("x-auth-token"))) {
+    res.status(401).json({ error: "unauthorized" });
+    return;
+  }
+  const cleaned = cleanOpportunities([req.body?.opportunity]);
+  const opportunity = cleaned?.[0];
+  if (!opportunity || opportunity.kind !== "school" || opportunity.id !== id) {
+    res.status(400).json({ error: "invalid_school_opportunity" });
+    return;
+  }
+  const encoded = JSON.stringify(opportunity);
+  const merge: SQL = sql`(
+    COALESCE((
+      SELECT jsonb_agg(item)
+      FROM jsonb_array_elements(COALESCE(${usersTable.opportunities}, '[]'::jsonb)) item
+      WHERE item->>'id' <> ${id}
+    ), '[]'::jsonb) || jsonb_build_array(${encoded}::jsonb)
+  )`;
+  const [updated] = await db.update(usersTable).set({ opportunities: merge })
+    .where(eq(usersTable.username, username)).returning();
+  if (!updated) {
+    res.status(404).json({ error: "not_found" });
+    return;
+  }
+  res.json({ opportunity });
+});
+
+router.delete("/auth/opportunities/:id", async (req, res): Promise<void> => {
+  const username = typeof req.query.username === "string" ? req.query.username.trim() : "";
+  const rawId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  const id = typeof rawId === "string" ? rawId.trim() : "";
+  if (!username || !id || id.length > 200) {
+    res.status(400).json({ error: "invalid_school_opportunity" });
+    return;
+  }
+  if (!verifyUserToken(username, req.header("x-auth-token"))) {
+    res.status(401).json({ error: "unauthorized" });
+    return;
+  }
+  const remove: SQL = sql`COALESCE((
+    SELECT jsonb_agg(item)
+    FROM jsonb_array_elements(COALESCE(${usersTable.opportunities}, '[]'::jsonb)) item
+    WHERE NOT (item->>'id' = ${id} AND item->>'kind' = 'school')
+  ), '[]'::jsonb)`;
+  const [updated] = await db.update(usersTable).set({ opportunities: remove })
+    .where(eq(usersTable.username, username)).returning();
+  if (!updated) {
+    res.status(404).json({ error: "not_found" });
+    return;
+  }
+  res.json({ ok: true });
+});
+
 /**
  * Sanitize a contacted-agencies map: { [agencyName]: "YYYY-MM-DD" }.
  * Returns null when the payload is not a plain object. Caps entry count and

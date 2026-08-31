@@ -70,12 +70,16 @@ async function submitEvaluator(opts: {
   institution: string;
   degree: string;
   field: string;
+  purpose?: string;
 }) {
   await act(async () => {
     fireEvent.change(screen.getByTestId('input-country'), { target: { value: opts.country } });
     fireEvent.change(screen.getByTestId('input-institution'), { target: { value: opts.institution } });
     fireEvent.change(screen.getByTestId('input-degree'), { target: { value: opts.degree } });
     fireEvent.change(screen.getByTestId('input-field'), { target: { value: opts.field } });
+    if (opts.purpose) {
+      fireEvent.change(screen.getByTestId('select-purpose'), { target: { value: opts.purpose } });
+    }
     fireEvent.submit(screen.getByTestId('form-eval'));
   });
 }
@@ -127,13 +131,32 @@ describe('Language toggle — home page', () => {
 describe('Evaluator — language-aware results', () => {
   beforeEach(() => { seedLoggedInUser(); });
 
+  it('does not classify N/A and high-school-only answers as a bachelor degree', async () => {
+    await act(async () => { render(<App />); });
+    await waitFor(() => {
+      expect(screen.queryByTestId('form-eval')).not.toBeNull();
+    });
+
+    await submitEvaluator({
+      country: 'Jamaica',
+      institution: 'N/A',
+      degree: 'N/A',
+      field: 'High School',
+    });
+
+    const summary = await screen.findByTestId('text-summary');
+    expect(summary.textContent).toContain('High School Diploma / Secondary Education');
+    expect(summary.textContent).not.toMatch(/Bachelor/i);
+    expect(summary.textContent).toContain('not an official U.S. equivalency determination');
+  });
+
   it('shows English evaluator heading by default', async () => {
     await act(async () => { render(<App />); });
     await waitFor(() => {
       expect(screen.queryByTestId('form-eval')).not.toBeNull();
     });
-    // TX: evalH1 EN = 'Transform Your Foreign Education Into'
-    expect(screen.queryByText(/Transform Your Foreign Education Into/i)).not.toBeNull();
+    // TX: evalH1 EN = 'Understand Your Foreign Education In'
+    expect(screen.queryByText(/Understand Your Foreign Education In/i)).not.toBeNull();
   });
 
   it('shows Spanish evaluator heading when ES is active', async () => {
@@ -242,7 +265,7 @@ describe('Evaluator — language-aware results', () => {
 
     await toggleLanguage();
     await waitFor(() => {
-      expect(screen.queryByText(/Transform Your Foreign Education Into/i)).not.toBeNull();
+      expect(screen.queryByText(/Understand Your Foreign Education In/i)).not.toBeNull();
     });
 
     // English accounting insight
@@ -350,6 +373,42 @@ describe('Evaluator — Spanish field-name classifiers', () => {
 });
 
 // ─── Dossier export — Spanish HTML ────────────────────────────────────────────
+
+describe('SchoolFinder — language-aware results', () => {
+  beforeEach(() => { seedLoggedInUser(); });
+
+  it('renders SchoolFinder in Spanish when purpose is University Admission', async () => {
+    await act(async () => { render(<App />); });
+    await waitFor(() => {
+      expect(screen.queryByTestId('form-eval')).not.toBeNull();
+    });
+
+    await submitEvaluator({
+      country: 'Mexico',
+      institution: 'UNAM',
+      degree: 'Bachelor',
+      field: 'Computer Science',
+      purpose: 'University Admission'
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('results-container')).not.toBeNull();
+      // Ensure SchoolFinder shows up
+      expect(screen.queryByTestId('container-schoolfinder')).not.toBeNull();
+    });
+
+    // It should be in English first
+    expect(screen.queryByText(/Búsqueda de Universidades/i)).toBeNull();
+    expect(screen.queryByText(/University Search/i)).not.toBeNull();
+
+    // Toggle to Spanish
+    await toggleLanguage();
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Búsqueda de Universidades/i)).not.toBeNull();
+    });
+  });
+});
 
 describe('Dossier export — Spanish HTML output', () => {
   beforeEach(() => { seedLoggedInUser(); });

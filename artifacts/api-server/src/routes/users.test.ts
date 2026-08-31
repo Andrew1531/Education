@@ -654,4 +654,38 @@ describe("opportunity sanitization and owner-only storage", () => {
     expect(get.status).toBe(200);
     expect(get.body.opportunities).toEqual([opportunity]);
   });
+
+  it("atomically upserts one owner-authenticated school opportunity", async () => {
+    const opportunity = {
+      id: "123", kind: "school", title: "Example University", organization: "Example University",
+      url: "https://example.edu", location: "MA", sourceName: "College Scorecard",
+      sourceUrl: "https://api.data.gov/", sourceRetrievedAt: "2026-01-01T00:00:00Z",
+      status: "saved", deadline: null, notes: "", nextAction: "", readinessChecks: [],
+      createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-01-01T00:00:00Z",
+    };
+    setState([makeUserRow({ opportunities: [opportunity] })]);
+    const response = await request(app).put("/api/auth/opportunities/123")
+      .set("x-auth-token", ALICE_TOKEN).send({ username: "alice", opportunity });
+    expect(response.status).toBe(200);
+    expect(response.body.opportunity).toMatchObject({ id: "123", kind: "school" });
+    expect((spies.set.mock.calls[0]?.[0] as Record<string, unknown>).opportunities).toBeDefined();
+  });
+
+  it("rejects per-record job writes and mismatched IDs", async () => {
+    const base = { id: "job-1", kind: "job", title: "Job" };
+    const response = await request(app).put("/api/auth/opportunities/school-1")
+      .set("x-auth-token", ALICE_TOKEN)
+      .send({ username: "alice", opportunity: base });
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe("invalid_school_opportunity");
+  });
+
+  it("atomically deletes only an owner's matching school record", async () => {
+    setState([makeUserRow({ opportunities: [] })]);
+    const response = await request(app).delete("/api/auth/opportunities/123?username=alice")
+      .set("x-auth-token", ALICE_TOKEN);
+    expect(response.status).toBe(200);
+    expect(response.body.ok).toBe(true);
+    expect((spies.set.mock.calls[0]?.[0] as Record<string, unknown>).opportunities).toBeDefined();
+  });
 });

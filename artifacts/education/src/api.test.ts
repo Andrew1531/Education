@@ -9,6 +9,9 @@ import {
   apiSignin,
   apiSignup,
   apiListUsers,
+  apiUpsertSchoolOpportunity,
+  apiDeleteSchoolOpportunity,
+  type Opportunity,
 } from './api';
 
 function fakeRes(status: number, contentType: string | null) {
@@ -283,5 +286,55 @@ describe('apiSignup — profile forwarding (country + goal)', () => {
 
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error).toBe('username_taken');
+  });
+});
+
+describe('school opportunity per-record sync', () => {
+  const jsonResponse = (status: number, body: unknown) =>
+    new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+
+  beforeEach(() => {
+    localStorage.clear();
+    localStorage.setItem('ge_auth_token_alice', 'tok-alice');
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  it('upserts the school at the matching atomic record URL', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(jsonResponse(200, { ok: true }));
+    const opportunity: Opportunity = {
+      id: '123456',
+      kind: 'school',
+      title: 'Public University',
+      organization: 'Public University',
+      location: 'Albany, NY',
+      url: 'https://example.edu/',
+      sourceName: 'U.S. Department of Education College Scorecard',
+      sourceUrl: 'https://api.data.gov/ed/collegescorecard/v1/schools.json',
+      sourceRetrievedAt: '2026-08-31T12:00:00.000Z',
+      status: 'saved',
+      deadline: null,
+      notes: '',
+      nextAction: '',
+      readinessChecks: [],
+      createdAt: '2026-08-31T12:00:00.000Z',
+      updatedAt: '2026-08-31T12:00:00.000Z',
+    };
+
+    await apiUpsertSchoolOpportunity('Alice', opportunity);
+
+    expect(fetchSpy.mock.calls[0]?.[0]).toBe('/api/auth/opportunities/123456');
+    const request = fetchSpy.mock.calls[0]?.[1] as RequestInit;
+    expect(request.method).toBe('PUT');
+    expect(request.headers).toMatchObject({ 'x-auth-token': 'tok-alice' });
+    expect(JSON.parse(request.body as string)).toEqual({ username: 'Alice', opportunity });
+  });
+
+  it('deletes only the requested school record', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(jsonResponse(200, { ok: true }));
+
+    await apiDeleteSchoolOpportunity('Alice', '123456');
+
+    expect(fetchSpy.mock.calls[0]?.[0]).toBe('/api/auth/opportunities/123456?username=Alice');
+    expect((fetchSpy.mock.calls[0]?.[1] as RequestInit).method).toBe('DELETE');
   });
 });

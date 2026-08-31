@@ -21,6 +21,8 @@ export const usersTable = pgTable("users", {
   // User-owned saved job and school research records. Route validation caps this
   // at 100 entries; the startup migration also installs a database constraint.
   opportunities: jsonb("opportunities").$type<Opportunity[]>().notNull().default([]),
+  // Sanitized outcomes of school outreach; capped by both the API and database.
+  schoolOutreachHistory: jsonb("school_outreach_history").$type<SchoolOutreachHistoryEntry[]>().notNull().default([]),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -44,6 +46,17 @@ export interface Opportunity {
   readinessChecks: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface SchoolOutreachHistoryEntry {
+  packageVersion: string;
+  schoolId: string;
+  schoolName: string;
+  recipient: string;
+  recipientSourceUrl: string;
+  result: "sent" | "failed";
+  providerMessageId: string | null;
+  sentAt: string;
 }
 
 export const insertUserSchema = createInsertSchema(usersTable).omit({ id: true, createdAt: true });
