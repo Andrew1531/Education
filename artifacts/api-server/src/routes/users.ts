@@ -3,6 +3,7 @@ import { randomBytes, pbkdf2, createHash, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
 import { eq, sql, type SQL } from "drizzle-orm";
 import { db, usersTable } from "@workspace/db";
+import type { Opportunity, OpportunityKind, OpportunityStatus } from "@workspace/db";
 import { issueUserToken, verifyUserToken } from "../lib/userToken";
 
 const pbkdf2Async = promisify(pbkdf2);
@@ -77,6 +78,64 @@ function cleanProfile(body: unknown): Partial<Record<"country" | "institution" |
   const out: Record<string, string> = {};
   for (const k of ["country", "institution", "degree", "field", "purpose"] as const) {
     if (typeof src[k] === "string" && (src[k] as string).trim()) out[k] = (src[k] as string).trim().slice(0, 300);
+  }
+  return out;
+}
+
+const OPPORTUNITY_KINDS = new Set<OpportunityKind>(["job", "school"]);
+const OPPORTUNITY_STATUSES = new Set<OpportunityStatus>([
+  "saved", "researching", "applying", "applied", "accepted", "rejected", "closed",
+]);
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+function cleanText(value: unknown, limit: number): string {
+  return typeof value === "string" ? value.trim().slice(0, limit) : "";
+}
+
+function cleanHttpsUrl(value: unknown): string {
+  if (typeof value !== "string") return "";
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === "https:" ? url.toString() : "";
+  } catch {
+    return "";
+  }
+}
+
+function cleanTimestamp(value: unknown, fallback: string): string {
+  if (typeof value !== "string" || Number.isNaN(Date.parse(value))) return fallback;
+  return new Date(value).toISOString();
+}
+
+/**
+ * Produces bounded, safe records for the JSONB column. Invalid entries are
+ * discarded rather than allowing arbitrary JSON storage. Exported for unit
+ * tests and used by the full-replace opportunities endpoint.
+ */
+export function cleanOpportunities(body: unknown): Opportunity[] | null {
+  if (!Array.isArray(body)) return null;
+  const now = new Date().toISOString();
+  const out: Opportunity[] = [];
+  for (const raw of body.slice(0, 100)) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) continue;
+    const src = raw as Record<string, unknown>;
+    const id = cleanText(src.id, 200);
+    const kind = src.kind;
+    if (!id || typeof kind !== "string" || !OPPORTUNITY_KINDS.has(kind as OpportunityKind)) continue;
+    const status = typeof src.status === "string" && OPPORTUNITY_STATUSES.has(src.status as OpportunityStatus)
+      ? src.status as OpportunityStatus : "saved";
+    const deadline = typeof src.deadline === "string" && ISO_DATE.test(src.deadline) && !Number.isNaN(Date.parse(`${src.deadline}T00:00:00Z`))
+      ? src.deadline : null;
+    const readinessChecks = Array.isArray(src.readinessChecks)
+      ? src.readinessChecks.filter((v): v is string => typeof v === "string").map((v) => v.trim().slice(0, 300)).filter(Boolean).slice(0, 50)
+      : [];
+    out.push({
+      id, kind: kind as OpportunityKind, title: cleanText(src.title, 500), organization: cleanText(src.organization, 500),
+      url: cleanHttpsUrl(src.url), location: cleanText(src.location, 300), sourceName: cleanText(src.sourceName, 300),
+      sourceUrl: cleanHttpsUrl(src.sourceUrl), sourceRetrievedAt: cleanTimestamp(src.sourceRetrievedAt, now),
+      status, deadline, notes: cleanText(src.notes, 10_000), nextAction: cleanText(src.nextAction, 1_000),
+      readinessChecks, createdAt: cleanTimestamp(src.createdAt, now), updatedAt: cleanTimestamp(src.updatedAt, now),
+    });
   }
   return out;
 }
@@ -208,6 +267,49 @@ router.post("/auth/profile", async (req, res) => {
     .returning();
   if (!updated) return res.status(404).json({ error: "not_found" });
   return res.json({ user: publicUser(updated) });
+});
+
+// Saved opportunities are full-replace, user-owned data. The x-auth-token is
+// bound to username, preventing one account from reading or overwriting another.
+router.get("/auth/opportunities", async (req, res): Promise<void> => {
+  const username = typeof req.query.username === "string" ? req.query.username.trim() : "";
+  if (!username) {
+    res.status(400).json({ error: "username is required" });
+    return;
+  }
+  if (!verifyUserToken(username, req.header("x-auth-token"))) {
+    res.status(401).json({ error: "unauthorized" });
+    return;
+  }
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.username, username));
+  if (!user) {
+    res.status(404).json({ error: "not_found" });
+    return;
+  }
+  res.json({ opportunities: user.opportunities ?? [] });
+});
+
+router.put("/auth/opportunities", async (req, res): Promise<void> => {
+  const username = typeof req.body?.username === "string" ? req.body.username.trim() : "";
+  if (!username) {
+    res.status(400).json({ error: "username is required" });
+    return;
+  }
+  if (!verifyUserToken(username, req.header("x-auth-token"))) {
+    res.status(401).json({ error: "unauthorized" });
+    return;
+  }
+  const opportunities = cleanOpportunities(req.body?.opportunities);
+  if (opportunities === null) {
+    res.status(400).json({ error: "opportunities must be an array" });
+    return;
+  }
+  const [updated] = await db.update(usersTable).set({ opportunities }).where(eq(usersTable.username, username)).returning();
+  if (!updated) {
+    res.status(404).json({ error: "not_found" });
+    return;
+  }
+  res.json({ opportunities: updated.opportunities ?? opportunities });
 });
 
 /**

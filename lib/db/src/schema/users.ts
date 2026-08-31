@@ -18,8 +18,33 @@ export const usersTable = pgTable("users", {
   contactedAgencies: jsonb("contacted_agencies").$type<Record<string, string>>(),
   // Roadmap step checkboxes: boolean[] indexed by step position
   roadmapSteps: jsonb("roadmap_steps").$type<boolean[]>(),
+  // User-owned saved job and school research records. Route validation caps this
+  // at 100 entries; the startup migration also installs a database constraint.
+  opportunities: jsonb("opportunities").$type<Opportunity[]>().notNull().default([]),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+export type OpportunityKind = "job" | "school";
+export type OpportunityStatus = "saved" | "researching" | "applying" | "applied" | "accepted" | "rejected" | "closed";
+
+export interface Opportunity {
+  id: string;
+  kind: OpportunityKind;
+  title: string;
+  organization: string;
+  url: string;
+  location: string;
+  sourceName: string;
+  sourceUrl: string;
+  sourceRetrievedAt: string;
+  status: OpportunityStatus;
+  deadline: string | null;
+  notes: string;
+  nextAction: string;
+  readinessChecks: string[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 export const insertUserSchema = createInsertSchema(usersTable).omit({ id: true, createdAt: true });
 export type InsertUser = z.infer<typeof insertUserSchema>;

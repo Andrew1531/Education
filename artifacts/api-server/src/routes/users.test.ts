@@ -52,6 +52,7 @@ vi.mock("@workspace/db", () => {
 
 // Resolve imports AFTER the mock is in place.
 import app from "../app";
+import { cleanOpportunities } from "./users";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -603,5 +604,54 @@ describe("POST /api/users/import — profile fields passed to db.insert (not sil
       .send({ users: [{ username: "alice", password: "x" }] });
     expect(res.status).toBe(401);
     expect(res.body.error).toBe("unauthorized");
+  });
+});
+
+describe("opportunity sanitization and owner-only storage", () => {
+  const ALICE_TOKEN = "2937e51f9fb99c40bfe3363d84a52f7bf515cb0efba6d000609132a615ec702a";
+
+  it("sanitizes URLs, dates, text lengths and untrusted fields", () => {
+    const [saved] = cleanOpportunities([{
+      id: "listing-1", kind: "job", title: "  Analyst ", organization: "Org",
+      url: "http://unsafe.example", location: "Remote", sourceName: "Source",
+      sourceUrl: "https://source.example", sourceRetrievedAt: "2026-01-01",
+      status: "not-a-status", deadline: "not-a-date", notes: "notes", nextAction: "apply",
+      readinessChecks: [" resume ", 12, ""], createdAt: "invalid", updatedAt: "2026-02-01T00:00:00Z",
+      privateToken: "must not persist",
+    }])!;
+    expect(saved).toMatchObject({
+      id: "listing-1", kind: "job", title: "Analyst", url: "", status: "saved",
+      deadline: null, readinessChecks: ["resume"],
+    });
+    expect(saved).not.toHaveProperty("privateToken");
+  });
+
+  it("rejects a token issued for another user", async () => {
+    const res = await request(app).put("/api/auth/opportunities")
+      .set("x-auth-token", ALICE_TOKEN)
+      .send({ username: "bob", opportunities: [] });
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe("unauthorized");
+  });
+
+  it("lets an owner save and retrieve only their sanitized opportunities", async () => {
+    const opportunity = {
+      id: "school-1", kind: "school", title: "Example University", organization: "Example University",
+      url: "https://example.edu", location: "MA", sourceName: "College Scorecard",
+      sourceUrl: "https://api.data.gov/", sourceRetrievedAt: "2026-01-01T00:00:00Z",
+      status: "researching", deadline: null, notes: "", nextAction: "", readinessChecks: [],
+      createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-01-01T00:00:00Z",
+    };
+    setState([makeUserRow({ opportunities: [opportunity] })]);
+    const put = await request(app).put("/api/auth/opportunities")
+      .set("x-auth-token", ALICE_TOKEN).send({ username: "alice", opportunities: [opportunity] });
+    expect(put.status).toBe(200);
+    expect(put.body.opportunities[0].id).toBe("school-1");
+    expect((spies.set.mock.calls[0]?.[0] as Record<string, unknown>).opportunities).toBeDefined();
+
+    setSelectState([makeUserRow({ opportunities: [opportunity] })]);
+    const get = await request(app).get("/api/auth/opportunities?username=alice").set("x-auth-token", ALICE_TOKEN);
+    expect(get.status).toBe(200);
+    expect(get.body.opportunities).toEqual([opportunity]);
   });
 });

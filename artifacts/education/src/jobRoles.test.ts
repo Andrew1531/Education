@@ -93,6 +93,7 @@ describe('getAlignedRoles field routing', () => {
   });
 });
 
+
 describe('jobSearchUrl', () => {
   it('builds a pre-filtered Indeed search with an encoded query', () => {
     expect(jobSearchUrl('Indeed', 'Staff Accountant')).toBe('https://www.indeed.com/jobs?q=Staff%20Accountant');
@@ -105,8 +106,19 @@ describe('jobSearchUrl', () => {
       expect(url).toContain('Nurse');
     }
   });
+  
+  it('appends location and remote when provided', () => {
+    const urlIndeed = jobSearchUrl('Indeed', 'Nurse', 'New York', true);
+    expect(urlIndeed).toContain('l=New%20York');
+    expect(urlIndeed).toContain('sc=0kf:attr(DSQF7);');
+    
+    const urlLinkedIn = jobSearchUrl('LinkedIn Jobs', 'Nurse', 'Texas', true);
+    expect(urlLinkedIn).toContain('location=Texas');
+    expect(urlLinkedIn).toContain('f_WT=2');
+  });
 
   it('returns empty string for an unknown board', () => {
     expect(jobSearchUrl('Unknown Board', 'Nurse')).toBe('');
   });
 });
+

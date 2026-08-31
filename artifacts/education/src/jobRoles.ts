@@ -1,17 +1,49 @@
 // Job-board helpers: pre-filled search URLs and field-aligned role suggestions.
 
 // Build a pre-filled job-search URL on each board for a given query
-export function jobSearchUrl(boardName: string, query: string): string {
+export function jobSearchUrl(boardName: string, query: string, location?: string, remote?: boolean): string {
   const q = encodeURIComponent(query);
+  const loc = location ? encodeURIComponent(location) : '';
   switch (boardName) {
-    case 'Indeed': return `https://www.indeed.com/jobs?q=${q}`;
-    case 'LinkedIn Jobs': return `https://www.linkedin.com/jobs/search/?keywords=${q}`;
-    case 'Glassdoor': return `https://www.glassdoor.com/Job/jobs.htm?sc.keyword=${q}`;
-    case 'ZipRecruiter': return `https://www.ziprecruiter.com/jobs-search?search=${q}`;
-    case 'USAJobs': return `https://www.usajobs.gov/Search/Results?k=${q}`;
-    case 'Monster': return `https://www.monster.com/jobs/search?q=${q}`;
+    case 'Indeed': {
+      let url = `https://www.indeed.com/jobs?q=${q}`;
+      if (loc) url += `&l=${loc}`;
+      if (remote) url += `&sc=0kf:attr(DSQF7);`;
+      return url;
+    }
+    case 'LinkedIn Jobs': {
+      let url = `https://www.linkedin.com/jobs/search/?keywords=${q}`;
+      if (loc) url += `&location=${loc}`;
+      if (remote) url += `&f_WT=2`;
+      return url;
+    }
+    case 'Glassdoor': {
+      let fullQ = query;
+      if (remote) fullQ += ' Remote';
+      else if (location) fullQ += ` ${location}`;
+      return `https://www.glassdoor.com/Job/jobs.htm?sc.keyword=${encodeURIComponent(fullQ)}`;
+    }
+    case 'ZipRecruiter': {
+      let url = `https://www.ziprecruiter.com/jobs-search?search=${q}`;
+      if (loc) url += `&location=${loc}`;
+      if (remote) url += `&refine_by_location_type=remote`;
+      return url;
+    }
+    case 'USAJobs': {
+      let url = `https://www.usajobs.gov/Search/Results?k=${q}`;
+      if (loc) url += `&l=${loc}`;
+      if (remote) url += `&rm=true`;
+      return url;
+    }
+    case 'Monster': {
+      let fullQ = query;
+      if (remote) fullQ += ' Remote';
+      else if (location) fullQ += ` ${location}`;
+      return `https://www.monster.com/jobs/search?q=${encodeURIComponent(fullQ)}`;
+    }
     default: return '';
   }
+}
 }
 
 // Suggested U.S. job titles aligned with the user's field of study

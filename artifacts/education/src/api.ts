@@ -11,6 +11,37 @@ import type { StoredUser } from './userStore';
 // on the same origin under /api.
 const API_BASE: string = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') || '/api';
 
+
+export interface School {
+  id: string;
+  name: string;
+  city: string;
+  state: string;
+  url?: string;
+  priceCalculatorUrl?: string;
+}
+
+export interface SchoolSearchResult {
+  schools: School[];
+  total: number;
+  page: number;
+}
+
+export interface Opportunity {
+  id: string;
+  type: 'job' | 'school';
+  title: string;
+  organization: string;
+  location?: string;
+  url?: string;
+  savedAt: string;
+  status: 'saved' | 'applied' | 'interviewing' | 'rejected' | 'accepted';
+  deadline?: string;
+  notes?: string;
+  nextAction?: string;
+  readinessChecks?: Record<string, boolean>;
+}
+
 export interface EvalProfile {
   country?: string;
   institution?: string;
@@ -295,6 +326,39 @@ export async function apiFetchContacted(username: string): Promise<Record<string
   } catch {
     return null;
   }
+}
+
+
+export async function apiSearchSchools(cip: string, state: string, degree: string, online: string, page: number = 1): Promise<SchoolSearchResult> {
+  const q = new URLSearchParams({ cip, state, degree, online, page: String(page) });
+  const res = await apiFetch(`/schools/search?${q.toString()}`);
+  if (!res.ok) throw new Error('School search failed');
+  return res.json();
+}
+
+export async function apiFetchOpportunities(username: string): Promise<Opportunity[] | null> {
+  const token = getUserToken(username);
+  if (!token) return null;
+  try {
+    const res = await apiFetch(`/auth/opportunities?username=${encodeURIComponent(username)}`, { headers: { 'x-auth-token': token } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return Array.isArray(data?.opportunities) ? data.opportunities : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function apiSaveOpportunities(username: string, opportunities: Opportunity[]): Promise<void> {
+  const token = getUserToken(username);
+  if (!token) return;
+  try {
+    await apiFetch('/auth/opportunities', {
+      method: 'PUT',
+      body: JSON.stringify({ username, opportunities }),
+      headers: { 'x-auth-token': token },
+    });
+  } catch { /* best-effort */ }
 }
 
 export function getUserToken(username: string): string {
