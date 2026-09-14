@@ -8,3 +8,9 @@ Treat a workspace commit and a live GitHub Pages release as separate states. Nev
 **Why:** A correctly committed tracking change remained absent from the public site because `main` had not received it. Direct Git credentials were invalid, SSH was unavailable, and the installed GitHub connector could read but its write request was blocked by a connector-side Cloudflare 403.
 
 **How to apply:** Check the live HTML and the latest Pages run before reporting success. If all repository write paths remain blocked, give the user the exact GitHub web edit or authentication action rather than implying a local commit was published.
+
+The connector's Contents API PUT can receive a Cloudflare block while Git Data API writes succeed. Do not equate a blocked Contents request with all repository writes being unavailable.
+
+**Why:** A discovery-file update succeeded through creating a tree and commit and fast-forwarding the branch after the Contents write route had failed.
+
+**How to apply:** Use the current remote tree as the base, include only authorized files, and update the branch without force so concurrent changes cannot be overwritten.
