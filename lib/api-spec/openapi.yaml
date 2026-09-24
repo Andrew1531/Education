@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: institutions
+    description: Public, source-backed institution verification
 paths:
   /healthz:
     get:
@@ -24,6 +26,43 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /institutions/verify:
+    post:
+      operationId: verifyInstitution
+      tags: [institutions]
+      summary: Check an institution against public non-government sources
+      description: Uses Wikidata, Wikipedia, and (for reported closures) Internet Archive. It does not determine accreditation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InstitutionVerificationRequest"
+      responses:
+        "200":
+          description: Verification result, including honest ambiguous and not-found states
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InstitutionVerificationResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "503":
+          description: Public evidence providers unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +72,75 @@ components:
           type: string
       required:
         - status
+    ApiError:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+    InstitutionVerificationRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 200
+        country:
+          type: string
+          minLength: 2
+          maxLength: 100
+        selectedEntityId:
+          type: string
+          pattern: "^Q[1-9][0-9]*$"
+      required: [name, country]
+    EvidenceSource:
+      type: object
+      properties:
+        name: { type: string }
+        url: { type: string }
+        retrievedAt: { type: string, format: date-time }
+      required: [name, url, retrievedAt]
+    InstitutionCandidate:
+      type: object
+      properties:
+        entityId: { type: string }
+        name: { type: string }
+        description: { type: [string, "null"] }
+        aliases:
+          type: array
+          items: { type: string }
+        country: { type: [string, "null"] }
+        countryMatch: { type: boolean }
+        higherEducationType: { type: [string, "null"] }
+        officialWebsite: { type: [string, "null"] }
+        websiteAvailability:
+          type: string
+          enum: [not_checked]
+        closureDate: { type: [string, "null"] }
+        wikipediaUrl: { type: [string, "null"] }
+        archiveUrl: { type: [string, "null"] }
+        sources:
+          type: array
+          items: { $ref: "#/components/schemas/EvidenceSource" }
+      required: [entityId, name, description, aliases, country, countryMatch, higherEducationType, officialWebsite, websiteAvailability, closureDate, wikipediaUrl, archiveUrl, sources]
+    InstitutionVerificationResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [verified, ambiguous, not_found]
+        message: { type: string }
+        accreditationChecked:
+          type: boolean
+          const: false
+        selected:
+          oneOf:
+            - $ref: "#/components/schemas/InstitutionCandidate"
+            - type: "null"
+        candidates:
+          type: array
+          items: { $ref: "#/components/schemas/InstitutionCandidate" }
+        retrievedAt: { type: string, format: date-time }
+      required: [status, message, accreditationChecked, selected, candidates, retrievedAt]
 

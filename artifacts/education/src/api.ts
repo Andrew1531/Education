@@ -92,6 +92,39 @@ export class ApiUnavailableError extends Error {
   constructor() { super('API unavailable'); this.name = 'ApiUnavailableError'; }
 }
 
+export const InstitutionEvidenceSourceSchema = z.object({
+  name: z.string(),
+  url: z.string(),
+  retrievedAt: z.string(),
+});
+
+export const InstitutionCandidateSchema = z.object({
+  entityId: z.string(),
+  name: z.string(),
+  description: z.string().nullable(),
+  aliases: z.array(z.string()),
+  country: z.string().nullable(),
+  countryMatch: z.boolean(),
+  higherEducationType: z.string().nullable(),
+  officialWebsite: z.string().nullable(),
+  websiteAvailability: z.literal('not_checked'),
+  closureDate: z.string().nullable(),
+  wikipediaUrl: z.string().nullable(),
+  archiveUrl: z.string().nullable(),
+  sources: z.array(InstitutionEvidenceSourceSchema),
+});
+export type InstitutionCandidate = z.infer<typeof InstitutionCandidateSchema>;
+
+export const InstitutionVerificationSchema = z.object({
+  status: z.enum(['verified', 'ambiguous', 'not_found']),
+  message: z.string(),
+  accreditationChecked: z.literal(false),
+  selected: InstitutionCandidateSchema.nullable(),
+  candidates: z.array(InstitutionCandidateSchema),
+  retrievedAt: z.string(),
+});
+export type InstitutionVerification = z.infer<typeof InstitutionVerificationSchema>;
+
 export class AdminKeyRequiredError extends Error {
   /** True when the server itself has no admin key configured yet (needs republish). */
   readonly notConfigured: boolean;
@@ -154,6 +187,26 @@ async function apiFetch(path: string, init?: RequestInit, timeoutMs = 5000): Pro
   }
   if (isUnavailableResponse(res)) throw new ApiUnavailableError();
   return res;
+}
+
+export async function apiVerifyInstitution(
+  name: string,
+  country: string,
+  selectedEntityId?: string,
+): Promise<InstitutionVerification> {
+  const res = await apiFetch('/institutions/verify', {
+    method: 'POST',
+    body: JSON.stringify({ name, country, selectedEntityId }),
+  }, 15_000);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 429) throw new Error('rate_limited');
+    if (res.status === 503) throw new Error('sources_unavailable');
+    throw new Error(data.error || 'verification_failed');
+  }
+  const parsed = InstitutionVerificationSchema.safeParse(await res.json());
+  if (!parsed.success) throw new Error('malformed_verification_response');
+  return parsed.data;
 }
 
 /**

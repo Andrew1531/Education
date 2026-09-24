@@ -31,9 +31,11 @@ import {
   apiSaveRoadmapSteps,
   apiFetchRoadmapSteps,
   type EvalProfile,
+  type InstitutionVerification as InstitutionVerificationResult,
 } from './api';
 import { contactedStorageKey, loadContacted, mergeContacted } from './contactedSync';
 import { SchoolFinder } from './SchoolFinder';
+import { InstitutionVerification } from './InstitutionVerification';
 
 /**
  * Best-effort push of this visitor's own account + evaluation profile to the
@@ -175,9 +177,9 @@ const TX = {
     svcUnavailableSub: 'Sign-in and registration are temporarily unavailable. Please try again later or contact support.',
     // Evaluator
     evalBadge: 'Educational Pathways Guidance: Aligning with U.S. standard frameworks',
-    evalH1: 'Understand Your Foreign Education In',
-    evalH2: 'U.S. Equivalency Terms',
-    evalSubtitle: 'Understand your academic background in the context of U.S. standards and generate a concrete roadmap for official verification.',
+    evalH1: 'Your Education Abroad.',
+    evalH2: 'Your Next Career Step in the U.S.',
+    evalSubtitle: 'Check your institution’s background, understand how to present your foreign degree to U.S. employers, and explore credential evaluation and licensing requirements for your next career step.',
     evalFormTitle: 'Credential Parameters',
     evalFormStep: 'STEP 1 OF 2',
     evalLCountry: 'Country of Education',
@@ -211,7 +213,7 @@ const TX = {
     // Roadmap steps — titles & descriptions (static parts)
     rm1Title: 'Verify Institutional Credentials for',
     rm1DescPre: 'Review',
-    rm1DescSuf: 'Ministry of Education registries to verify accreditation status and active degree registry records.',
+    rm1DescSuf: 'public non-government evidence for country, higher-education type, official website listing, and reported closure history. This does not determine accreditation.',
     rm2Title: 'Map Coursework to NACES-Accredited Standards',
     rm2DescPre: 'Convert regional credit hours to U.S. semester credit units (SCU) matching standard undergraduate/graduate benchmarks for',
     rm3TitlePre: 'Align with',
@@ -221,19 +223,19 @@ const TX = {
     rm4Title: 'Prepare Official NACES Application Dossier',
     rm4Desc: 'Compile your provided information into a structured document to reference while preparing your official application for WES, ECE, or Josef Silny & Associates.',
     // Verify step content
-    verifyStatus: 'Accreditation Guidance',
+    verifyStatus: 'Public Evidence Check',
     verifyInstitution: 'Institution',
     verifyCountry: 'Country',
     verifyDegree: 'Degree Recorded',
     verifyRegistry: 'Registry Source',
-    verifyRegistrySuf: 'Ministry of Education – Active Registry',
+    verifyRegistrySuf: 'Wikidata, Wikipedia, and Internet Archive when applicable',
     verifyRecognition: 'Recognition Status',
-    verifyRecognitionVal: 'Typically requires verification by NACES-member agencies',
+    verifyRecognitionVal: 'Not checked — no accreditation claim is made',
     verifyWES: 'WES Eligibility',
-    verifyWESVal: 'Verify eligibility directly on the WES website',
+    verifyWESVal: 'Not checked by this public evidence search',
     verifyECE: 'ECE Eligibility',
-    verifyECEVal: 'Verify eligibility directly on the ECE website',
-    verifyActionLabel: 'Verify on WES Registry',
+    verifyECEVal: 'Not checked by this public evidence search',
+    verifyActionLabel: 'Open primary evidence record',
     // Coursework step content
     cwColSubject: 'Subject / Course Block',
     cwColSCU: 'U.S. SCU',
@@ -623,9 +625,9 @@ const TX = {
     svcUnavailableSub: 'El inicio de sesión y el registro están temporalmente no disponibles. Por favor intente más tarde o contacte al soporte.',
     // Evaluator
     evalBadge: '⚡ Plataforma Unificada: Procesando marcos NACES, USCIS y Juntas Estatales en tiempo real.',
-    evalH1: 'Transforma Tu Educación Extranjera en',
-    evalH2: 'Equivalencia en EE.UU.',
-    evalSubtitle: 'Consulta bases de datos académicas al instante, mapea estudios internacionales a estándares de EE.UU. y genera una hoja de ruta de verificación dinámica.',
+    evalH1: 'Tu educación en el extranjero.',
+    evalH2: 'Tu próximo paso profesional en EE.UU.',
+    evalSubtitle: 'Consulta los antecedentes de tu institución, descubre cómo presentar tu título extranjero a empleadores en EE.UU. y explora los requisitos de evaluación de credenciales y licencia para tu próximo paso profesional.',
     evalFormTitle: 'Parámetros de Credencial',
     evalFormStep: 'PASO 1 DE 2',
     evalLCountry: 'País de Estudios',
@@ -659,7 +661,7 @@ const TX = {
     // Roadmap steps — titles & descriptions (static parts)
     rm1Title: 'Verificar Credenciales Institucionales de',
     rm1DescPre: 'Consulta automatizada de registros del',
-    rm1DescSuf: 'Ministerio de Educación para verificar el estado de acreditación y los registros de títulos activos.',
+    rm1DescSuf: 'evidencia pública no gubernamental sobre país, tipo de educación superior, sitio oficial listado e historial de cierre informado. Esto no determina acreditación.',
     rm2Title: 'Mapear Plan de Estudios a Estándares NACES',
     rm2DescPre: 'Convertir créditos regionales a unidades de crédito semestral de EE.UU. (SCU) según los referentes de pregrado/posgrado estándar para',
     rm3TitlePre: 'Alinear con',
@@ -669,19 +671,19 @@ const TX = {
     rm4Title: 'Exportar Expediente Oficial de Solicitud NACES',
     rm4Desc: 'Compilar tu paquete de datos en un formato estandarizado listo para envío directo a WES, ECE o Josef Silny & Associates.',
     // Verify step content
-    verifyStatus: 'Acreditación Confirmada',
+    verifyStatus: 'Comprobación de evidencia pública',
     verifyInstitution: 'Institución',
     verifyCountry: 'País',
     verifyDegree: 'Título Registrado',
     verifyRegistry: 'Fuente del Registro',
-    verifyRegistrySuf: 'Ministerio de Educación – Registro Activo',
+    verifyRegistrySuf: 'Wikidata, Wikipedia e Internet Archive cuando corresponda',
     verifyRecognition: 'Estado de Reconocimiento',
-    verifyRecognitionVal: 'Reconocido por agencias miembros de NACES',
+    verifyRecognitionVal: 'No comprobada — no se afirma acreditación',
     verifyWES: 'Elegibilidad WES',
-    verifyWESVal: 'Elegible para evaluación de World Education Services',
+    verifyWESVal: 'No comprobada por esta búsqueda de evidencia pública',
     verifyECE: 'Elegibilidad ECE',
-    verifyECEVal: 'Elegible para revisión de Educational Credential Evaluators',
-    verifyActionLabel: 'Verificar en el Registro WES',
+    verifyECEVal: 'No comprobada por esta búsqueda de evidencia pública',
+    verifyActionLabel: 'Abrir el registro de evidencia principal',
     // Coursework step content
     cwColSubject: 'Materia / Bloque de Cursos',
     cwColSCU: 'SCU EE.UU.',
@@ -1753,19 +1755,24 @@ function ContactSection() {
 
 // ─── Step content generators ──────────────────────────────────────────────────
 
-function getVerifyContent(institution: string, country: string, degree: string, t: (k: TKey) => string) {
+function getVerifyContent(verification: InstitutionVerificationResult, degree: string, t: (k: TKey) => string) {
+  const selected = verification.selected!;
   return {
     status: t('verifyStatus'),
     rows: [
-      { label: t('verifyInstitution'), value: institution },
-      { label: t('verifyCountry'), value: country },
+      { label: t('verifyInstitution'), value: selected.name },
+      { label: t('verifyCountry'), value: selected.country || 'Unavailable' },
       { label: t('verifyDegree'), value: degree },
-      { label: t('verifyRegistry'), value: `${country} ${t('verifyRegistrySuf')}` },
+      { label: t('verifyRegistry'), value: selected.sources.map((source) => source.name).join(', ') },
+      { label: 'Higher-education type', value: selected.higherEducationType || 'Unavailable' },
+      { label: 'Official website listing', value: selected.officialWebsite || 'Unavailable; live availability not checked' },
+      ...(selected.closureDate ? [{ label: 'Reported closure date', value: `${selected.closureDate}${selected.archiveUrl ? ' — archived history available' : ''}` }] : []),
+      ...(selected.archiveUrl ? [{ label: 'Internet Archive evidence', value: selected.archiveUrl }] : []),
+      ...selected.sources.map((source) => ({ label: `Source: ${source.name}`, value: source.url })),
       { label: t('verifyRecognition'), value: t('verifyRecognitionVal') },
-      { label: t('verifyWES'), value: t('verifyWESVal') },
-      { label: t('verifyECE'), value: t('verifyECEVal') },
+      { label: 'Evidence retrieved', value: new Date(verification.retrievedAt).toLocaleString() },
     ],
-    action: { label: t('verifyActionLabel'), url: 'https://www.wes.org/about-credential-evaluations/the-evaluation-process/' },
+    action: { label: t('verifyActionLabel'), url: `https://www.wikidata.org/wiki/${selected.entityId}` },
   };
 }
 
@@ -1859,6 +1866,9 @@ function getPrereqContent(field: string, purpose: string, t: (k: TKey) => string
 }
 
 function exportDossier(result: EvalResult, usLevel: string, verifyRows: { label: string; value: string }[], prereqItems: { label: string; value: string }[], lang: Lang, t: (k: TKey) => string) {
+  const escapeHtml = (value: string) => value.replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  })[character]!);
   const locale = lang === 'es' ? 'es-ES' : 'en-US';
   const today = new Date().toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' });
   const html = `<!DOCTYPE html>
@@ -1891,17 +1901,17 @@ function exportDossier(result: EvalResult, usLevel: string, verifyRows: { label:
 
 <h2>${t('dossierSecCredential')}</h2>
 <table>
-  <tr><td>${t('dossierRowInstitution')}</td><td>${result.institution}</td></tr>
-  <tr><td>${t('dossierRowCountry')}</td><td>${result.country}</td></tr>
-  <tr><td>${t('dossierRowDegree')}</td><td>${result.degree}</td></tr>
-  <tr><td>${t('dossierRowField')}</td><td>${result.field}</td></tr>
-  <tr><td>${t('dossierRowUSEq')}</td><td><strong>${usLevel}</strong></td></tr>
-  ${result.purpose ? `<tr><td>${t('dossierRowGoal')}</td><td>${result.purpose}</td></tr>` : ''}
+  <tr><td>${t('dossierRowInstitution')}</td><td>${escapeHtml(result.institution)}</td></tr>
+  <tr><td>${t('dossierRowCountry')}</td><td>${escapeHtml(result.country)}</td></tr>
+  <tr><td>${t('dossierRowDegree')}</td><td>${escapeHtml(result.degree)}</td></tr>
+  <tr><td>${t('dossierRowField')}</td><td>${escapeHtml(result.field)}</td></tr>
+  <tr><td>${t('dossierRowUSEq')}</td><td><strong>${escapeHtml(usLevel)}</strong></td></tr>
+  ${result.purpose ? `<tr><td>${t('dossierRowGoal')}</td><td>${escapeHtml(result.purpose)}</td></tr>` : ''}
 </table>
 
 <h2>${t('dossierSecVerification')}</h2>
 <table>
-  ${verifyRows.map(r => `<tr><td>${r.label}</td><td>${r.value}</td></tr>`).join('')}
+  ${verifyRows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${escapeHtml(r.value)}</td></tr>`).join('')}
 </table>
 
 <h2>${t('dossierSecNACES')}</h2>
@@ -1914,7 +1924,7 @@ function exportDossier(result: EvalResult, usLevel: string, verifyRows: { label:
 
 <h2>${t('dossierSecRegulatory')}</h2>
 <table>
-  ${prereqItems.map(r => `<tr><td>${r.label}</td><td>${r.value}</td></tr>`).join('')}
+  ${prereqItems.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${escapeHtml(r.value)}</td></tr>`).join('')}
 </table>
 
 <h2>${t('dossierSecInsight')}</h2>
@@ -1922,10 +1932,10 @@ function exportDossier(result: EvalResult, usLevel: string, verifyRows: { label:
 
 <h2>${t('dossierSecTags')}</h2>
 <div>
-  <span class="badge">🎓 ${usLevel}</span>
-  <span class="badge">📚 ${result.field}</span>
-  <span class="badge">📍 ${result.country}</span>
-  ${result.purpose ? `<span class="badge">🎯 ${result.purpose}</span>` : ''}
+  <span class="badge">🎓 ${escapeHtml(usLevel)}</span>
+  <span class="badge">📚 ${escapeHtml(result.field)}</span>
+  <span class="badge">📍 ${escapeHtml(result.country)}</span>
+  ${result.purpose ? `<span class="badge">🎯 ${escapeHtml(result.purpose)}</span>` : ''}
 </div>
 
 <p class="notice">
@@ -1940,7 +1950,7 @@ function exportDossier(result: EvalResult, usLevel: string, verifyRows: { label:
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `VerifED-Global-Dossier-${result.institution.replace(/\s+/g, '-')}.html`;
+  a.download = `VerifED-Global-Dossier-${result.institution.replace(/[^a-z0-9]+/gi, '-').slice(0, 80) || 'institution'}.html`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -2139,20 +2149,10 @@ function EvaluatorView() {
   const [field, setField] = useState(saved.field || '');
   const [credits, setCredits] = useState('');
   const [purpose, setPurpose] = useState(saved.purpose || '');
-  // A saved profile is also enough to rebuild the deterministic evaluation
-  // result. Rehydrate it immediately so restored roadmap checkmarks are visible
-  // after a reload or after signing in on another browser.
-  const [result, setResult] = useState<EvalResult | null>(() => (
-    saved.country && isValidCountry(saved.country)
-      ? {
-          country: saved.country,
-          institution: saved.institution || '',
-          degree: saved.degree || '',
-          field: saved.field || '',
-          purpose: saved.purpose || '',
-        }
-      : null
-  ));
+  // Evidence is ephemeral and must be checked again after a reload; never
+  // reconstruct a verified-looking report from saved self-reported inputs.
+  const [result, setResult] = useState<EvalResult | null>(null);
+  const [institutionVerification, setInstitutionVerification] = useState<InstitutionVerificationResult | null>(null);
   const [countryErr, setCountryErr] = useState('');
   const evalUser = getSignedInUser();
   const roadmapStepsKey = `ge_roadmap_steps_${evalUser.username.toLowerCase() || 'anon'}`;
@@ -2194,6 +2194,7 @@ function EvaluatorView() {
       setCountryErr(t('errCountry'));
       return;
     }
+    if (!institutionVerification?.selected || institutionVerification.status !== 'verified') return;
     setCountryErr('');
     // Store only raw inputs — derived strings (usLevel, insight, roadmap) are computed
     // at render time from the active language, so toggling language after submission
@@ -2254,12 +2255,13 @@ function EvaluatorView() {
             <form onSubmit={handleSubmit} className="space-y-5" data-testid="form-eval">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLCountry')}</label>
-                <CountryPicker value={country} onChange={(v) => { setCountry(v); if (countryErr) setCountryErr(''); }} data-testid="input-country" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPCountry')} required />
+                <CountryPicker value={country} onChange={(v) => { setCountry(v); setInstitutionVerification(null); setResult(null); if (countryErr) setCountryErr(''); }} data-testid="input-country" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPCountry')} required />
                 {countryErr && <p className="mt-1.5 text-red-400 text-xs font-medium" data-testid="error-country">{countryErr}</p>}
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLInstitution')}</label>
-                <input value={institution} onChange={(e) => setInstitution(e.target.value)} data-testid="input-institution" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPInstitution')} required />
+                <input value={institution} onChange={(e) => { setInstitution(e.target.value); setInstitutionVerification(null); setResult(null); }} data-testid="input-institution" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPInstitution')} required />
+                <InstitutionVerification name={institution} country={country} lang={lang} onChange={setInstitutionVerification} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -2287,17 +2289,18 @@ function EvaluatorView() {
                   </select>
                 </div>
               </div>
-              <button type="submit" data-testid="button-eval-submit" className="w-full mt-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-4 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center space-x-2">
+              <button type="submit" disabled={!institutionVerification?.selected} data-testid="button-eval-submit" className="w-full mt-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-4 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center space-x-2">
                 <span>{t('evalBtn')}</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </button>
+              {!institutionVerification?.selected && <p className="text-center text-xs text-amber-300">{lang === 'es' ? 'Se requiere evidencia pública antes de generar el informe. Si no está disponible, no se generará silenciosamente.' : 'Public evidence is required before report generation. If unavailable, the report will not silently bypass the check.'}</p>}
             </form>
           </div>
         </section>
 
         {/* Results Column */}
         <section className="lg:col-span-7" id="results-section">
-          {result ? (() => {
+          {result && institutionVerification ? (() => {
             // Derive all display strings from the current language at render time.
             // This ensures toggling EN↔ES after submission immediately re-renders in the new locale.
             const usLevel = getUsLevel(result.degree, result.institution, result.field, t);
@@ -2346,7 +2349,7 @@ function EvaluatorView() {
                 <p className="text-xs text-slate-400 mb-6">{t('evalRoadmapDesc')}</p>
 
                 {(() => {
-                  const verifyContent = getVerifyContent(result.institution, result.country, result.degree, t);
+                  const verifyContent = getVerifyContent(institutionVerification, result.degree, t);
                   const courseworkContent = getCourseworkContent(result.field, result.field, t);
                   const prereqContent = getPrereqContent(result.field, result.purpose, t);
 
