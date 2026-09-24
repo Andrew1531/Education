@@ -24,11 +24,13 @@ export function InstitutionVerification({
   country,
   lang,
   onChange,
+  onContinueUnverified,
 }: {
   name: string;
   country: string;
   lang: 'en' | 'es';
   onChange: (verification: Verification | null) => void;
+  onContinueUnverified: () => void;
 }) {
   const [result, setResult] = useState<Verification | null>(null);
   const [loading, setLoading] = useState(false);
@@ -92,6 +94,9 @@ export function InstitutionVerification({
           <button type="button" onClick={() => void check()} className="font-bold underline">
             {es ? 'Reintentar' : 'Retry'}
           </button>
+          <button type="button" onClick={onContinueUnverified} data-testid="button-continue-unverified" className="ml-3 font-bold underline">
+            {es ? 'Continuar sin verificación' : 'Continue unverified'}
+          </button>
         </div>
       )}
 
@@ -109,6 +114,14 @@ export function InstitutionVerification({
               ))}
             </div>
           )}
+          <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-950/20 p-3">
+            <p className="text-[11px] leading-relaxed text-amber-200">
+              {es ? 'Si su institución no aparece, puede continuar. El informe la marcará claramente como no verificada y no afirmará que sea falsa.' : 'If your institution is not listed, you may continue. The report will clearly mark it unverified and will not call it fake.'}
+            </p>
+            <button type="button" onClick={onContinueUnverified} data-testid="button-continue-unverified" className="mt-2 rounded-lg border border-amber-500/40 px-3 py-2 text-[11px] font-bold text-amber-200 hover:bg-amber-500/10">
+              {es ? 'Continuar sin verificación' : 'Continue without verification'}
+            </button>
+          </div>
         </div>
       )}
 

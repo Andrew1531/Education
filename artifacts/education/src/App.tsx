@@ -1755,8 +1755,23 @@ function ContactSection() {
 
 // ─── Step content generators ──────────────────────────────────────────────────
 
-function getVerifyContent(verification: InstitutionVerificationResult, degree: string, t: (k: TKey) => string) {
-  const selected = verification.selected!;
+function getVerifyContent(verification: InstitutionVerificationResult | null, institution: string, country: string, degree: string, t: (k: TKey) => string) {
+  const selected = verification?.selected;
+  if (!selected) {
+    return {
+      status: 'Unverified institution — user chose to continue',
+      rows: [
+        { label: 'Verification status', value: 'UNVERIFIED — no source-backed institution match was confirmed' },
+        { label: t('verifyInstitution'), value: institution },
+        { label: t('verifyCountry'), value: country },
+        { label: t('verifyDegree'), value: degree },
+        { label: t('verifyRegistry'), value: 'No corroborating directory result was selected' },
+        { label: t('verifyRecognition'), value: 'Not checked — no accreditation or authenticity claim is made' },
+        { label: 'Next step', value: 'Ask a qualified credential evaluator to verify the institution and documents directly' },
+      ],
+      action: null,
+    };
+  }
   return {
     status: t('verifyStatus'),
     rows: [
@@ -1772,7 +1787,7 @@ function getVerifyContent(verification: InstitutionVerificationResult, degree: s
       { label: t('verifyRecognition'), value: t('verifyRecognitionVal') },
       { label: 'Evidence retrieved', value: new Date(verification.retrievedAt).toLocaleString() },
     ],
-    action: { label: t('verifyActionLabel'), url: `https://www.wikidata.org/wiki/${selected.entityId}` },
+    action: { label: t('verifyActionLabel'), url: `https://www.wikidata.org/wiki/${selected.entityId}` } as { label: string; url: string } | null,
   };
 }
 
@@ -2153,6 +2168,7 @@ function EvaluatorView() {
   // reconstruct a verified-looking report from saved self-reported inputs.
   const [result, setResult] = useState<EvalResult | null>(null);
   const [institutionVerification, setInstitutionVerification] = useState<InstitutionVerificationResult | null>(null);
+  const [continueUnverified, setContinueUnverified] = useState(false);
   const [countryErr, setCountryErr] = useState('');
   const evalUser = getSignedInUser();
   const roadmapStepsKey = `ge_roadmap_steps_${evalUser.username.toLowerCase() || 'anon'}`;
@@ -2194,7 +2210,7 @@ function EvaluatorView() {
       setCountryErr(t('errCountry'));
       return;
     }
-    if (!institutionVerification?.selected || institutionVerification.status !== 'verified') return;
+    if ((!institutionVerification?.selected || institutionVerification.status !== 'verified') && !continueUnverified) return;
     setCountryErr('');
     // Store only raw inputs — derived strings (usLevel, insight, roadmap) are computed
     // at render time from the active language, so toggling language after submission
@@ -2255,13 +2271,20 @@ function EvaluatorView() {
             <form onSubmit={handleSubmit} className="space-y-5" data-testid="form-eval">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLCountry')}</label>
-                <CountryPicker value={country} onChange={(v) => { setCountry(v); setInstitutionVerification(null); setResult(null); if (countryErr) setCountryErr(''); }} data-testid="input-country" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPCountry')} required />
+                <CountryPicker value={country} onChange={(v) => { setCountry(v); setInstitutionVerification(null); setContinueUnverified(false); setResult(null); if (countryErr) setCountryErr(''); }} data-testid="input-country" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPCountry')} required />
                 {countryErr && <p className="mt-1.5 text-red-400 text-xs font-medium" data-testid="error-country">{countryErr}</p>}
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLInstitution')}</label>
-                <input value={institution} onChange={(e) => { setInstitution(e.target.value); setInstitutionVerification(null); setResult(null); }} data-testid="input-institution" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPInstitution')} required />
-                <InstitutionVerification name={institution} country={country} lang={lang} onChange={setInstitutionVerification} />
+                <input value={institution} onChange={(e) => { setInstitution(e.target.value); setInstitutionVerification(null); setContinueUnverified(false); setResult(null); }} data-testid="input-institution" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPInstitution')} required />
+                <InstitutionVerification
+                  name={institution}
+                  country={country}
+                  lang={lang}
+                  onChange={(value) => { setInstitutionVerification(value); if (value) setContinueUnverified(false); }}
+                  onContinueUnverified={() => { setInstitutionVerification(null); setContinueUnverified(true); }}
+                />
+                {continueUnverified && <p role="status" className="mt-2 rounded-lg border border-amber-500/40 bg-amber-950/30 p-3 text-xs font-semibold text-amber-200">{lang === 'es' ? 'Continuará con una institución no verificada. El informe mantendrá esta advertencia.' : 'You will continue with an unverified institution. The report will retain this warning.'}</p>}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -2289,18 +2312,18 @@ function EvaluatorView() {
                   </select>
                 </div>
               </div>
-              <button type="submit" disabled={!institutionVerification?.selected} data-testid="button-eval-submit" className="w-full mt-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-4 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center space-x-2">
+              <button type="submit" disabled={!institutionVerification?.selected && !continueUnverified} data-testid="button-eval-submit" className="w-full mt-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-4 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center space-x-2">
                 <span>{t('evalBtn')}</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </button>
-              {!institutionVerification?.selected && <p className="text-center text-xs text-amber-300">{lang === 'es' ? 'Se requiere evidencia pública antes de generar el informe. Si no está disponible, no se generará silenciosamente.' : 'Public evidence is required before report generation. If unavailable, the report will not silently bypass the check.'}</p>}
+              {!institutionVerification?.selected && !continueUnverified && <p className="text-center text-xs text-amber-300">{lang === 'es' ? 'Compruebe la institución primero. Si no hay evidencia, podrá continuar con una advertencia explícita.' : 'Check the institution first. If evidence is unavailable, you may then continue with an explicit warning.'}</p>}
             </form>
           </div>
         </section>
 
         {/* Results Column */}
         <section className="lg:col-span-7" id="results-section">
-          {result && institutionVerification ? (() => {
+          {result && (institutionVerification || continueUnverified) ? (() => {
             // Derive all display strings from the current language at render time.
             // This ensures toggling EN↔ES after submission immediately re-renders in the new locale.
             const usLevel = getUsLevel(result.degree, result.institution, result.field, t);
@@ -2308,6 +2331,13 @@ function EvaluatorView() {
             const roadmap = getRoadmap(result.country, result.institution, result.field, result.purpose, t);
             return (
             <div className="space-y-6" data-testid="results-container">
+              {continueUnverified && (
+                <div role="alert" data-testid="report-unverified-warning" className="rounded-2xl border-2 border-amber-500/50 bg-amber-950/40 p-5 text-sm font-semibold text-amber-100">
+                  {lang === 'es'
+                    ? 'Institución no verificada: no se confirmó una coincidencia respaldada por fuentes. Esto no significa que la institución sea falsa. El expediente conserva esta incertidumbre para revisión profesional.'
+                    : 'Unverified institution: no source-backed match was confirmed. This does not mean the institution is fake. The dossier preserves this uncertainty for professional review.'}
+                </div>
+              )}
               <div className="glass-panel p-8 rounded-3xl border-l-4 border-l-indigo-500 relative overflow-hidden shadow-2xl">
                 <div className="flex items-center justify-between mb-4">
                   <span className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 flex items-center gap-1.5">
@@ -2349,7 +2379,7 @@ function EvaluatorView() {
                 <p className="text-xs text-slate-400 mb-6">{t('evalRoadmapDesc')}</p>
 
                 {(() => {
-                  const verifyContent = getVerifyContent(institutionVerification, result.degree, t);
+                  const verifyContent = getVerifyContent(institutionVerification, result.institution, result.country, result.degree, t);
                   const courseworkContent = getCourseworkContent(result.field, result.field, t);
                   const prereqContent = getPrereqContent(result.field, result.purpose, t);
 
@@ -2374,9 +2404,9 @@ function EvaluatorView() {
                               ))}
                             </tbody>
                           </table>
-                          <a href={verifyContent.action.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
+                           {verifyContent.action && <a href={verifyContent.action.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
                             {verifyContent.action.label} →
-                          </a>
+                           </a>}
                         </div>
                       ),
                     },

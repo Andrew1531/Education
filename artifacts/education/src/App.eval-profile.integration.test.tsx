@@ -74,6 +74,21 @@ async function submitEvaluator(opts: {
   purpose?: string;
 }) {
   await waitFor(() => expect(screen.queryByTestId('form-eval')).not.toBeNull());
+  const verification = {
+    status: 'verified', message: 'corroborated', accreditationChecked: false,
+    retrievedAt: '2026-01-01T00:00:00.000Z',
+    selected: {
+      entityId: 'Q123', name: opts.institution, description: 'university', aliases: [],
+      country: opts.country, countryMatch: true, higherEducationType: 'university',
+      officialWebsite: 'https://example.edu/', websiteAvailability: 'not_checked',
+      closureDate: null, wikipediaUrl: null, archiveUrl: null,
+      sources: [{ name: 'Wikidata', url: 'https://www.wikidata.org/wiki/Q123', retrievedAt: '2026-01-01T00:00:00.000Z' }],
+    },
+    candidates: [],
+  };
+  vi.mocked(fetch).mockImplementation(async (input) => String(input).includes('/institutions/verify')
+    ? jsonOk(verification)
+    : jsonOk({ ok: true }));
   await act(async () => {
     fireEvent.change(screen.getByTestId('input-country'),     { target: { value: opts.country } });
     fireEvent.change(screen.getByTestId('input-institution'), { target: { value: opts.institution } });
@@ -82,8 +97,10 @@ async function submitEvaluator(opts: {
     if (opts.purpose) {
       fireEvent.change(screen.getByTestId('select-purpose'), { target: { value: opts.purpose } });
     }
-    fireEvent.submit(screen.getByTestId('form-eval'));
   });
+  await act(async () => { fireEvent.click(screen.getByTestId('button-check-institution')); });
+  await waitFor(() => expect(screen.queryByTestId('institution-verified')).not.toBeNull());
+  await act(async () => { fireEvent.submit(screen.getByTestId('form-eval')); });
 }
 
 // ─── 1 · /auth/profile is called with country and purpose ────────────────────
@@ -185,8 +202,8 @@ describe('EvaluatorView submit — repeated submissions update the profile', () 
   });
 });
 
-describe('EvaluatorView restore — saved roadmap remains visible after reload', () => {
-  it('rebuilds the saved evaluation and restores checked roadmap steps', async () => {
+describe('EvaluatorView restore — saved inputs require fresh evidence', () => {
+  it('prefills saved inputs but does not rebuild a verified-looking report on reload', async () => {
     seedLoggedIn();
     localStorage.setItem('ge_profile', JSON.stringify({
       country: 'Nigeria',
@@ -202,13 +219,10 @@ describe('EvaluatorView restore — saved roadmap remains visible after reload',
 
     await act(async () => { render(<App />); });
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('results-container')).not.toBeNull();
-      expect(screen.queryByTestId('roadmap-step-0')).not.toBeNull();
-    });
-    expect(screen.getByTestId('roadmap-step-0').className).toContain('border-indigo-500/40');
-    expect(screen.getByTestId('roadmap-step-1').className).toContain('border-slate-800/80');
-    expect(screen.getByTestId('roadmap-step-2').className).toContain('border-indigo-500/40');
+    await waitFor(() => expect(screen.queryByTestId('form-eval')).not.toBeNull());
+    expect((screen.getByTestId('input-institution') as HTMLInputElement).value).toBe('University of Lagos');
+    expect(screen.queryByTestId('results-container')).toBeNull();
+    expect((screen.getByTestId('button-eval-submit') as HTMLButtonElement).disabled).toBe(true);
   });
 });
 
@@ -230,13 +244,7 @@ describe('EvaluatorView submit — no profile push without a signed-in user', ()
     // Clear session key AFTER render so the evaluator is already mounted.
     localStorage.removeItem('ge_username');
 
-    await act(async () => {
-      fireEvent.change(screen.getByTestId('input-country'),     { target: { value: 'Peru' } });
-      fireEvent.change(screen.getByTestId('input-institution'), { target: { value: 'PUCP' } });
-      fireEvent.change(screen.getByTestId('input-degree'),      { target: { value: 'B.A.' } });
-      fireEvent.change(screen.getByTestId('input-field'),       { target: { value: 'Accounting' } });
-      fireEvent.submit(screen.getByTestId('form-eval'));
-    });
+    await submitEvaluator({ country: 'Peru', institution: 'PUCP', degree: 'B.A.', field: 'Accounting' });
     await waitFor(() => expect(screen.queryByTestId('results-container')).not.toBeNull());
 
     const profileCall = fetchSpy.mock.calls.find(([url]: [unknown]) =>

@@ -111,7 +111,7 @@ describe('AuthView sign-up — country validation', () => {
     const langBtns = screen.getAllByTestId('button-lang-toggle');
     await act(async () => { fireEvent.click(langBtns[0]); });
     // Wait for Spanish UI to render (hero heading switches language)
-    await waitFor(() => expect(screen.queryByText(/Reconocida en EE\.UU\./i)).not.toBeNull());
+    await waitFor(() => expect(screen.queryByText(/Tu educación en el extranjero\./i)).not.toBeNull());
     fireEvent.change(screen.getByTestId('input-username'), { target: { value: 'alice' } });
     fireEvent.change(screen.getByTestId('input-password'), { target: { value: 'password123' } });
     fireEvent.change(screen.getByTestId('input-email'), { target: { value: 'alice@example.com' } });
@@ -194,7 +194,7 @@ describe('EvaluatorView — country validation', () => {
     const langBtns = screen.getAllByTestId('button-lang-toggle');
     await act(async () => { fireEvent.click(langBtns[0]); });
     // Wait for Spanish UI to appear before submitting.
-    await waitFor(() => expect(screen.queryByText(/Transforma Tu Educación Extranjera en/i)).not.toBeNull());
+    await waitFor(() => expect(screen.queryByText(/Tu educación en el extranjero\./i)).not.toBeNull());
     fireEvent.change(screen.getByTestId('input-country'), { target: { value: 'xyz' } });
     fireEvent.change(screen.getByTestId('input-institution'), { target: { value: 'UNAM' } });
     fireEvent.change(screen.getByTestId('input-degree'), { target: { value: 'Lic.' } });

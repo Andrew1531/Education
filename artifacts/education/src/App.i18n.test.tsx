@@ -72,6 +72,21 @@ async function submitEvaluator(opts: {
   field: string;
   purpose?: string;
 }) {
+  const verification = {
+    status: 'verified', message: 'corroborated', accreditationChecked: false,
+    retrievedAt: '2026-01-01T00:00:00.000Z',
+    selected: {
+      entityId: 'Q123', name: opts.institution, description: 'university', aliases: [],
+      country: opts.country, countryMatch: true, higherEducationType: 'university',
+      officialWebsite: 'https://example.edu/', websiteAvailability: 'not_checked',
+      closureDate: null, wikipediaUrl: 'https://en.wikipedia.org/wiki/Example',
+      archiveUrl: null, sources: [{ name: 'Wikidata', url: 'https://www.wikidata.org/wiki/Q123', retrievedAt: '2026-01-01T00:00:00.000Z' }],
+    },
+    candidates: [],
+  };
+  vi.mocked(fetch).mockImplementation(async (input) => String(input).includes('/institutions/verify')
+    ? new Response(JSON.stringify(verification), { status: 200, headers: { 'content-type': 'application/json' } })
+    : new Response('{}', { status: 503, headers: { 'content-type': 'application/json' } }));
   await act(async () => {
     fireEvent.change(screen.getByTestId('input-country'), { target: { value: opts.country } });
     fireEvent.change(screen.getByTestId('input-institution'), { target: { value: opts.institution } });
@@ -80,8 +95,10 @@ async function submitEvaluator(opts: {
     if (opts.purpose) {
       fireEvent.change(screen.getByTestId('select-purpose'), { target: { value: opts.purpose } });
     }
-    fireEvent.submit(screen.getByTestId('form-eval'));
   });
+  await act(async () => { fireEvent.click(screen.getByTestId('button-check-institution')); });
+  await waitFor(() => expect(screen.queryByTestId('institution-verified')).not.toBeNull());
+  await act(async () => { fireEvent.submit(screen.getByTestId('form-eval')); });
 }
 
 // ─── Home page language toggle ────────────────────────────────────────────────
@@ -90,39 +107,39 @@ describe('Language toggle — home page', () => {
   it('shows English hero text by default', async () => {
     await act(async () => { render(<App />); });
     await waitFor(() => {
-      expect(screen.queryByText(/Your Foreign Education,/i)).not.toBeNull();
+      expect(screen.queryByText(/Your Education Abroad\./i)).not.toBeNull();
     });
   });
 
   it('switches hero text to Spanish when ES is selected', async () => {
     await act(async () => { render(<App />); });
     await waitFor(() => {
-      expect(screen.queryByText(/Your Foreign Education,/i)).not.toBeNull();
+      expect(screen.queryByText(/Your Education Abroad\./i)).not.toBeNull();
     });
 
     await toggleLanguage();
 
     await waitFor(() => {
       // Spanish hero line (TX: heroLine1)
-      expect(screen.queryByText(/Tu Educación Extranjera,/i)).not.toBeNull();
+      expect(screen.queryByText(/Tu educación en el extranjero\./i)).not.toBeNull();
     });
     // English hero line should no longer appear
-    expect(screen.queryByText(/Your Foreign Education,/i)).toBeNull();
+    expect(screen.queryByText(/Your Education Abroad\./i)).toBeNull();
   });
 
   it('switches back to English when toggled again', async () => {
     await act(async () => { render(<App />); });
     await toggleLanguage();
     await waitFor(() => {
-      expect(screen.queryByText(/Tu Educación Extranjera,/i)).not.toBeNull();
+      expect(screen.queryByText(/Tu educación en el extranjero\./i)).not.toBeNull();
     });
 
     await toggleLanguage();
 
     await waitFor(() => {
-      expect(screen.queryByText(/Your Foreign Education,/i)).not.toBeNull();
+      expect(screen.queryByText(/Your Education Abroad\./i)).not.toBeNull();
     });
-    expect(screen.queryByText(/Tu Educación Extranjera,/i)).toBeNull();
+    expect(screen.queryByText(/Tu educación en el extranjero\./i)).toBeNull();
   });
 });
 
@@ -156,7 +173,7 @@ describe('Evaluator — language-aware results', () => {
       expect(screen.queryByTestId('form-eval')).not.toBeNull();
     });
     // TX: evalH1 EN = 'Understand Your Foreign Education In'
-    expect(screen.queryByText(/Understand Your Foreign Education In/i)).not.toBeNull();
+    expect(screen.queryByText(/Your Education Abroad\./i)).not.toBeNull();
   });
 
   it('shows Spanish evaluator heading when ES is active', async () => {
@@ -169,7 +186,7 @@ describe('Evaluator — language-aware results', () => {
 
     await waitFor(() => {
       // TX: evalH1 ES = 'Transforma Tu Educación Extranjera en'
-      expect(screen.queryByText(/Transforma Tu Educación Extranjera en/i)).not.toBeNull();
+      expect(screen.queryByText(/Tu educación en el extranjero\./i)).not.toBeNull();
     });
   });
 
@@ -181,7 +198,7 @@ describe('Evaluator — language-aware results', () => {
 
     await toggleLanguage();
     await waitFor(() => {
-      expect(screen.queryByText(/Transforma Tu Educación Extranjera en/i)).not.toBeNull();
+      expect(screen.queryByText(/Tu educación en el extranjero\./i)).not.toBeNull();
     });
 
     await submitEvaluator({
@@ -233,7 +250,7 @@ describe('Evaluator — language-aware results', () => {
 
     await waitFor(() => {
       // Spanish evaluator heading confirms the context re-rendered
-      expect(screen.queryByText(/Transforma Tu Educación Extranjera en/i)).not.toBeNull();
+      expect(screen.queryByText(/Tu educación en el extranjero\./i)).not.toBeNull();
     });
 
     // Insight should now be in Spanish: "Equivalencia Técnica"
@@ -260,12 +277,12 @@ describe('Evaluator — language-aware results', () => {
 
     await toggleLanguage();
     await waitFor(() => {
-      expect(screen.queryByText(/Transforma Tu Educación Extranjera en/i)).not.toBeNull();
+      expect(screen.queryByText(/Tu educación en el extranjero\./i)).not.toBeNull();
     });
 
     await toggleLanguage();
     await waitFor(() => {
-      expect(screen.queryByText(/Understand Your Foreign Education In/i)).not.toBeNull();
+      expect(screen.queryByText(/Your Education Abroad\./i)).not.toBeNull();
     });
 
     // English accounting insight
@@ -440,7 +457,7 @@ describe('Dossier export — Spanish HTML output', () => {
     // Switch to Spanish
     await toggleLanguage();
     await waitFor(() => {
-      expect(screen.queryByText(/Transforma Tu Educación Extranjera en/i)).not.toBeNull();
+      expect(screen.queryByText(/Tu educación en el extranjero\./i)).not.toBeNull();
     });
 
     // Submit the evaluator

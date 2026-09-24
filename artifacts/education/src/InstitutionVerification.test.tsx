@@ -50,9 +50,9 @@ describe('InstitutionVerification', () => {
     const pending = deferred<Verification>();
     apiVerifyInstitution.mockReturnValueOnce(pending.promise);
     const onChange = vi.fn();
-    const view = render(<InstitutionVerification name="Old University" country="United States" lang="en" onChange={onChange} />);
+    const view = render(<InstitutionVerification name="Old University" country="United States" lang="en" onChange={onChange} onContinueUnverified={vi.fn()} />);
     fireEvent.click(screen.getByTestId('button-check-institution'));
-    view.rerender(<InstitutionVerification name="New University" country="United States" lang="en" onChange={onChange} />);
+    view.rerender(<InstitutionVerification name="New University" country="United States" lang="en" onChange={onChange} onContinueUnverified={vi.fn()} />);
     pending.resolve(verified);
     await Promise.resolve();
     expect(screen.queryByTestId('institution-verified')).toBeNull();
@@ -62,10 +62,23 @@ describe('InstitutionVerification', () => {
   it('shows source-backed evidence and enables the parent only after verification', async () => {
     apiVerifyInstitution.mockResolvedValueOnce(verified);
     const onChange = vi.fn();
-    render(<InstitutionVerification name="Example University" country="United States" lang="en" onChange={onChange} />);
+    render(<InstitutionVerification name="Example University" country="United States" lang="en" onChange={onChange} onContinueUnverified={vi.fn()} />);
     fireEvent.click(screen.getByTestId('button-check-institution'));
     await waitFor(() => expect(screen.queryByTestId('institution-verified')).not.toBeNull());
     expect(screen.getAllByText(/Wikidata/).length).toBeGreaterThan(0);
     expect(onChange).toHaveBeenLastCalledWith(verified);
+  });
+
+  it('offers an explicit unverified path when no evidence is found', async () => {
+    apiVerifyInstitution.mockResolvedValueOnce({
+      status: 'not_found', message: 'none', accreditationChecked: false,
+      retrievedAt: '2026-01-01T00:00:00.000Z', selected: null, candidates: [],
+    });
+    const continueUnverified = vi.fn();
+    render(<InstitutionVerification name="Unknown School" country="United States" lang="en" onChange={vi.fn()} onContinueUnverified={continueUnverified} />);
+    fireEvent.click(screen.getByTestId('button-check-institution'));
+    await waitFor(() => expect(screen.queryByTestId('button-continue-unverified')).not.toBeNull());
+    fireEvent.click(screen.getByTestId('button-continue-unverified'));
+    expect(continueUnverified).toHaveBeenCalledOnce();
   });
 });

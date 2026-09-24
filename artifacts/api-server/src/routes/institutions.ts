@@ -3,6 +3,7 @@ import { VerifyInstitutionBody } from "@workspace/api-zod";
 
 const router: IRouter = Router();
 const WIKIDATA_API = "https://www.wikidata.org/w/api.php";
+const WIKIPEDIA_API = "https://en.wikipedia.org/w/api.php";
 const ARCHIVE_API = "https://archive.org/wayback/available";
 const USER_AGENT = "VerifEDGlobal/1.0 (public institution evidence)";
 const HIGHER_ED_ROOTS = new Set(["Q3918", "Q189004", "Q38723"]);
@@ -50,6 +51,9 @@ function safePublicUrl(value: string | null): string | null {
       /^127\./.test(host) || /^10\./.test(host) || /^192\.168\./.test(host) ||
       /^169\.254\./.test(host) || /^172\.(1[6-9]|2\d|3[01])\./.test(host);
     if (!["http:", "https:"].includes(url.protocol) || !host || privateHost || url.username || url.password) return null;
+    // Official domains come from Wikidata, never user input. Prefer HTTPS for
+    // rendering without probing the arbitrary destination server.
+    url.protocol = "https:";
     return url.toString();
   } catch {
     return null;
@@ -57,12 +61,18 @@ function safePublicUrl(value: string | null): string | null {
 }
 
 async function providerJson(url: URL, timeoutMs = 6_000): Promise<unknown> {
-  const response = await fetch(url, {
-    headers: { "User-Agent": USER_AGENT, Accept: "application/json" },
-    signal: AbortSignal.timeout(timeoutMs),
-  });
-  if (!response.ok) throw new Error(`provider_${response.status}`);
-  return response.json();
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const response = await fetch(url, {
+      headers: { "User-Agent": USER_AGENT, Accept: "application/json" },
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    if (response.ok) return response.json();
+    if (response.status !== 429 || attempt === 1) throw new Error(`provider_${response.status}`);
+    // One short, bounded retry handles Wikimedia's burst throttle without
+    // turning an upstream outage into a long-hanging user request.
+    await new Promise((resolve) => setTimeout(resolve, 750));
+  }
+  throw new Error("provider_unavailable");
 }
 
 async function searchEntities(name: string): Promise<string[]> {
@@ -73,6 +83,29 @@ async function searchEntities(name: string): Promise<string[]> {
   }).toString();
   const payload = await providerJson(url) as { search?: Array<{ id?: unknown }> };
   return (payload.search || []).flatMap((item) => typeof item.id === "string" && /^Q\d+$/.test(item.id) ? [item.id] : []);
+}
+
+async function wikipediaSpellingSuggestion(name: string): Promise<string | null> {
+  const url = new URL(WIKIPEDIA_API);
+  url.search = new URLSearchParams({
+    action: "query", list: "search", srsearch: name, srnamespace: "0",
+    srlimit: "1", format: "json", origin: "*",
+  }).toString();
+  const payload = await providerJson(url) as { query?: { searchinfo?: { suggestion?: unknown } } };
+  const suggestion = payload.query?.searchinfo?.suggestion;
+  return typeof suggestion === "string" && normalize(suggestion) !== normalize(name) ? suggestion : null;
+}
+
+async function discoverEntities(name: string): Promise<{ ids: string[]; suggestedName: string | null }> {
+  const direct = await searchEntities(name);
+  if (direct.length) return { ids: direct, suggestedName: null };
+  // Wikidata's entity search does not correct even simple transpositions.
+  // Wikipedia's public API exposes its search spelling suggestion; feed that
+  // suggestion back into Wikidata, where all type/country/website validation
+  // still occurs. A suggestion is never itself treated as verification.
+  const suggestedName = await wikipediaSpellingSuggestion(name);
+  if (!suggestedName) return { ids: [], suggestedName: null };
+  return { ids: await searchEntities(suggestedName), suggestedName };
 }
 
 async function getEntities(ids: string[]): Promise<Map<string, Entity>> {
@@ -150,7 +183,7 @@ function rateLimited(req: Request): boolean {
 
 export async function verifyInstitutionEvidence(name: string, country: string, selectedEntityId?: string) {
   const retrievedAt = new Date().toISOString();
-  const searchIds = await searchEntities(name);
+  const { ids: searchIds, suggestedName } = await discoverEntities(name);
   if (selectedEntityId && !searchIds.includes(selectedEntityId)) {
     return { status: "not_found" as const, message: "The selected result no longer matches this search.", accreditationChecked: false, selected: null, candidates: [], retrievedAt };
   }
@@ -203,7 +236,7 @@ export async function verifyInstitutionEvidence(name: string, country: string, s
   }
   if (candidates.length) {
     return { status: "ambiguous" as const, message: candidates.some((candidate) => candidate.countryMatch)
-      ? "More than one plausible higher-education entity was found, or an official website listing is missing. Select an eligible institution."
+      ? `${suggestedName ? `A spelling suggestion (“${suggestedName}”) found possible matches. ` : ""}Select the correct eligible institution; suggested matches are never auto-verified.`
       : "Higher-education name matches were found, but none match the selected country.", accreditationChecked: false, selected: null, candidates, retrievedAt };
   }
   return { status: "not_found" as const, message: "No country-matched higher-education entity was found in the available sources. This does not mean the institution is fake.", accreditationChecked: false, selected: null, candidates: [], retrievedAt };

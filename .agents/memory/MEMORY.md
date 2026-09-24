@@ -2,3 +2,4 @@
 - [Per-user sync auth & schema deploys](per-user-sync-auth.md) — per-user endpoints need the HMAC user token, and new columns need an idempotent startup migration (deploys never run db push).
 - [Contact form delivery](contact-form-delivery.md) — direct Web3Forms submission was confirmed working in production; avoid all mailto fallbacks.
 - [GitHub Pages publishing](github-pages-publishing.md) — verify the live HTML after a main-branch Pages run; a local commit alone does not update verifed.co.
+- [Institution evidence limits](institution-evidence-limits.md) — directory misses and throttling are not proof a college is fake; preserve uncertainty without blocking guidance.
