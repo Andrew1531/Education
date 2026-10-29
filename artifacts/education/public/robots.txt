@@ -4,5 +4,6 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
+Disallow: /api$
 
 Sitemap: https://verifed.co/sitemap.xml

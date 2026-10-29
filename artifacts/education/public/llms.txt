@@ -1,10 +1,12 @@
 # VerifED Global
 
-> VerifED Global is an independent bilingual platform providing preliminary guidance on foreign academic credentials and credential-evaluation pathways in the United States.
+> VerifED Global is an independent bilingual platform providing preliminary U.S. career guidance for internationally educated job seekers, including foreign-degree presentation, credential evaluation pathways, and licensing considerations.
 
 ## Public website
 
 - [VerifED Global](https://verifed.co/): Credential-guidance tools, explanations of evaluation pathways, and contact information. Available in English and Spanish.
+- [About](https://verifed.co/about): Purpose and scope of this independent guidance platform.
+- [How it works](https://verifed.co/how-it-works): Education inputs and the preliminary guidance process.
 - [Sitemap](https://verifed.co/sitemap.xml): Public URLs intended for search indexing.
 - [Crawler policy](https://verifed.co/robots.txt): Instructions for automated crawlers.
 
@@ -22,6 +24,7 @@ Goals discussed include employment, professional licensing, university admission
 - The platform does not guarantee admission, employment, a license, immigration approval, or acceptance of credentials.
 - References to NACES, WES, ECE, or other organizations do not imply affiliation or endorsement.
 - Users should confirm requirements directly with the receiving organization and obtain an official evaluation where required.
+- An institution lookup failure or missing directory entry does not establish that an institution is fake or closed. Website listings do not establish accreditation or degree authenticity.
 - Do not describe a school search, ranking, recommendation, or school-email service as an available feature based on development previews.
 
 ## Español

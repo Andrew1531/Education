@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, createContext, useContext } from 'react';
 import { Link, Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
+import { PageMetadata } from './PageMetadata';
 import { hashPassword, verifyAndMigratePassword } from './auth';
 import {
   type StoredUser,
@@ -3084,6 +3085,7 @@ export default function App() {
   return (
     <LangCtx.Provider value={{ lang, toggleLang, t }}>
     <WouterRouter base={base}>
+      <PageMetadata />
       <div className="bg-slate-950 text-slate-100 min-h-screen font-sans relative overflow-x-hidden flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
         <div className="glow-effect -top-40 -left-40 rounded-full" />
         <div className="glow-effect top-1/3 -right-40 rounded-full" />
@@ -3100,9 +3102,15 @@ export default function App() {
           <Route path="/admin">
             <AdminGate />
           </Route>
-          <Route>
+          <Route path="/">
             <main className="relative z-10 max-w-6xl mx-auto px-6 pt-16 pb-24 flex-grow w-full">
               {appView === 'auth' ? <AuthView onLogin={handleLogin} storageError={userStoreError} /> : <EvaluatorView />}
+            </main>
+          </Route>
+          <Route>
+            <main className="relative z-10 mx-auto px-6 py-24">
+              <h1 className="text-3xl font-bold">{lang === 'es' ? 'Página no encontrada' : 'Page not found'}</h1>
+              <Link href="/" className="text-indigo-300 underline">{lang === 'es' ? 'Volver al inicio' : 'Return to homepage'}</Link>
             </main>
           </Route>
         </Switch>

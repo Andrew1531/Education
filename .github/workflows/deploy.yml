@@ -45,8 +45,11 @@ jobs:
           # backend is published; until then the site runs in device-local mode)
           VITE_API_URL: ${{ vars.VITE_API_URL }}
 
-      - name: Copy index.html to 404.html for SPA routing
-        run: cp artifacts/education/dist/public/index.html artifacts/education/dist/public/404.html
+      - name: Verify generated public pages
+        run: |
+          test -f artifacts/education/dist/public/about/index.html
+          test -f artifacts/education/dist/public/how-it-works/index.html
+          test -f artifacts/education/dist/public/404.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
