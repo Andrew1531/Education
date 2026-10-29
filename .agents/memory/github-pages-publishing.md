@@ -5,9 +5,9 @@ description: Release verification and authentication constraints for the public 
 
 Treat a workspace commit and a live GitHub Pages release as separate states. Never claim a metadata or tracking change is live until the `main`-branch Pages workflow runs successfully and the public HTML contains it.
 
-For this site, push requested updates to the live branch (`main`), not only a staging branch.
+For this site, push requested updates to the live branch (`main`), not only a staging branch. Keep only `main`; do not create staging branches.
 
-**Why:** The user instructed: “yes, push it to the live branch always”.
+**Why:** The user instructed: “yes, push it to the live branch always” and “I only want the main to be there”.
 
 **How to apply:** Treat `main` as the intended destination when the user asks to push this site's updates; preserve remote changes and verify the release.
 
