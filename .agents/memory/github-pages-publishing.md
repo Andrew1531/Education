@@ -5,6 +5,12 @@ description: Release verification and authentication constraints for the public 
 
 Treat a workspace commit and a live GitHub Pages release as separate states. Never claim a metadata or tracking change is live until the `main`-branch Pages workflow runs successfully and the public HTML contains it.
 
+For this site, push requested updates to the live branch (`main`), not only a staging branch.
+
+**Why:** The user instructed: “yes, push it to the live branch always”.
+
+**How to apply:** Treat `main` as the intended destination when the user asks to push this site's updates; preserve remote changes and verify the release.
+
 Public route HTML must be generated during the normal Pages build; do not restore the old practice of copying the homepage over the 404 document.
 
 **Why:** GitHub Pages has no SPA rewrite server. Public routes need their own files, while unknown URLs should remain genuine not-found responses rather than a homepage carrying indexable metadata.
