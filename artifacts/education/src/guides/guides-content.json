@@ -1,0 +1,427 @@
+{
+  "updated": "2026-10-29",
+  "sources": {
+    "wes-why": {
+      "publisher": "World Education Services (WES)",
+      "title": "Why Is My Employer Asking for a Credential Evaluation?",
+      "url": "https://www.wes.org/resource-library/blog/credential-advice/why-employer-asking-credential-evaluation/",
+      "scope": {
+        "en": "Explains that employers may request an evaluation to understand a degree earned outside the U.S. WES is a commercial evaluation provider; this article reflects its perspective and is not a universal legal requirement.",
+        "es": "Explica que los empleadores pueden solicitar una evaluación para entender un título obtenido fuera de EE. UU. WES es un proveedor comercial de evaluaciones; el artículo refleja su perspectiva y no es un requisito legal universal."
+      }
+    },
+    "harvard-resume": {
+      "publisher": "Harvard University, Office of Career Services (FAS)",
+      "title": "Create a Strong Resume",
+      "url": "https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/",
+      "scope": {
+        "en": "General resume guidance: keep it concise and factual, tailor it to the role, use consistent formatting, and list education in reverse chronological order. It does not specifically address foreign credentials or endorse any phrasing shown in this guide.",
+        "es": "Orientación general sobre currículums: conciso y factual, adaptado al puesto, con formato coherente y educación en orden cronológico inverso. No trata específicamente credenciales extranjeras ni respalda las frases de esta guía."
+      }
+    }
+  },
+  "guides": [
+    {
+      "slug": "credential-evaluation-for-us-jobs",
+      "sources": ["wes-why", "harvard-resume"],
+      "related": ["foreign-degree-on-resume"],
+      "en": {
+        "title": "Credential Evaluation for U.S. Jobs: When You Need One and What to Ask First",
+        "seoTitle": "Do You Need a Credential Evaluation for a U.S. Job? | VerifED Global",
+        "description": "When U.S. employers or licensing boards may ask for a foreign credential evaluation, what to confirm before paying, and what an evaluation does not do.",
+        "summary": "A credential evaluation is not required for every U.S. job. Before you pay for one, ask the employer or licensing board that will receive it exactly what they accept.",
+        "readTime": "6 min read",
+        "sections": [
+          {
+            "id": "not-universal",
+            "heading": "An evaluation is not a universal requirement",
+            "paragraphs": [
+              "There is no single U.S. rule that every job seeker with a foreign degree must have a credential evaluation. Many employers hire based on your resume, interviews and experience. Others ask for an evaluation so they can understand a degree earned outside the U.S., for example when a posting requires a specific degree level.",
+              "World Education Services, a commercial evaluation provider, describes this employer motivation in its own guidance. Treat provider articles as useful context, not as proof that your specific employer requires an evaluation."
+            ],
+            "sourceRefs": ["wes-why"]
+          },
+          {
+            "id": "ask-first",
+            "heading": "Ask the recipient before you buy anything",
+            "paragraphs": [
+              "The organization that will receive the report decides what it accepts. That might be an employer, a state licensing board, or another receiving organization. Send a short written question before ordering a report, and keep the reply."
+            ],
+            "checklistTitle": "Questions to ask the employer or licensing board",
+            "checklist": [
+              "Do you require a credential evaluation for this position or application, or is it optional?",
+              "Which evaluation providers do you accept? Is there a required list?",
+              "Which report type do you need: a document-by-document (general) report or a course-by-course report?",
+              "Must the report be sent directly from the provider to you, or may I submit a copy?",
+              "Which documents must be official, and must they come directly from my institution?",
+              "Do you need certified English translations, and who may provide them?",
+              "Is there a deadline, and will you accept a report I already have?"
+            ]
+          },
+          {
+            "id": "requirements-differ",
+            "heading": "Accepted providers, report types and documents differ",
+            "paragraphs": [
+              "Requirements vary by recipient. A licensing board in one state may name specific providers and require a course-by-course report sent directly to the board, while an employer may accept a general report you upload yourself. Document rules also differ: some recipients require transcripts sent directly by your institution, others accept certified copies.",
+              "Ordering the wrong report type, or from a provider the recipient does not accept, can mean paying twice. Match the order exactly to the written requirements you received."
+            ]
+          },
+          {
+            "id": "translation-vs-equivalency",
+            "heading": "A translation is not an equivalency",
+            "paragraphs": [
+              "A certified translation converts your documents from one language into English. It does not state what your degree compares to in the U.S. system. An equivalency statement comes from an evaluation report, not from a translation and not from you.",
+              "You may need both, one, or neither. Ask the recipient which they require, and whether the evaluation provider needs a translation before it can review your documents."
+            ]
+          },
+          {
+            "id": "what-it-does-not-do",
+            "heading": "What an evaluation does not do",
+            "paragraphs": [
+              "A credential evaluation describes your education. It is not a professional license, and it does not authorize you to work in the U.S. Licensing is decided by the relevant licensing board, which may also require exams, supervised experience or other steps. Work authorization is a separate legal matter.",
+              "An evaluation also does not guarantee that an employer will hire you or that a board will approve your application."
+            ],
+            "checklistTitle": "Keep these separate",
+            "checklist": [
+              "Credential evaluation: describes your foreign education for a recipient.",
+              "Translation: converts document language; makes no equivalency claim.",
+              "Professional license: issued only by the licensing board for your field and state.",
+              "Work authorization: a separate legal status that an evaluation does not provide."
+            ]
+          },
+          {
+            "id": "before-you-order",
+            "heading": "Before-you-order checklist",
+            "paragraphs": [
+              "Use this list once you have confirmed that the recipient wants a report."
+            ],
+            "checklist": [
+              "I have the recipient's requirement in writing.",
+              "The provider I chose is on the recipient's accepted list, if they have one.",
+              "I am ordering the exact report type the recipient named.",
+              "I know how the report must be delivered and to which address.",
+              "I know which documents must come directly from my institution.",
+              "I have arranged any required translations separately.",
+              "I have checked current fees and processing times on the provider's own website."
+            ]
+          }
+        ]
+      },
+      "es": {
+        "title": "Evaluación de credenciales para empleos en EE. UU.: cuándo la necesita y qué preguntar primero",
+        "seoTitle": "¿Necesita una evaluación de credenciales para trabajar en EE. UU.? | VerifED Global",
+        "description": "Cuándo un empleador o una junta de licencias en EE. UU. puede pedir una evaluación de credenciales extranjeras, qué confirmar antes de pagar y qué no hace.",
+        "summary": "No todos los empleos en EE. UU. exigen una evaluación de credenciales. Antes de pagar, pregunte al empleador o a la junta de licencias que la recibirá qué acepta exactamente.",
+        "readTime": "6 min de lectura",
+        "sections": [
+          {
+            "id": "not-universal",
+            "heading": "La evaluación no es un requisito universal",
+            "paragraphs": [
+              "No existe una regla única en EE. UU. que obligue a toda persona con un título extranjero a tener una evaluación de credenciales. Muchos empleadores contratan con base en su currículum, entrevistas y experiencia. Otros piden una evaluación para entender un título obtenido fuera de EE. UU., por ejemplo cuando el puesto exige cierto nivel de título.",
+              "World Education Services, un proveedor comercial de evaluaciones, describe esta motivación de los empleadores en su propia guía. Considere los artículos de proveedores como contexto útil, no como prueba de que su empleador concreto exija una evaluación."
+            ],
+            "sourceRefs": ["wes-why"]
+          },
+          {
+            "id": "ask-first",
+            "heading": "Pregunte al destinatario antes de comprar",
+            "paragraphs": [
+              "La organización que recibirá el informe decide qué acepta. Puede ser un empleador, una junta estatal de licencias u otra organización. Envíe una pregunta breve por escrito antes de pedir un informe y guarde la respuesta."
+            ],
+            "checklistTitle": "Preguntas para el empleador o la junta de licencias",
+            "checklist": [
+              "¿Exigen una evaluación de credenciales para este puesto o solicitud, o es opcional?",
+              "¿Qué proveedores de evaluación aceptan? ¿Tienen una lista obligatoria?",
+              "¿Qué tipo de informe necesitan: documento por documento (general) o curso por curso?",
+              "¿El informe debe enviarse directamente del proveedor a ustedes, o puedo entregar una copia?",
+              "¿Qué documentos deben ser oficiales y deben venir directamente de mi institución?",
+              "¿Necesitan traducciones certificadas al inglés y quién puede hacerlas?",
+              "¿Hay una fecha límite y aceptan un informe que ya tengo?"
+            ]
+          },
+          {
+            "id": "requirements-differ",
+            "heading": "Los proveedores aceptados, tipos de informe y documentos varían",
+            "paragraphs": [
+              "Los requisitos dependen del destinatario. Una junta de licencias de un estado puede nombrar proveedores específicos y exigir un informe curso por curso enviado directamente a la junta, mientras que un empleador puede aceptar un informe general que usted sube. Las reglas de documentos también cambian: algunos exigen expedientes enviados por su institución y otros aceptan copias certificadas.",
+              "Pedir el tipo de informe equivocado, o de un proveedor que el destinatario no acepta, puede significar pagar dos veces. Haga el pedido exactamente según los requisitos escritos que recibió."
+            ]
+          },
+          {
+            "id": "translation-vs-equivalency",
+            "heading": "Una traducción no es una equivalencia",
+            "paragraphs": [
+              "Una traducción certificada pasa sus documentos de un idioma al inglés. No indica a qué se compara su título en el sistema de EE. UU. Una declaración de equivalencia proviene de un informe de evaluación, no de una traducción ni de usted.",
+              "Puede necesitar ambas, una o ninguna. Pregunte al destinatario qué exige y si el proveedor de evaluación necesita una traducción antes de revisar sus documentos."
+            ]
+          },
+          {
+            "id": "what-it-does-not-do",
+            "heading": "Lo que una evaluación no hace",
+            "paragraphs": [
+              "Una evaluación de credenciales describe su educación. No es una licencia profesional y no le autoriza a trabajar en EE. UU. La licencia la decide la junta correspondiente, que puede exigir exámenes, experiencia supervisada u otros pasos. La autorización de trabajo es un asunto legal aparte.",
+              "Una evaluación tampoco garantiza que un empleador le contrate ni que una junta apruebe su solicitud."
+            ],
+            "checklistTitle": "Mantenga esto por separado",
+            "checklist": [
+              "Evaluación de credenciales: describe su educación extranjera para un destinatario.",
+              "Traducción: cambia el idioma del documento; no afirma equivalencias.",
+              "Licencia profesional: la emite solo la junta de su campo y estado.",
+              "Autorización de trabajo: un estatus legal aparte que la evaluación no otorga."
+            ]
+          },
+          {
+            "id": "before-you-order",
+            "heading": "Lista antes de hacer el pedido",
+            "paragraphs": [
+              "Use esta lista después de confirmar que el destinatario quiere un informe."
+            ],
+            "checklist": [
+              "Tengo el requisito del destinatario por escrito.",
+              "El proveedor elegido está en la lista aceptada del destinatario, si existe.",
+              "Pido exactamente el tipo de informe que indicó el destinatario.",
+              "Sé cómo debe entregarse el informe y a qué dirección.",
+              "Sé qué documentos deben venir directamente de mi institución.",
+              "Organicé por separado las traducciones necesarias.",
+              "Revisé tarifas y plazos actuales en el sitio web del propio proveedor."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "foreign-degree-on-resume",
+      "sources": ["harvard-resume", "wes-why"],
+      "related": ["credential-evaluation-for-us-jobs"],
+      "en": {
+        "title": "How to List a Foreign Degree on a U.S. Resume Truthfully",
+        "seoTitle": "How to List a Foreign Degree on a U.S. Resume | VerifED Global",
+        "description": "Present your original degree, institution and country clearly on a U.S. resume, with an understandable translation and no self-declared equivalency.",
+        "summary": "Write your degree exactly as it was awarded, add a plain English translation, and only mention a U.S. equivalency if you actually hold an evaluation that states it.",
+        "readTime": "5 min read",
+        "sections": [
+          {
+            "id": "basics",
+            "heading": "Start with general resume basics",
+            "paragraphs": [
+              "General U.S. resume guidance, such as Harvard's Office of Career Services, recommends a concise and factual resume tailored to the role, with consistent formatting and education listed in reverse chronological order. That guidance is not specific to foreign credentials, but the same principles apply to how you describe them."
+            ],
+            "sourceRefs": ["harvard-resume"]
+          },
+          {
+            "id": "what-to-include",
+            "heading": "What to include for each degree",
+            "paragraphs": [
+              "A reader should be able to tell exactly what you earned and where, without having to guess."
+            ],
+            "checklist": [
+              "The original degree title as it appears on your diploma.",
+              "An understandable English translation of that title, marked as a translation where helpful.",
+              "The institution's official name, and an English translation if the name is not in English.",
+              "The city and country of the institution.",
+              "Your completion year, or the honest status if not completed."
+            ]
+          },
+          {
+            "id": "avoid",
+            "heading": "What to avoid",
+            "paragraphs": [
+              "Employers may verify education, and some ask for an evaluation to understand foreign degrees. Statements you cannot support create risk."
+            ],
+            "sourceRefs": ["wes-why"],
+            "checklistTitle": "Do not",
+            "checklist": [
+              "Write a U.S. equivalency yourself, such as \"equivalent to a U.S. bachelor's degree\", without an evaluation that says so.",
+              "Convert your grades into a U.S. GPA on your own. If you list grades, use the original scale, for example \"18/20\".",
+              "Name an evaluation provider or report you do not actually hold.",
+              "Rename your degree to a U.S. title that does not match your diploma.",
+              "List ongoing study in a way that suggests it is finished."
+            ]
+          },
+          {
+            "id": "if-evaluated",
+            "heading": "If you already hold an evaluation",
+            "paragraphs": [
+              "If you have a completed report, you may add a line that quotes its wording and names the provider exactly as written on the report. Do not paraphrase it upward. If you do not have one, leave this line out entirely; you can say you are willing to provide an evaluation on request."
+            ]
+          },
+          {
+            "id": "ongoing",
+            "heading": "Study in progress",
+            "paragraphs": [
+              "If you have not finished a program, say so explicitly. Use wording such as \"in progress\" with an expected completion date, or \"coursework completed, degree not awarded\" if that is accurate. Never list only a year that could be read as a graduation date."
+            ]
+          }
+        ],
+        "templatesTitle": "Illustrative resume templates",
+        "templatesNote": "These are formatting examples with placeholder details in brackets. They are not real people, not user results, and not wording endorsed by any cited source. Replace every bracket with your own true information.",
+        "templates": [
+          {
+            "label": "Template A: completed degree, no evaluation held",
+            "lines": [
+              "[Original degree title] ([English translation of the title])",
+              "[Institution official name] ([English translation, if needed]) — [City], [Country]",
+              "Completed [Year] · Grades: [result on original scale, e.g. 16/20]"
+            ]
+          },
+          {
+            "label": "Template B: completed degree, evaluation held",
+            "lines": [
+              "[Original degree title] ([English translation of the title])",
+              "[Institution official name] — [City], [Country] · Completed [Year]",
+              "Credential evaluation by [provider name exactly as on report]: \"[exact equivalency wording quoted from your report]\""
+            ]
+          },
+          {
+            "label": "Template C: study in progress",
+            "lines": [
+              "[Original degree title] ([English translation]) — in progress, not yet completed",
+              "[Institution official name] — [City], [Country]",
+              "Expected completion: [Month Year]"
+            ]
+          }
+        ]
+      },
+      "es": {
+        "title": "Cómo incluir un título extranjero en un currículum de EE. UU. con veracidad",
+        "seoTitle": "Cómo poner un título extranjero en un currículum de EE. UU. | VerifED Global",
+        "description": "Presente su título original, institución y país con claridad en un currículum de EE. UU., con una traducción comprensible y sin equivalencias autodeclaradas.",
+        "summary": "Escriba su título tal como se otorgó, añada una traducción clara al inglés y mencione una equivalencia en EE. UU. solo si tiene una evaluación que la indique.",
+        "readTime": "5 min de lectura",
+        "sections": [
+          {
+            "id": "basics",
+            "heading": "Empiece por lo básico de un currículum",
+            "paragraphs": [
+              "La orientación general sobre currículums en EE. UU., como la de la Oficina de Servicios Profesionales de Harvard, recomienda un documento conciso y factual, adaptado al puesto, con formato coherente y la educación en orden cronológico inverso. Esa guía no trata credenciales extranjeras, pero los mismos principios sirven para describirlas."
+            ],
+            "sourceRefs": ["harvard-resume"]
+          },
+          {
+            "id": "what-to-include",
+            "heading": "Qué incluir para cada título",
+            "paragraphs": [
+              "Quien lea debe entender exactamente qué obtuvo y dónde, sin adivinar."
+            ],
+            "checklist": [
+              "El título original tal como aparece en su diploma.",
+              "Una traducción comprensible al inglés de ese título, indicada como traducción cuando ayude.",
+              "El nombre oficial de la institución y su traducción si no está en inglés.",
+              "La ciudad y el país de la institución.",
+              "El año de finalización, o el estado real si no lo terminó."
+            ]
+          },
+          {
+            "id": "avoid",
+            "heading": "Qué evitar",
+            "paragraphs": [
+              "Los empleadores pueden verificar la educación y algunos piden una evaluación para entender títulos extranjeros. Las afirmaciones que no puede respaldar crean riesgos."
+            ],
+            "sourceRefs": ["wes-why"],
+            "checklistTitle": "No haga esto",
+            "checklist": [
+              "Escribir usted mismo una equivalencia, como \"equivalente a un bachelor's de EE. UU.\", sin una evaluación que lo diga.",
+              "Convertir sus notas a un GPA de EE. UU. por su cuenta. Si incluye notas, use la escala original, por ejemplo \"18/20\".",
+              "Nombrar un proveedor o informe de evaluación que no tiene.",
+              "Cambiar su título por uno de EE. UU. que no coincide con su diploma.",
+              "Presentar estudios en curso como si estuvieran terminados."
+            ]
+          },
+          {
+            "id": "if-evaluated",
+            "heading": "Si ya tiene una evaluación",
+            "paragraphs": [
+              "Si tiene un informe terminado, puede añadir una línea que cite su redacción y nombre al proveedor exactamente como aparece en el informe. No lo exagere. Si no lo tiene, omita esa línea; puede indicar que está dispuesto a presentar una evaluación si se la piden."
+            ]
+          },
+          {
+            "id": "ongoing",
+            "heading": "Estudios en curso",
+            "paragraphs": [
+              "Si no terminó un programa, dígalo explícitamente. Use frases como \"in progress\" con fecha prevista de finalización, o \"coursework completed, degree not awarded\" si es exacto. Nunca ponga solo un año que pueda leerse como fecha de graduación."
+            ]
+          }
+        ],
+        "templatesTitle": "Plantillas ilustrativas de currículum",
+        "templatesNote": "Son ejemplos de formato con datos de relleno entre corchetes. No son personas reales, ni resultados de usuarios, ni redacción respaldada por las fuentes citadas. Reemplace cada corchete con su información verdadera.",
+        "templates": [
+          {
+            "label": "Plantilla A: título terminado, sin evaluación",
+            "lines": [
+              "[Título original] ([traducción al inglés del título])",
+              "[Nombre oficial de la institución] ([traducción, si hace falta]) — [Ciudad], [País]",
+              "Completed [Año] · Grades: [resultado en escala original, p. ej. 16/20]"
+            ]
+          },
+          {
+            "label": "Plantilla B: título terminado, con evaluación",
+            "lines": [
+              "[Título original] ([traducción al inglés del título])",
+              "[Nombre oficial de la institución] — [Ciudad], [País] · Completed [Año]",
+              "Credential evaluation by [proveedor exactamente como en el informe]: \"[redacción exacta de la equivalencia citada de su informe]\""
+            ]
+          },
+          {
+            "label": "Plantilla C: estudios en curso",
+            "lines": [
+              "[Título original] ([traducción al inglés]) — in progress, not yet completed",
+              "[Nombre oficial de la institución] — [Ciudad], [País]",
+              "Expected completion: [Mes Año]"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "ui": {
+    "en": {
+      "nav": "Guides",
+      "indexTitle": "Guides for Internationally Educated Job Seekers",
+      "indexSeoTitle": "Foreign Degree Career Guides for U.S. Jobs | VerifED Global",
+      "indexDescription": "Free, sourced guides on credential evaluation and listing a foreign degree on a U.S. resume. Preliminary guidance, not an official evaluation.",
+      "indexIntro": "Plain-language guides to help you make informed decisions before you spend money. Each guide cites its sources and states what it cannot tell you.",
+      "readGuide": "Read guide",
+      "home": "Home",
+      "onThisPage": "On this page",
+      "sources": "Sources",
+      "sourcesNote": "Sources were reviewed for the specific points cited. Each note describes what the source does and does not cover.",
+      "related": "Related guides",
+      "updated": "Last reviewed",
+      "disclaimer": "This guide is preliminary information, not an official credential evaluation, legal advice or immigration advice. It does not guarantee employment, admission or licensing. Confirm requirements with the organization that will receive your documents.",
+      "ctaTitle": "Organize your own education details",
+      "ctaBody": "Create a free account on the homepage to enter your country, institution and field and get a preliminary roadmap you can bring to employers or licensing boards.",
+      "ctaButton": "Go to account and guidance",
+      "allGuides": "All guides",
+      "homeEntry": "New here? Read our free guides first",
+      "homeEntryBody": "No account needed: when you may need a credential evaluation, and how to list a foreign degree on a U.S. resume.",
+      "skip": "Skip to main content",
+      "menu": "Menu",
+      "closeMenu": "Close menu"
+    },
+    "es": {
+      "nav": "Guías",
+      "indexTitle": "Guías para quienes buscan empleo con estudios en el extranjero",
+      "indexSeoTitle": "Guías profesionales para títulos extranjeros en EE. UU. | VerifED Global",
+      "indexDescription": "Guías gratuitas y con fuentes sobre evaluación de credenciales y cómo incluir un título extranjero en un currículum de EE. UU.",
+      "indexIntro": "Guías en lenguaje claro para decidir con información antes de gastar dinero. Cada guía cita sus fuentes e indica lo que no puede decirle.",
+      "readGuide": "Leer guía",
+      "home": "Inicio",
+      "onThisPage": "En esta página",
+      "sources": "Fuentes",
+      "sourcesNote": "Las fuentes se revisaron para los puntos concretos citados. Cada nota describe lo que la fuente cubre y lo que no.",
+      "related": "Guías relacionadas",
+      "updated": "Última revisión",
+      "disclaimer": "Esta guía es información preliminar, no una evaluación oficial de credenciales ni asesoría legal o migratoria. No garantiza empleo, admisión ni licencias. Confirme los requisitos con la organización que recibirá sus documentos.",
+      "ctaTitle": "Organice los datos de su propia educación",
+      "ctaBody": "Cree una cuenta gratuita en la página de inicio para indicar su país, institución y campo, y obtener una ruta preliminar para empleadores o juntas de licencias.",
+      "ctaButton": "Ir a cuenta y orientación",
+      "allGuides": "Todas las guías",
+      "homeEntry": "¿Es nuevo? Lea primero nuestras guías gratuitas",
+      "homeEntryBody": "Sin cuenta: cuándo puede necesitar una evaluación de credenciales y cómo incluir un título extranjero en un currículum de EE. UU.",
+      "skip": "Saltar al contenido principal",
+      "menu": "Menú",
+      "closeMenu": "Cerrar menú"
+    }
+  }
+}

@@ -1,6 +1,7 @@
-import { useState, useEffect, useMemo, createContext, useContext } from 'react';
+import { useState, useEffect, useMemo, useRef, createContext, useContext, lazy, Suspense } from 'react';
 import { Link, Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { PageMetadata } from './PageMetadata';
+import seoPages from '../seo-pages.json';
 import { hashPassword, verifyAndMigratePassword } from './auth';
 import {
   type StoredUser,
@@ -35,8 +36,17 @@ import {
   type InstitutionVerification as InstitutionVerificationResult,
 } from './api';
 import { contactedStorageKey, loadContacted, mergeContacted } from './contactedSync';
-import { SchoolFinder } from './SchoolFinder';
+// Only shown after an admission-goal result; load its UI kit on demand.
+const SchoolFinder = lazy(() => import('./SchoolFinder').then((m) => ({ default: m.SchoolFinder })));
 import { InstitutionVerification } from './InstitutionVerification';
+
+// Guides are public long-form content: keep them in their own chunk so the
+// article text is not shipped to every visitor of the evaluator.
+const GuidesRoute = lazy(() => import('./guides/GuidesPages'));
+const GUIDE_UI = {
+  en: { nav: 'Guides', skip: 'Skip to main content', menu: 'Menu', closeMenu: 'Close menu', homeEntry: 'New here? Read our free guides first', homeEntryBody: 'No account needed: when you may need a credential evaluation, and how to list a foreign degree on a U.S. resume.', loading: 'Loading guide…' },
+  es: { nav: 'Guías', skip: 'Saltar al contenido principal', menu: 'Menú', closeMenu: 'Cerrar menú', homeEntry: '¿Es nuevo? Lea primero nuestras guías gratuitas', homeEntryBody: 'Sin cuenta: cuándo puede necesitar una evaluación de credenciales y cómo incluir un título extranjero en un currículum de EE. UU.', loading: 'Cargando guía…' },
+} as const;
 
 /**
  * Best-effort push of this visitor's own account + evaluation profile to the
@@ -1051,32 +1061,56 @@ function LangToggle() {
 }
 
 function Navbar({ appView, username, onLogout }: { appView: AppView; username: string; onLogout: () => void }) {
-  const { t } = useLang();
-  const [, setLocation] = useLocation();
+  const { t, lang } = useLang();
+  const g = GUIDE_UI[lang];
+  const [location] = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuBtn = useRef<HTMLButtonElement>(null);
+  useEffect(() => { setMenuOpen(false); }, [location]);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') { setMenuOpen(false); menuBtn.current?.focus(); } };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
+  const mLink = 'block rounded-lg px-4 py-3 text-base text-slate-200 hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-indigo-400';
   return (
     <nav className="relative z-50 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl sticky top-0">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <button
-          onClick={() => setLocation('/')}
-          className="flex items-center cursor-pointer bg-transparent border-none p-0"
+        <Link
+          href="/"
+          className="flex items-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-indigo-400"
           data-testid="link-home"
+          aria-label="VerifED Global home"
         >
           <img
             src={`${import.meta.env.BASE_URL}logo.png`.replace(/\/+/g, '/')}
             alt="VerifED Global"
             className="h-10 w-auto object-contain"
           />
-        </button>
+        </Link>
 
         <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-400">
           <Link href="/about" className="hover:text-white transition-colors" data-testid="link-about">{t('about')}</Link>
           <Link href="/how-it-works" className="hover:text-white transition-colors" data-testid="link-how-it-works">{t('howItWorks')}</Link>
+          <Link href="/guides" className="hover:text-white transition-colors" data-testid="link-guides" aria-current={location.startsWith('/guides') ? 'page' : undefined}>{g.nav}</Link>
           <LangToggle />
         </div>
 
         <div className="flex items-center gap-3">
           {/* Mobile lang toggle */}
           <div className="md:hidden"><LangToggle /></div>
+          <button
+            ref={menuBtn}
+            type="button"
+            className="md:hidden inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-slate-700 bg-slate-900 px-3 text-sm font-semibold text-slate-200 focus-visible:outline-2 focus-visible:outline-indigo-400"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setMenuOpen((o) => !o)}
+            data-testid="button-mobile-menu"
+          >
+            {menuOpen ? g.closeMenu : g.menu}
+          </button>
 
           {appView === 'app' && (
             <div className="flex items-center space-x-3" data-testid="nav-user-badge">
@@ -1094,12 +1128,21 @@ function Navbar({ appView, username, onLogout }: { appView: AppView; username: s
           )}
         </div>
       </div>
+      {menuOpen && (
+        <div id="mobile-menu" className="md:hidden border-t border-slate-800 bg-slate-950 px-4 py-3">
+          <ul className="space-y-1">
+            <li><Link href="/guides" className={mLink} data-testid="link-guides-mobile">{g.nav}</Link></li>
+            <li><Link href="/about" className={mLink}>{t('about')}</Link></li>
+            <li><Link href="/how-it-works" className={mLink}>{t('howItWorks')}</Link></li>
+          </ul>
+        </div>
+      )}
     </nav>
   );
 }
 
 function Footer({ onPrivacy, onTerms }: { onPrivacy: () => void; onTerms: () => void }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   return (
     <footer className="border-t border-slate-800/80 bg-slate-950 py-12 px-6 relative z-10 mt-20">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
@@ -1107,7 +1150,8 @@ function Footer({ onPrivacy, onTerms }: { onPrivacy: () => void; onTerms: () => 
           <p className="text-xs text-slate-400 font-medium">{t('footerCopy')}</p>
           <p className="text-[11px] text-slate-500 mt-1">{t('footerTag')}</p>
         </div>
-        <div className="flex items-center space-x-6 text-xs text-slate-400 font-medium">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-400 font-medium">
+          <Link href="/guides" className="hover:text-white transition-colors text-slate-300 text-xs font-medium" data-testid="link-footer-guides">{GUIDE_UI[lang].nav}</Link>
           <button onClick={onPrivacy} data-testid="button-privacy-policy" className="hover:text-white transition-colors cursor-pointer bg-transparent border-none text-slate-400 text-xs font-medium">{t('privacy')}</button>
           <button onClick={onTerms} data-testid="button-terms" className="hover:text-white transition-colors cursor-pointer bg-transparent border-none text-slate-400 text-xs font-medium">{t('terms')}</button>
           <Link href="/admin" className="hover:text-white transition-colors text-slate-600 text-xs font-medium" data-testid="link-admin">{t('admin')}</Link>
@@ -1153,7 +1197,7 @@ function AboutPage() {
   const { t } = useLang();
   const [, setLocation] = useLocation();
   return (
-    <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full space-y-16">
+    <main id="main-content" tabIndex={-1} className="outline-none relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full space-y-16">
       {/* Hero */}
       <div className="text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs text-indigo-300 font-semibold mb-8">
@@ -1233,7 +1277,7 @@ function HowItWorksPage() {
   const { t } = useLang();
   const [, setLocation] = useLocation();
   return (
-    <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full space-y-8">
+    <main id="main-content" tabIndex={-1} className="outline-none relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full space-y-8">
       {/* Header */}
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs mb-8">
@@ -1304,7 +1348,7 @@ function HowItWorksPage() {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function AuthView({ onLogin, storageError }: { onLogin: (username: string) => void; storageError?: string }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [isSignUp, setIsSignUp] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -1454,6 +1498,11 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
         <p className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-14">
           {t('heroSub')}
         </p>
+
+        <Link href="/guides" data-testid="link-home-guides" className="mx-auto mb-10 flex max-w-xl flex-col gap-1 rounded-2xl border border-indigo-500/40 bg-indigo-500/10 px-5 py-4 text-left hover:border-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400">
+          <span className="font-bold text-white">{GUIDE_UI[lang].homeEntry} <span aria-hidden="true">→</span></span>
+          <span className="text-sm text-slate-300">{GUIDE_UI[lang].homeEntryBody}</span>
+        </Link>
 
         {/* Stats strip */}
         <div className="inline-flex flex-col sm:flex-row items-center divide-y sm:divide-y-0 sm:divide-x divide-slate-800 rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden backdrop-blur-sm">
@@ -2542,6 +2591,7 @@ function EvaluatorView() {
       </div>
 
       {result && result.purpose === 'University Admission' && (
+        <Suspense fallback={<div role="status" className="h-40 rounded-2xl border border-slate-800 bg-slate-900/40" aria-label="Loading" />}>
         <SchoolFinder 
           username={getSignedInUser().username || null}
           profile={{
@@ -2553,6 +2603,7 @@ function EvaluatorView() {
           }}
           t={t}
         />
+        </Suspense>
       )}
 
       <ContactSection />
@@ -2624,7 +2675,7 @@ function AdminGate() {
   if (unlocked) return <AdminPage />;
 
   return (
-    <main className="relative z-10 max-w-md mx-auto px-6 pt-24 pb-32 flex-grow w-full">
+    <main id="main-content" tabIndex={-1} className="outline-none relative z-10 max-w-md mx-auto px-6 pt-24 pb-32 flex-grow w-full">
       <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6">
         <h2 className="text-white font-bold text-sm mb-1">{t('adminGateTitle')}</h2>
         <p className="text-slate-400 text-xs mb-4">{t('adminGateDesc')}</p>
@@ -2797,7 +2848,7 @@ function AdminPage() {
   const dateLocale = lang === 'es' ? 'es-ES' : 'en-US';
 
   return (
-    <main className="relative z-10 max-w-6xl mx-auto px-6 pt-12 pb-24 flex-grow w-full">
+    <main id="main-content" tabIndex={-1} className="outline-none relative z-10 max-w-6xl mx-auto px-6 pt-12 pb-24 flex-grow w-full">
       {/* Storage corruption warning */}
       {storageErr && <StorageCorruptBanner message={storageErr} onDismiss={() => setStorageErr('')} />}
 
@@ -3040,6 +3091,18 @@ function AdminPage() {
   );
 }
 
+const GUIDE_SLUGS = Object.keys(seoPages).filter((r) => r.startsWith('/guides/')).map((r) => r.slice('/guides/'.length));
+
+function NotFoundView() {
+  const { lang } = useLang();
+  return (
+    <main id="main-content" tabIndex={-1} className="relative z-10 mx-auto px-6 py-24 outline-none">
+      <h1 className="text-3xl font-bold">{lang === 'es' ? 'Página no encontrada' : 'Page not found'}</h1>
+      <Link href="/" className="text-indigo-300 underline">{lang === 'es' ? 'Volver al inicio' : 'Return to homepage'}</Link>
+    </main>
+  );
+}
+
 // ─── Root App ─────────────────────────────────────────────────────────────────
 
 export default function App() {
@@ -3085,11 +3148,12 @@ export default function App() {
   return (
     <LangCtx.Provider value={{ lang, toggleLang, t }}>
     <WouterRouter base={base}>
-      <PageMetadata />
+      <PageMetadata lang={lang} />
       <div className="bg-slate-950 text-slate-100 min-h-screen font-sans relative overflow-x-hidden flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
         <div className="glow-effect -top-40 -left-40 rounded-full" />
         <div className="glow-effect top-1/3 -right-40 rounded-full" />
 
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-indigo-500 focus:px-4 focus:py-3 focus:font-bold focus:text-white">{GUIDE_UI[lang].skip}</a>
         <Navbar appView={appView} username={username} onLogout={handleLogout} />
 
         <Switch>
@@ -3099,19 +3163,22 @@ export default function App() {
           <Route path="/how-it-works">
             <HowItWorksPage />
           </Route>
+          <Route path="/guides">
+            <Suspense fallback={<main id="main-content" className="relative z-10 mx-auto w-full max-w-3xl flex-grow px-6 pt-12"><p role="status" className="text-slate-400">{GUIDE_UI[lang].loading}</p></main>}><GuidesRoute lang={lang} /></Suspense>
+          </Route>
+          <Route path="/guides/:slug">
+            {(params) => GUIDE_SLUGS.includes(params.slug) ? <Suspense fallback={<main id="main-content" className="relative z-10 mx-auto w-full max-w-3xl flex-grow px-6 pt-12"><p role="status" className="text-slate-400">{GUIDE_UI[lang].loading}</p></main>}><GuidesRoute slug={params.slug} lang={lang} /></Suspense> : <NotFoundView />}
+          </Route>
           <Route path="/admin">
             <AdminGate />
           </Route>
           <Route path="/">
-            <main className="relative z-10 max-w-6xl mx-auto px-6 pt-16 pb-24 flex-grow w-full">
+            <main id="main-content" tabIndex={-1} className="relative z-10 max-w-6xl mx-auto px-6 pt-16 pb-24 flex-grow w-full outline-none">
               {appView === 'auth' ? <AuthView onLogin={handleLogin} storageError={userStoreError} /> : <EvaluatorView />}
             </main>
           </Route>
           <Route>
-            <main className="relative z-10 mx-auto px-6 py-24">
-              <h1 className="text-3xl font-bold">{lang === 'es' ? 'Página no encontrada' : 'Page not found'}</h1>
-              <Link href="/" className="text-indigo-300 underline">{lang === 'es' ? 'Volver al inicio' : 'Return to homepage'}</Link>
-            </main>
+            <NotFoundView />
           </Route>
         </Switch>
 

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://verifed.co/</loc>
-  </url>
+  <url><loc>https://verifed.co/</loc></url>
   <url><loc>https://verifed.co/about</loc></url>
   <url><loc>https://verifed.co/how-it-works</loc></url>
+  <url><loc>https://verifed.co/guides</loc><lastmod>2026-10-29</lastmod></url>
+  <url><loc>https://verifed.co/guides/credential-evaluation-for-us-jobs</loc><lastmod>2026-10-29</lastmod></url>
+  <url><loc>https://verifed.co/guides/foreign-degree-on-resume</loc><lastmod>2026-10-29</lastmod></url>
 </urlset>

@@ -7,6 +7,9 @@
 - [VerifED Global](https://verifed.co/): Credential-guidance tools, explanations of evaluation pathways, and contact information. Available in English and Spanish.
 - [About](https://verifed.co/about): Purpose and scope of this independent guidance platform.
 - [How it works](https://verifed.co/how-it-works): Education inputs and the preliminary guidance process.
+- [Guides](https://verifed.co/guides): Free, sourced public guides for internationally educated job seekers. No account required.
+- [Credential evaluation for U.S. jobs](https://verifed.co/guides/credential-evaluation-for-us-jobs): When an evaluation may be requested, questions to ask the employer or licensing board before paying, and what an evaluation does not do.
+- [Foreign degree on a U.S. resume](https://verifed.co/guides/foreign-degree-on-resume): Listing an original degree truthfully, with illustrative templates and no self-declared equivalency.
 - [Sitemap](https://verifed.co/sitemap.xml): Public URLs intended for search indexing.
 - [Crawler policy](https://verifed.co/robots.txt): Instructions for automated crawlers.
 

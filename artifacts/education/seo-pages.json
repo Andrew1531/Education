@@ -16,5 +16,38 @@
     "description": "Learn how to organize your education details, explore credential evaluation options, and prepare next steps for employers and licensing boards in the U.S.",
     "heading": "How VerifED Global Works",
     "body": "Create an account, enter your country of study, institution, degree and field, and explore preliminary career guidance. Review evaluation-agency information and licensing considerations, then confirm requirements with your employer, receiving organization or licensing board. A personalized roadmap is not a certified equivalency determination."
+  },
+  "/guides": {
+    "title": "Foreign Degree Career Guides for U.S. Jobs | VerifED Global",
+    "description": "Free, sourced guides on credential evaluation and listing a foreign degree on a U.S. resume. Preliminary guidance, not an official evaluation.",
+    "heading": "Guides for Internationally Educated Job Seekers",
+    "body": "Plain-language guides to help you make informed decisions before you spend money. Each guide cites its sources and states what it cannot tell you.",
+    "es": {
+      "title": "Guías profesionales para títulos extranjeros en EE. UU. | VerifED Global",
+      "description": "Guías gratuitas y con fuentes sobre evaluación de credenciales y cómo incluir un título extranjero en un currículum de EE. UU."
+    },
+    "guides": "index"
+  },
+  "/guides/credential-evaluation-for-us-jobs": {
+    "title": "Do You Need a Credential Evaluation for a U.S. Job? | VerifED Global",
+    "description": "When U.S. employers or licensing boards may ask for a foreign credential evaluation, what to confirm before paying, and what an evaluation does not do.",
+    "heading": "Credential Evaluation for U.S. Jobs: When You Need One and What to Ask First",
+    "body": "A credential evaluation is not required for every U.S. job. Before you pay for one, ask the employer or licensing board that will receive it exactly what they accept.",
+    "es": {
+      "title": "¿Necesita una evaluación de credenciales para trabajar en EE. UU.? | VerifED Global",
+      "description": "Cuándo un empleador o una junta de licencias en EE. UU. puede pedir una evaluación de credenciales extranjeras, qué confirmar antes de pagar y qué no hace."
+    },
+    "guide": "credential-evaluation-for-us-jobs"
+  },
+  "/guides/foreign-degree-on-resume": {
+    "title": "How to List a Foreign Degree on a U.S. Resume | VerifED Global",
+    "description": "Present your original degree, institution and country clearly on a U.S. resume, with an understandable translation and no self-declared equivalency.",
+    "heading": "How to List a Foreign Degree on a U.S. Resume Truthfully",
+    "body": "Write your degree exactly as it was awarded, add a plain English translation, and only mention a U.S. equivalency if you actually hold an evaluation that states it.",
+    "es": {
+      "title": "Cómo poner un título extranjero en un currículum de EE. UU. | VerifED Global",
+      "description": "Presente su título original, institución y país con claridad en un currículum de EE. UU., con una traducción comprensible y sin equivalencias autodeclaradas."
+    },
+    "guide": "foreign-degree-on-resume"
   }
 }
