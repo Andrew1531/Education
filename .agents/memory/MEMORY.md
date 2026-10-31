@@ -3,3 +3,4 @@
 - [Contact form delivery](contact-form-delivery.md) — direct Web3Forms submission was confirmed working in production; avoid all mailto fallbacks.
 - [GitHub Pages publishing](github-pages-publishing.md) — verify the live HTML after a main-branch Pages run; a local commit alone does not update verifed.co.
 - [Institution evidence limits](institution-evidence-limits.md) — directory misses and throttling are not proof a college is fake; preserve uncertainty without blocking guidance.
+- [Uniform education guidance](education-guidance-scope.md) — one shared qualification workflow focused on U.S. context, not country-by-country registry integrations.
