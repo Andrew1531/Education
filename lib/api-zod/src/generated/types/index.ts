@@ -7,6 +7,8 @@
  */
 
 export * from './apiError';
+export * from './educationProfile';
+export * from './educationProfileInput';
 export * from './evidenceSource';
 export * from './healthStatus';
 export * from './institutionCandidate';
@@ -14,3 +16,7 @@ export * from './institutionCandidateWebsiteAvailability';
 export * from './institutionVerificationRequest';
 export * from './institutionVerificationResponse';
 export * from './institutionVerificationResponseStatus';
+export * from './qualification';
+export * from './qualificationAwardType';
+export * from './qualificationCompletion';
+export * from './qualificationEvidenceStatus';

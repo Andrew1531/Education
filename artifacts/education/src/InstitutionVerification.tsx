@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import type { Qualification } from './qualificationGuidance';
 import {
   apiVerifyInstitution,
   type InstitutionCandidate,
@@ -25,29 +26,41 @@ export function InstitutionVerification({
   lang,
   onChange,
   onContinueUnverified,
+  onOutcome,
+  initialVerification,
+  initialStatus,
+  autoCheck = true,
 }: {
   name: string;
   country: string;
   lang: 'en' | 'es';
   onChange: (verification: Verification | null) => void;
   onContinueUnverified: () => void;
+  onOutcome?: (status: Qualification['evidenceStatus'], verification?: Verification) => void;
+  initialVerification?: Verification;
+  initialStatus?: Qualification['evidenceStatus'];
+  autoCheck?: boolean;
 }) {
-  const [result, setResult] = useState<Verification | null>(null);
+  const [result, setResult] = useState<Verification | null>(initialVerification || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const requestId = useRef(0);
   const autoTimer = useRef<number | undefined>(undefined);
+  const initialIdentity = useRef({ name, country });
   const es = lang === 'es';
 
   useEffect(() => {
     requestId.current += 1;
-    setResult(null);
+    const restore = initialIdentity.current?.name === name && initialIdentity.current?.country === country;
+    const snapshot = restore ? initialVerification || null : null;
+    setResult(snapshot);
     setError('');
     setLoading(false);
-    onChange(null);
-    // Check each settled entry, not just visitors who notice the manual button.
-    // Changing either input invalidates the evidence immediately.
-    autoTimer.current = name.trim().length >= 3 && country.trim().length >= 2
+    onChange(snapshot?.status === 'verified' ? snapshot : null);
+    if (!restore) onOutcome?.('not_checked');
+    // The qualification editor attempts lookup on save; other callers retain
+    // the shared component's automatic check for each settled institution.
+    autoTimer.current = autoCheck && !snapshot && name.trim().length >= 3 && country.trim().length >= 2
       ? window.setTimeout(() => void check(), 1000) : undefined;
     return () => {
       window.clearTimeout(autoTimer.current);
@@ -68,13 +81,16 @@ export function InstitutionVerification({
       if (id !== requestId.current) return;
       setResult(next);
       onChange(next.status === 'verified' && next.selected ? next : null);
+      onOutcome?.(next.status === 'verified' ? 'corroborated' : next.status, next);
     } catch (err) {
       if (id !== requestId.current) return;
       const code = err instanceof Error ? err.message : '';
       setError(code === 'rate_limited'
         ? (es ? 'Demasiadas consultas. Espere un minuto e inténtelo de nuevo.' : 'Too many checks. Wait a minute and retry.')
-        : (es ? 'Las fuentes públicas no están disponibles ahora. Reintente o continúe con la institución marcada como no verificada.' : 'Public evidence sources are unavailable right now. Retry or continue with the institution clearly marked unverified.'));
+        : (es ? 'Las fuentes públicas no están disponibles ahora. Puede reintentar o continuar con orientación preliminar no verificada. Este error no invalida la institución ni el título.' : 'Public evidence sources are unavailable right now. Retry or continue with unverified preliminary guidance. This error does not invalidate the institution or award.'));
+      setResult(null);
       onChange(null);
+      onOutcome?.('unavailable');
     } finally {
       if (id === requestId.current) setLoading(false);
     }
@@ -143,7 +159,7 @@ export function InstitutionVerification({
           <p className="mt-1 text-sm font-semibold text-white">{selected.name}</p>
           {selected.name.trim().toLowerCase() !== name.trim().toLowerCase() && (
             <p className="mt-1 text-[11px] text-indigo-200" data-testid="text-selected-institution-name">
-              {es ? 'El informe usará el nombre de la institución seleccionada que se muestra arriba, no el texto original de búsqueda.' : 'Your report will use the selected institution name above, not the original search spelling.'}
+              {es ? 'Al guardar se usará el nombre de la institución seleccionada que se muestra arriba, no el texto original de búsqueda.' : 'Saving will use the selected institution name above, not the original search spelling.'}
             </p>
           )}
           <p className="text-xs text-slate-400">{selected.higherEducationType} · {selected.country}</p>
@@ -176,6 +192,7 @@ export function InstitutionVerification({
             {es ? 'Fuentes consultadas' : 'Sources retrieved'}: {selected.sources.map((source) => source.name).join(', ')} · {new Date(result.retrievedAt).toLocaleString(es ? 'es' : 'en-US')}
           </p>
           <p className="mt-1 text-[10px] font-semibold text-amber-300">{es ? 'No es una conclusión de acreditación.' : 'This is not an accreditation finding.'}</p>
+          <p className="mt-1 text-[10px] text-slate-400">{es ? 'Evidencia de la fecha indicada; no autentica su título, no establece equivalencia ni autoriza una licencia profesional.' : 'Evidence as of the date shown; it does not authenticate your award, establish equivalency or authorize professional licensure.'}</p>
         </div>
       )}
     </div>

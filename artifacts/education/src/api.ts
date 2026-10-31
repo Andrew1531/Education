@@ -6,6 +6,7 @@
 //    as before.
 import type { StoredUser } from './userStore';
 import { z } from 'zod';
+import type { Qualification } from './qualificationGuidance';
 import { verifyWithPublicDirectory } from './institutionDirectory';
 
 // VITE_API_URL is baked in at build time (GitHub Actions sets it to the
@@ -75,6 +76,8 @@ export interface EvalProfile {
   degree?: string;
   field?: string;
   purpose?: string;
+  credits?: string;
+  qualifications?: Qualification[];
 }
 
 export interface ServerUser {
@@ -264,6 +267,7 @@ export async function apiSignin(username: string, password: string): Promise<{ o
       const v = u[k];
       if (typeof v === 'string' && v) profile[k] = v;
     }
+    if (Array.isArray(u.qualifications)) profile.qualifications = u.qualifications as Qualification[];
     return { ok: true, profile: Object.keys(profile).length ? profile : undefined };
   }
   const data = await res.json().catch(() => ({}));
@@ -312,6 +316,17 @@ export async function apiSaveProfile(username: string, profile: EvalProfile): Pr
       headers: { 'x-auth-token': token },
     });
   } catch { /* best-effort */ }
+}
+
+/** Explicit save feedback for the multi-award editor, unlike legacy best-effort callers. */
+export async function apiSaveEducationProfile(username: string, profile: EvalProfile): Promise<void> {
+  const token = getUserToken(username);
+  if (!token) throw new ApiUnavailableError();
+  const res = await apiFetch('/auth/profile', {
+    method: 'POST', body: JSON.stringify({ username, profile }),
+    headers: { 'x-auth-token': token },
+  });
+  if (!res.ok) throw new Error(`profile_save_failed_${res.status}`);
 }
 
 /**

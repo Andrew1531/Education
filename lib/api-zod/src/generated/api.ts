@@ -9,6 +9,109 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Save the authenticated owner's education profile
+ */
+export const SaveEducationProfileHeader = zod.object({
+  "x-auth-token": zod.string()
+})
+
+
+export const saveEducationProfileBodyProfileCountryMax = 300;
+
+export const saveEducationProfileBodyProfileInstitutionMax = 300;
+
+export const saveEducationProfileBodyProfileDegreeMax = 300;
+
+export const saveEducationProfileBodyProfileFieldMax = 300;
+
+export const saveEducationProfileBodyProfilePurposeMax = 300;
+
+export const saveEducationProfileBodyProfileQualificationsItemIdMax = 100;
+
+export const saveEducationProfileBodyProfileQualificationsItemAwardNameMax = 300;
+
+export const saveEducationProfileBodyProfileQualificationsItemInstitutionMax = 300;
+
+export const saveEducationProfileBodyProfileQualificationsItemCountryMax = 300;
+
+export const saveEducationProfileBodyProfileQualificationsItemFieldMax = 300;
+
+export const saveEducationProfileBodyProfileQualificationsItemDurationMax = 300;
+
+export const saveEducationProfileBodyProfileQualificationsMax = 50;
+
+
+
+export const SaveEducationProfileBody = zod.object({
+  "username": zod.string().min(1),
+  "profile": zod.object({
+  "country": zod.string().max(saveEducationProfileBodyProfileCountryMax).optional(),
+  "institution": zod.string().max(saveEducationProfileBodyProfileInstitutionMax).optional(),
+  "degree": zod.string().max(saveEducationProfileBodyProfileDegreeMax).optional(),
+  "field": zod.string().max(saveEducationProfileBodyProfileFieldMax).optional(),
+  "purpose": zod.string().max(saveEducationProfileBodyProfilePurposeMax).optional(),
+  "qualifications": zod.array(zod.object({
+  "id": zod.string().min(1).max(saveEducationProfileBodyProfileQualificationsItemIdMax),
+  "awardName": zod.string().max(saveEducationProfileBodyProfileQualificationsItemAwardNameMax),
+  "institution": zod.string().max(saveEducationProfileBodyProfileQualificationsItemInstitutionMax),
+  "country": zod.string().max(saveEducationProfileBodyProfileQualificationsItemCountryMax),
+  "field": zod.string().max(saveEducationProfileBodyProfileQualificationsItemFieldMax),
+  "duration": zod.string().max(saveEducationProfileBodyProfileQualificationsItemDurationMax),
+  "completion": zod.enum(['completed', 'in_progress', 'not_completed', 'unknown']),
+  "awardType": zod.enum(['academic', 'professional', 'unknown']),
+  "evidenceStatus": zod.enum(['not_checked', 'corroborated', 'not_found', 'ambiguous', 'unavailable']),
+  "verification": zod.object({
+  "status": zod.enum(['verified', 'ambiguous', 'not_found']),
+  "message": zod.string(),
+  "accreditationChecked": zod.boolean(),
+  "selected": zod.union([zod.object({
+  "entityId": zod.string(),
+  "name": zod.string(),
+  "description": zod.string().nullable(),
+  "aliases": zod.array(zod.string()),
+  "country": zod.string().nullable(),
+  "countryMatch": zod.boolean(),
+  "higherEducationType": zod.string().nullable(),
+  "officialWebsite": zod.string().nullable(),
+  "websiteAvailability": zod.enum(['not_checked']),
+  "closureDate": zod.string().nullable(),
+  "wikipediaUrl": zod.string().nullable(),
+  "archiveUrl": zod.string().nullable(),
+  "sources": zod.array(zod.object({
+  "name": zod.string(),
+  "url": zod.string(),
+  "retrievedAt": zod.coerce.date()
+}))
+}),zod.null()]),
+  "candidates": zod.array(zod.object({
+  "entityId": zod.string(),
+  "name": zod.string(),
+  "description": zod.string().nullable(),
+  "aliases": zod.array(zod.string()),
+  "country": zod.string().nullable(),
+  "countryMatch": zod.boolean(),
+  "higherEducationType": zod.string().nullable(),
+  "officialWebsite": zod.string().nullable(),
+  "websiteAvailability": zod.enum(['not_checked']),
+  "closureDate": zod.string().nullable(),
+  "wikipediaUrl": zod.string().nullable(),
+  "archiveUrl": zod.string().nullable(),
+  "sources": zod.array(zod.object({
+  "name": zod.string(),
+  "url": zod.string(),
+  "retrievedAt": zod.coerce.date()
+}))
+})),
+  "retrievedAt": zod.coerce.date()
+}).optional()
+})).max(saveEducationProfileBodyProfileQualificationsMax).optional()
+})
+})
+
+export const SaveEducationProfileResponse = zod.unknown()
+
+
+/**
  * Returns server health status
  * @summary Health check
  */

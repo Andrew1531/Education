@@ -21,6 +21,7 @@ import type {
 
 import type {
   ApiError,
+  EducationProfileInput,
   HealthStatus,
   InstitutionVerificationRequest,
   InstitutionVerificationResponse
@@ -52,6 +53,77 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getSaveEducationProfileUrl = () => {
+
+
+
+
+  return `/api/auth/profile`
+}
+
+/**
+ * @summary Save the authenticated owner's education profile
+ */
+export const saveEducationProfile = async (educationProfileInput: EducationProfileInput, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getSaveEducationProfileUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(educationProfileInput)
+  }
+);}
+
+
+
+
+
+export const getSaveEducationProfileMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveEducationProfile>>, TError,{data: BodyType<EducationProfileInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof saveEducationProfile>>, TError,{data: BodyType<EducationProfileInput>}, TContext> => {
+
+const mutationKey = ['saveEducationProfile'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof saveEducationProfile>>, {data: BodyType<EducationProfileInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  saveEducationProfile(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SaveEducationProfileMutationResult = NonNullable<Awaited<ReturnType<typeof saveEducationProfile>>>
+    export type SaveEducationProfileMutationBody = BodyType<EducationProfileInput>
+    export type SaveEducationProfileMutationError = ErrorType<void>
+
+    /**
+ * @summary Save the authenticated owner's education profile
+ */
+export const useSaveEducationProfile = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveEducationProfile>>, TError,{data: BodyType<EducationProfileInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof saveEducationProfile>>,
+        TError,
+        {data: BodyType<EducationProfileInput>},
+        TContext
+      > => {
+      return useMutation(getSaveEducationProfileMutationOptions(options));
+    }
 
 export const getHealthCheckUrl = () => {
 

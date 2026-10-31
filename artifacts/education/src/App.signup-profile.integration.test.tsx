@@ -6,8 +6,8 @@
  * its request body — verified by inspecting the captured fetch call.
  *
  * Offline path: when the API is unreachable (ApiUnavailableError), the form's
- * saveSignupProfile() merges the answers into ge_profile without clobbering
- * evaluator answers that are already there.
+ * saveSignupProfile() starts a new, isolated profile from signup answers only.
+ * Unowned legacy answers are archived, never imported into the new account.
  *
  * syncOwnAccount path: on the next page load the profile stored in ge_profile
  * is pushed to the server via apiSyncSelf.
@@ -17,6 +17,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, waitFor, act, cleanup, fireEvent } from '@testing-library/react';
 import App from './App';
 import { USERS_KEY } from './userStore';
+import { educationProfileKey, unownedEducationProfileKey } from './educationProfileStore';
 
 // jsdom provides localStorage natively.
 
@@ -175,14 +176,15 @@ describe('App sign-up — offline path saves country + goal to ge_profile', () =
     expect(profile?.purpose).toBe('Immigration (USCIS)');
   });
 
-  it('does not clobber existing evaluator answers already in ge_profile', async () => {
-    // The evaluator already ran; it wrote institution + field + country.
+  it('does not import unowned legacy qualifications into a different user’s signup', async () => {
+    // A previous account signed out before ownership keys were introduced.
     const existingProfile = {
       institution: 'University of Lagos',
       field: 'Computer Science',
       degree: 'B.Sc',
       country: 'Nigeria', // evaluator set it first
       purpose: 'Employment & HR', // evaluator set it first
+      qualifications: [{ id: 'private-legacy', awardName: 'Previous user award' }],
     };
     localStorage.setItem('ge_profile', JSON.stringify(existingProfile));
 
@@ -190,8 +192,8 @@ describe('App sign-up — offline path saves country + goal to ge_profile', () =
       username: 'eve',
       password: 'hunter2',
       email: 'eve@example.com',
-      country: 'India',           // should NOT overwrite Nigeria
-      goal: 'University Admission', // should NOT overwrite Employment & HR
+      country: 'India',
+      goal: 'University Admission',
     });
 
     await waitFor(() => {
@@ -199,17 +201,13 @@ describe('App sign-up — offline path saves country + goal to ge_profile', () =
     });
 
     const profile = JSON.parse(localStorage.getItem('ge_profile') ?? 'null') as Record<string, string> | null;
-    // Evaluator values must be preserved.
-    expect(profile?.country).toBe('Nigeria');
-    expect(profile?.purpose).toBe('Employment & HR');
-    // Other evaluator fields must also be untouched.
-    expect(profile?.institution).toBe('University of Lagos');
-    expect(profile?.field).toBe('Computer Science');
-    expect(profile?.degree).toBe('B.Sc');
+    expect(profile).toEqual({ country: 'India', purpose: 'University Admission' });
+    expect(JSON.parse(localStorage.getItem(educationProfileKey('eve'))!)).toEqual(profile);
+    expect(localStorage.getItem(unownedEducationProfileKey)).toBe(JSON.stringify(existingProfile));
+    expect(screen.queryByText('Previous user award')).toBeNull();
   });
 
-  it('fills in country when ge_profile exists but country is missing', async () => {
-    // Evaluator ran but only set field/degree, not country.
+  it('keeps partial unowned legacy data separate from new signup answers', async () => {
     const existingProfile = { institution: 'UNAM', field: 'Law', degree: 'LLB' };
     localStorage.setItem('ge_profile', JSON.stringify(existingProfile));
 
@@ -227,9 +225,9 @@ describe('App sign-up — offline path saves country + goal to ge_profile', () =
     const profile = JSON.parse(localStorage.getItem('ge_profile') ?? 'null') as Record<string, string> | null;
     // New country should be added.
     expect(profile?.country).toBe('Mexico');
-    // Existing fields must remain intact.
-    expect(profile?.institution).toBe('UNAM');
-    expect(profile?.field).toBe('Law');
+    expect(profile?.institution).toBeUndefined();
+    expect(profile?.field).toBeUndefined();
+    expect(localStorage.getItem(unownedEducationProfileKey)).toBe(JSON.stringify(existingProfile));
   });
 
   it('skips writing ge_profile when neither country nor goal is provided', async () => {
@@ -287,6 +285,21 @@ describe('App sign-in — server profile seeds ge_profile on a fresh device', ()
     });
   }
 
+  it('never assigns unowned legacy qualifications to a different user after sign-in', async () => {
+    const legacy = JSON.stringify({ institution: 'Previous user school', qualifications: [{ id: 'private-legacy', awardName: 'Previous user award' }] });
+    localStorage.setItem('ge_profile', legacy);
+    expect(localStorage.getItem('ge_profile_owner')).toBeNull();
+    expect(localStorage.getItem('ge_username')).toBeNull();
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(jsonResponse(200, {
+      user: { country: 'Mexico', qualifications: [] }, token: 'tok-new-owner',
+    }));
+    await submitSignIn('new-owner', 'hunter2');
+    await waitFor(() => expect(screen.queryByTestId('nav-user-badge')).not.toBeNull());
+    expect(JSON.parse(localStorage.getItem(educationProfileKey('new-owner'))!)).toEqual({ country: 'Mexico', qualifications: [] });
+    expect(localStorage.getItem(unownedEducationProfileKey)).toBe(legacy);
+    expect(screen.queryByText('Previous user award')).toBeNull();
+  });
+
   it('seeds ge_profile from server values when the device has no local profile', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       jsonResponse(200, {
@@ -310,6 +323,7 @@ describe('App sign-in — server profile seeds ge_profile on a fresh device', ()
   });
 
   it('does not overwrite existing local ge_profile values with older server values', async () => {
+    localStorage.setItem('ge_profile_owner', 'bob');
     // User previously ran the evaluator on this device and saved different answers.
     const localProfile = {
       country: 'Brazil',
@@ -343,6 +357,7 @@ describe('App sign-in — server profile seeds ge_profile on a fresh device', ()
   });
 
   it('fills only the missing fields when the local profile is partial', async () => {
+    localStorage.setItem('ge_profile_owner', 'carol');
     // Only country is already known locally.
     localStorage.setItem('ge_profile', JSON.stringify({ country: 'Mexico' }));
 

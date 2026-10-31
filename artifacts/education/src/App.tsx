@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, createContext, useContext, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef, createContext, useContext, lazy, Suspense } from 'react';
 import { Link, Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { PageMetadata } from './PageMetadata';
 import seoPages from '../seo-pages.json';
@@ -11,7 +11,6 @@ import {
 } from './userStore';
 import { StorageCorruptBanner } from './StorageCorruptBanner';
 import { jobSearchUrl, getAlignedRoles } from './jobRoles';
-import { classifyEducationLevel } from './educationLevel';
 import { CountryPicker, isValidCountry } from './CountryPicker';
 import {
   type ServerUser,
@@ -28,17 +27,14 @@ import {
   apiResetPassword,
   apiSyncSelf,
   apiSaveProfile,
-  apiSaveContacted,
-  apiFetchContacted,
-  apiSaveRoadmapSteps,
-  apiFetchRoadmapSteps,
   type EvalProfile,
-  type InstitutionVerification as InstitutionVerificationResult,
 } from './api';
-import { contactedStorageKey, loadContacted, mergeContacted } from './contactedSync';
 // Only shown after an admission-goal result; load its UI kit on demand.
 const ComparablePrograms = lazy(() => import('./programs/ComparablePrograms').then((m) => ({ default: m.ComparablePrograms })));
-import { InstitutionVerification } from './InstitutionVerification';
+import { QualificationWorkflow } from './QualificationWorkflow';
+import type { Qualification } from './qualificationGuidance';
+import { educationProfileKey, loadEducationProfile, restoreEducationProfile, storeEducationProfile } from './educationProfileStore';
+import { apiSaveEducationProfile } from './api';
 
 // Guides are public long-form content: keep them in their own chunk so the
 // article text is not shipped to every visitor of the evaluator.
@@ -57,13 +53,25 @@ function syncOwnAccount(): void {
   const username = localStorage.getItem(STORAGE_KEY);
   if (!username) return;
   let profile: EvalProfile | undefined;
-  try { profile = JSON.parse(localStorage.getItem('ge_profile') || 'null') || undefined; } catch { /* ignore */ }
+  try { profile = loadEducationProfile(username); } catch { /* ignore */ }
+  const pendingKey = `${educationProfileKey(username)}_pending`;
+  const syncPending = async () => {
+    if (profile?.qualifications && localStorage.getItem(pendingKey) === 'true') {
+      try {
+        await apiSaveEducationProfile(username, profile);
+        localStorage.removeItem(pendingKey);
+      } catch { /* Keep the explicit pending marker; never discard local edits. */ }
+    }
+  };
   try {
     const me = getUsers().find((u) => u.username.toLowerCase() === username.toLowerCase());
-    if (me) { void apiSyncSelf(me, profile); return; }
+    if (me) { void apiSyncSelf(me, profile).then(syncPending); return; }
   } catch { /* local store unreadable */ }
   // Account exists only server-side — still push the profile if we have one
-  if (profile) void apiSaveProfile(username, profile);
+  if (profile) {
+    const { qualifications: _awards, ...legacy } = profile;
+    void apiSaveProfile(username, legacy).then(syncPending);
+  }
 }
 
 const STORAGE_KEY = 'ge_username';
@@ -81,11 +89,11 @@ const TX = {
     heroLine2: 'Your Next Career Step in the U.S.',
     heroSub: 'Understand how to present your foreign degree to U.S. employers, when you may need an official credential evaluation, and which licensing requirements apply to your field—before you spend money on evaluations.',
     stat1: '180+', stat1L: 'Countries Covered',
-    stat2: 'NACES', stat2L: 'Agency Aligned',
+    stat2: 'NACES', stat2L: 'Evaluation Resources',
     stat3: '< 2 min', stat3L: 'To Your Roadmap',
-    f1t: 'Credential Mapping', f1d: 'See exactly how your foreign degree maps to U.S. equivalency standards, institution types, and academic frameworks.',
-    f2t: 'NACES Agency Matching', f2d: 'Find the right accredited evaluation agency for your specific country, degree level, and end goal.',
-    f3t: 'Licensing Roadmap', f3d: 'Get field-specific licensing and regulatory requirements for your U.S. career path, state by state.',
+    f1t: 'Education Guidance', f1d: 'Keep each original qualification and understand U.S. terminology without an automatic degree equivalency.',
+    f2t: 'Evaluation Resources', f2d: 'Learn when to request official evaluation and confirm which service your recipient accepts before paying.',
+    f3t: 'Licensing Next Steps', f3d: 'Find authoritative licensing resources. Your profession and state determine the requirements, not this app.',
     f4t: 'Job Board Access', f4d: 'Direct links to U.S. job boards actively seeking internationally educated professionals in your field.',
     createAcc: 'Create Your Account', signInAcc: 'Sign In to Your Account',
     alreadyReg: 'Already registered? Sign In', needAcc: 'Need an account? Sign Up',
@@ -110,7 +118,7 @@ const TX = {
     about02P2: 'This is not because people are malicious. It is because this system is genuinely complex, and the correct answer depends on your specific country, degree, field, and goal. Generic advice fails people every day.',
     about03T: 'We Are Here to Help Guide You in the Right Direction',
     about03P1: 'VerifED Global was built for one purpose: to give international individuals access to the kind of clear, specific, honest information that can actually move their situation forward. We do not claim to do everything. But we will do our absolute best to point you in the right direction.',
-    about03P2: 'We map your credentials to U.S. equivalency standards, help you understand which evaluation agencies apply to your situation, surface the field-specific licensing and employment requirements you need to know, and connect you with the job boards where real opportunities are waiting.',
+    about03P2: 'We preserve your qualifications, explain U.S. education terms with cited sources, and help you ask employers, admissions offices and licensing boards about their requirements. We do not determine degree equivalency.',
     about03P3: 'We cannot promise the road ahead will be short. But we can promise you will not be walking it without a map.',
     val1T: 'Honest Guidance', val1D: 'We tell you what we know — and what we do not know. No false promises, no shortcuts.',
     val2T: 'Specific Answers', val2D: 'Your country. Your degree. Your field. The right answer depends on all three.',
@@ -120,19 +128,19 @@ const TX = {
     howBadge: '⚡ Simple, Step-by-Step',
     stepLabel: 'Step',
     whatNeedTitle: '📦 What You Will Need to Get Started',
-    howCtaText: 'Ready to get started? The evaluator takes less than two minutes. Enter your details and we will generate your equivalency report and action roadmap instantly.',
+    howCtaText: 'Enter each qualification to receive preliminary guidance with sources, limits and next steps. An official comparison requires review of your documents.',
     step01T: 'Create Your Account',
     step01D: 'Sign up with a username and email. Your information stays private and secure — it is used only to save your progress and correspond with you about your evaluation.',
     step01Det: 'We keep your data strictly confidential. It is never shared with government agencies, employers, or third parties.',
     step02T: 'Enter Your Credential Details',
-    step02D: 'Tell us your country of education, institution name, degree level, and field of study. The more detail you provide, the more specific your results will be.',
+    step02D: 'Add each original award separately, with institution, country, field, duration and completion status where known. The same workflow applies to all countries.',
     step02Det: 'You can also note your primary goal — university admission, employment, professional licensing, or immigration — so we can tailor the roadmap to your path.',
     step03T: 'We Analyze Your Credentials',
-    step03D: 'Our platform maps your degree to its U.S. equivalent, identifies the relevant NACES evaluation agencies, and surfaces field-specific licensing and regulatory requirements.',
+    step03D: 'Review preliminary U.S.-context guidance and public institution evidence. Neither confirms authenticity, accreditation, U.S. equivalency nor professional licensure.',
     step03Det: 'Results are generated instantly based on your inputs, giving you a clear starting point before you spend time or money on official evaluations.',
     step04T: 'Follow Your Personalized Roadmap',
-    step04D: "You receive a step-by-step action plan: verify your institution, map your coursework, align with your goal's requirements, and prepare your NACES application dossier.",
-    step04Det: 'Each step is checkable so you can track your progress as you move through the process.',
+    step04D: 'Review missing details, contact your intended recipient about accepted evaluations, and download a dossier containing all qualifications and their uncertainty.',
+    step04Det: 'Use the sources to plan your next steps. Institution evidence remains separate from evaluation and professional licensing.',
     step05T: 'Reach Out If You Need Help',
     step05D: 'Stuck? Not sure which evaluation agency fits your situation? Our team is available to answer questions, review your specific case, and help you take the next step.',
     step05Det: 'Use the contact form on the main platform to send us a message. We respond within 24 hours.',
@@ -529,11 +537,11 @@ const TX = {
     heroLine2: 'Tu próximo paso profesional en EE.UU.',
     heroSub: 'Descubre cómo presentar tu título extranjero a empleadores en EE.UU., cuándo podrías necesitar una evaluación oficial de credenciales y qué requisitos de licencia se aplican a tu campo, antes de gastar dinero en evaluaciones.',
     stat1: '180+', stat1L: 'Países Cubiertos',
-    stat2: 'NACES', stat2L: 'Agencias Acreditadas',
+    stat2: 'NACES', stat2L: 'Recursos de evaluación',
     stat3: '< 2 min', stat3L: 'Para Tu Hoja de Ruta',
-    f1t: 'Mapeo de Credenciales', f1d: 'Ve exactamente cómo tu título extranjero se equipara con los estándares de equivalencia de EE.UU., tipos de instituciones y marcos académicos.',
-    f2t: 'Agencias NACES', f2d: 'Encuentra la agencia evaluadora acreditada correcta para tu país, nivel de título y objetivo final.',
-    f3t: 'Hoja de Ruta de Licencias', f3d: 'Obtén los requisitos de licencias específicos por campo para tu carrera en EE.UU., estado por estado.',
+    f1t: 'Orientación educativa', f1d: 'Conserve cada titulación original y conozca la terminología estadounidense sin equivalencias automáticas.',
+    f2t: 'Recursos de evaluación', f2d: 'Sepa cuándo solicitar una evaluación oficial y confirme qué servicio acepta el destinatario antes de pagar.',
+    f3t: 'Próximos pasos de licencia', f3d: 'Consulte fuentes autorizadas. Su profesión y estado determinan los requisitos, no esta aplicación.',
     f4t: 'Bolsas de Trabajo', f4d: 'Links directos a bolsas de trabajo de EE.UU. que buscan activamente profesionales educados internacionalmente en tu campo.',
     createAcc: 'Crear Tu Cuenta', signInAcc: 'Iniciar Sesión',
     alreadyReg: '¿Ya tienes cuenta? Inicia Sesión', needAcc: '¿Necesitas una cuenta? Regístrate',
@@ -558,7 +566,7 @@ const TX = {
     about02P2: 'Esto no es porque la gente sea maliciosa. Es porque este sistema es genuinamente complejo, y la respuesta correcta depende de tu país, título, campo y objetivo específicos. El consejo genérico falla a las personas todos los días.',
     about03T: 'Estamos Aquí Para Guiarte en la Dirección Correcta',
     about03P1: 'VerifED Global fue construido con un propósito: darle a las personas internacionales acceso al tipo de información clara, específica y honesta que realmente puede mover su situación hacia adelante. No pretendemos hacerlo todo. Pero haremos nuestro mejor esfuerzo para señalarte en la dirección correcta.',
-    about03P2: 'Mapeamos tus credenciales a los estándares de equivalencia de EE.UU., te ayudamos a entender qué agencias evaluadoras aplican a tu situación, mostramos los requisitos de licencia y empleo específicos del campo que necesitas saber, y te conectamos con las bolsas de trabajo donde esperan oportunidades reales.',
+    about03P2: 'Conservamos sus titulaciones, explicamos términos educativos estadounidenses con fuentes y le ayudamos a consultar requisitos con empleadores, admisiones y juntas de licencias. No determinamos equivalencias.',
     about03P3: 'No podemos prometer que el camino por delante será corto. Pero sí podemos prometerte que no lo caminarás sin un mapa.',
     val1T: 'Orientación Honesta', val1D: 'Te decimos lo que sabemos — y lo que no sabemos. Sin promesas falsas, sin atajos.',
     val2T: 'Respuestas Específicas', val2D: 'Tu país. Tu título. Tu campo. La respuesta correcta depende de los tres.',
@@ -568,19 +576,19 @@ const TX = {
     howBadge: '⚡ Simple, Paso a Paso',
     stepLabel: 'Paso',
     whatNeedTitle: '📦 Lo Que Necesitarás Para Comenzar',
-    howCtaText: '¿Listo para comenzar? El evaluador tarda menos de dos minutos. Ingresa tus datos y generaremos tu informe de equivalencia y hoja de ruta de acción al instante.',
+    howCtaText: 'Ingrese cada titulación para recibir orientación preliminar con fuentes, límites y próximos pasos. Una comparación oficial requiere revisar sus documentos.',
     step01T: 'Crear Tu Cuenta',
     step01D: 'Regístrate con un nombre de usuario y correo electrónico. Tu información permanece privada y segura — solo se usa para guardar tu progreso y corresponderte sobre tu evaluación.',
     step01Det: 'Mantenemos tus datos estrictamente confidenciales. Nunca se comparten con agencias gubernamentales, empleadores ni terceros.',
     step02T: 'Ingresa los Detalles de Tu Credencial',
-    step02D: 'Cuéntanos tu país de estudios, nombre de la institución, nivel del título y campo de estudio. Cuanto más detalle proporciones, más específicos serán tus resultados.',
+    step02D: 'Agregue cada título original por separado con institución, país, área, duración y estado de finalización cuando los conozca. El flujo es igual para todos los países.',
     step02Det: 'También puedes indicar tu objetivo principal — admisión universitaria, empleo, licencia profesional o inmigración — para adaptar la hoja de ruta a tu camino.',
     step03T: 'Analizamos Tus Credenciales',
-    step03D: 'Nuestra plataforma mapea tu título a su equivalente en EE.UU., identifica las agencias evaluadoras NACES relevantes y muestra los requisitos de licencias y regulaciones específicos de tu campo.',
+    step03D: 'Revise orientación preliminar sobre EE. UU. y evidencia pública institucional. No confirma autenticidad, acreditación, equivalencia ni licencia profesional.',
     step03Det: 'Los resultados se generan al instante en base a tus datos, dándote un punto de partida claro antes de que gastes tiempo o dinero en evaluaciones oficiales.',
     step04T: 'Sigue Tu Hoja de Ruta Personalizada',
-    step04D: 'Recibes un plan de acción paso a paso: verifica tu institución, mapea tu plan de estudios, alinéate con los requisitos de tu objetivo y prepara tu expediente de solicitud NACES.',
-    step04Det: 'Cada paso es verificable para que puedas hacer seguimiento de tu progreso mientras avanzas en el proceso.',
+    step04D: 'Revise los datos faltantes, consulte al destinatario sobre evaluaciones aceptadas y descargue un expediente de todas sus titulaciones con sus incertidumbres.',
+    step04Det: 'Use las fuentes para planificar sus próximos pasos. La evidencia institucional es distinta de la evaluación y la licencia profesional.',
     step05T: '¿Necesitas Ayuda? Contáctanos',
     step05D: '¿Bloqueado? ¿No sabes qué agencia evaluadora aplica a tu situación? Nuestro equipo está disponible para responder preguntas, revisar tu caso y ayudarte a dar el siguiente paso.',
     step05Det: 'Usa el formulario de contacto en la plataforma principal para enviarnos un mensaje. Respondemos en 24 horas.',
@@ -973,76 +981,8 @@ const LangCtx = createContext<{ lang: Lang; toggleLang: () => void; t: (k: TKey)
   lang: 'en', toggleLang: () => {}, t: (k) => TX.en[k],
 });
 
-/** Maps the canonical English goal value (stored in localStorage / DB) to its TX key. */
-const GOAL_TX_KEYS: Partial<Record<string, TKey>> = {
-  'University Admission': 'evalGoal1',
-  'Employment & HR': 'evalGoal2',
-  'Professional Licensing': 'evalGoal3',
-  'Immigration (USCIS)': 'evalGoal4',
-};
 function useLang() { return useContext(LangCtx); }
 type AppView = 'auth' | 'app';
-
-// Only raw inputs are stored; all derived display strings are computed at render-time
-// from the active language so that language switches always reflect the current locale.
-interface EvalResult {
-  country: string;
-  institution: string;
-  degree: string;
-  field: string;
-  purpose: string;
-}
-
-// Spanish synonyms are included so users who type field names in Spanish get the correct pathway.
-function getUsLevel(
-  degree: string,
-  institution: string,
-  field: string,
-  t: (k: TKey) => string,
-): string {
-  const level = classifyEducationLevel({ degree, institution, field });
-  const keyByLevel: Record<ReturnType<typeof classifyEducationLevel>, TKey> = {
-    secondary: 'usLevelSecondary',
-    associate: 'usLevelAssociate',
-    bachelor: 'usLevelBachelor',
-    master: 'usLevelMaster',
-    doctor: 'usLevelDoctor',
-    unknown: 'usLevelUnknown',
-  };
-  return t(keyByLevel[level]);
-}
-
-function getInsight(field: string, t: (k: TKey) => string): string {
-  const f = field.toLowerCase();
-  if (f.includes('account') || f.includes('finance') || f.includes('audit') ||
-      f.includes('contab') || f.includes('finanz') || f.includes('auditor') || f.includes('contabilid')) return t('insightAccount');
-  if (f.includes('engineering') || f.includes('tech') || f.includes('computer') ||
-      f.includes('ingeni') || f.includes('tecnolog') || f.includes('computac') || f.includes('informát') || f.includes('informat') || f.includes('sistem')) return t('insightEngineering');
-  if (f.includes('nursing') || f.includes('health') || f.includes('medicine') ||
-      f.includes('enfermer') || f.includes('salud') || f.includes('medic') || f.includes('medicina')) return t('insightHealth');
-  return t('insightGeneral');
-}
-
-function getRoadmap(country: string, institution: string, field: string, purpose: string, t: (k: TKey) => string) {
-  return [
-    {
-      title: `${t('rm1Title')} ${institution || 'Foreign Institution'}`,
-      desc: `${t('rm1DescPre')} ${country || 'International'} ${t('rm1DescSuf')}`,
-    },
-    {
-      title: t('rm2Title'),
-      desc: `${t('rm2DescPre')} ${field || 'your field'}.`,
-    },
-    {
-      title: `${t('rm3TitlePre')} ${purpose || t('rm3TitleFallback')} ${t('rm3TitleSuf')}`,
-      desc: t('rm3Desc'),
-    },
-    {
-      title: t('rm4Title'),
-      desc: t('rm4Desc'),
-    },
-  ];
-}
 function LangToggle() {
   const { lang, toggleLang } = useLang();
   return (
@@ -1357,20 +1297,16 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
   const [purpose, setPurpose] = useState('');
   const [error, setError] = useState('');
 
-  /** Merge the sign-up answers into the saved eval profile (without clobbering
-   *  anything the evaluator already captured) so the admin board and later
-   *  syncs see them even if the user never runs the evaluator. */
+  /** New accounts start with only their own signup answers. A global legacy
+   *  profile is never evidence that its data belongs to this new account. */
   function saveSignupProfile(): void {
     const trimmed = { country: country.trim(), purpose };
-    if (!trimmed.country && !trimmed.purpose) return;
-    let existing: EvalProfile = {};
-    try { existing = JSON.parse(localStorage.getItem('ge_profile') || 'null') || {}; } catch { /* ignore */ }
     const merged: EvalProfile = {
-      ...existing,
-      ...(trimmed.country && !existing.country ? { country: trimmed.country } : {}),
-      ...(trimmed.purpose && !existing.purpose ? { purpose: trimmed.purpose } : {}),
+      ...(trimmed.country ? { country: trimmed.country } : {}),
+      ...(trimmed.purpose ? { purpose } : {}),
     };
-    localStorage.setItem('ge_profile', JSON.stringify(merged));
+    if (!Object.keys(merged).length && !localStorage.getItem('ge_profile')) return;
+    storeEducationProfile(username, merged);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -1407,12 +1343,7 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
           if (!r.ok) { setError(t('errCredentials')); return; }
           // Remember this user's saved answers on this device so the
           // evaluator comes prefilled — fill only fields not already set here.
-          if (r.profile) {
-            let existing: EvalProfile = {};
-            try { existing = JSON.parse(localStorage.getItem('ge_profile') || 'null') || {}; } catch { /* ignore */ }
-            const merged = { ...r.profile, ...Object.fromEntries(Object.entries(existing).filter(([, v]) => v)) };
-            try { localStorage.setItem('ge_profile', JSON.stringify(merged)); } catch { /* storage full/blocked */ }
-          }
+          restoreEducationProfile(username, r.profile);
         }
         if (trimmedEmail) localStorage.setItem('ge_email', trimmedEmail);
         localStorage.setItem(STORAGE_KEY, username);
@@ -1466,6 +1397,7 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
         }
       }
 
+      if (!isSignUp) restoreEducationProfile(username);
       localStorage.setItem(STORAGE_KEY, username);
       onLogin(username);
     } catch (err) {
@@ -1803,819 +1735,45 @@ function ContactSection() {
 
 // ─── Evaluator View ───────────────────────────────────────────────────────────
 
-// ─── Step content generators ──────────────────────────────────────────────────
-
-function getVerifyContent(verification: InstitutionVerificationResult | null, institution: string, country: string, degree: string, t: (k: TKey) => string) {
-  const selected = verification?.selected;
-  if (!selected) {
-    return {
-      status: 'Unverified institution — user chose to continue',
-      rows: [
-        { label: 'Verification status', value: 'UNVERIFIED — no source-backed institution match was confirmed' },
-        { label: t('verifyInstitution'), value: institution },
-        { label: t('verifyCountry'), value: country },
-        { label: t('verifyDegree'), value: degree },
-        { label: t('verifyRegistry'), value: 'No corroborating directory result was selected' },
-        { label: t('verifyRecognition'), value: 'Not checked — no accreditation or authenticity claim is made' },
-        { label: 'Next step', value: 'Ask a qualified credential evaluator to verify the institution and documents directly' },
-      ],
-      action: null,
-    };
-  }
-  return {
-    status: t('verifyStatus'),
-    rows: [
-      { label: t('verifyInstitution'), value: selected.name },
-      { label: t('verifyCountry'), value: selected.country || 'Unavailable' },
-      { label: t('verifyDegree'), value: degree },
-      { label: t('verifyRegistry'), value: selected.sources.map((source) => source.name).join(', ') },
-      { label: 'Higher-education type', value: selected.higherEducationType || 'Unavailable' },
-      { label: 'Official website listing', value: selected.officialWebsite || 'Unavailable; live availability not checked' },
-      ...(selected.closureDate ? [{ label: 'Reported closure date', value: `${selected.closureDate}${selected.archiveUrl ? ' — archived history available' : ''}` }] : []),
-      ...(selected.archiveUrl ? [{ label: 'Internet Archive evidence', value: selected.archiveUrl }] : []),
-      ...selected.sources.map((source) => ({ label: `Source: ${source.name}`, value: source.url })),
-      { label: t('verifyRecognition'), value: t('verifyRecognitionVal') },
-      { label: 'Evidence retrieved', value: new Date(verification.retrievedAt).toLocaleString() },
-    ],
-    action: { label: t('verifyActionLabel'), url: `https://www.wikidata.org/wiki/${selected.entityId}` } as { label: string; url: string } | null,
-  };
-}
-
-function getCourseworkContent(field: string, credits: string, t: (k: TKey) => string) {
-  const f = field.toLowerCase();
-  let rows: { regional: string; usSCU: string; notes: string }[] = [];
-  if (f.includes('account') || f.includes('finance') ||
-      f.includes('contab') || f.includes('finanz') || f.includes('auditor') || f.includes('contabilid')) {
-    rows = [
-      { regional: t('cwAcct1'), usSCU: '6 SCU', notes: t('cwNoteAASCB') },
-      { regional: t('cwAcct2'), usSCU: '3 SCU', notes: t('cwNoteCPAPath') },
-      { regional: t('cwAcct3'), usSCU: '3 SCU', notes: t('cwNoteStateMin') },
-      { regional: t('cwAcct4'), usSCU: '3 SCU', notes: t('cwNoteTaxElec') },
-      { regional: t('cwAcct5'), usSCU: '3 SCU', notes: t('cwNote150') },
-      { regional: t('cwAcct6'), usSCU: '6 SCU', notes: t('cwNoteCoreBiz') },
-    ];
-  } else if (f.includes('engineer') || f.includes('tech') || f.includes('computer') ||
-             f.includes('ingeni') || f.includes('tecnolog') || f.includes('computac') || f.includes('informat') || f.includes('sistem')) {
-    rows = [
-      { regional: t('cwEng1'), usSCU: '9 SCU', notes: t('cwNoteABETMath') },
-      { regional: t('cwEng2'), usSCU: '8 SCU', notes: t('cwNoteLabCred') },
-      { regional: t('cwEng3'), usSCU: '30–36 SCU', notes: t('cwNoteMajorMap') },
-      { regional: t('cwEng4'), usSCU: '6 SCU', notes: t('cwNoteSenDes') },
-    ];
-  } else if (f.includes('nurs') || f.includes('health') || f.includes('medic') ||
-             f.includes('enfermer') || f.includes('salud') || f.includes('medicina')) {
-    rows = [
-      { regional: t('cwHealth1'), usSCU: '8 SCU', notes: t('cwNoteWithLab') },
-      { regional: t('cwHealth2'), usSCU: '3 SCU', notes: t('cwNoteClinReq') },
-      { regional: t('cwHealth3'), usSCU: '18–24 SCU', notes: t('cwNoteNCLEXPre') },
-      { regional: t('cwHealth4'), usSCU: '500+ hrs', notes: t('cwNoteStateBdMin') },
-    ];
-  } else {
-    rows = [
-      { regional: t('cwGen1'), usSCU: '30–36 SCU', notes: t('cwNoteCourseRev') },
-      { regional: t('cwGen2'), usSCU: '30 SCU', notes: t('cwNoteGenEd') },
-      { regional: t('cwGen3'), usSCU: '12–18 SCU', notes: t('cwNoteInstElec') },
-      { regional: t('cwGen4'), usSCU: '3–6 SCU', notes: t('cwNoteIfApp') },
-    ];
-  }
-  const totalSCU = credits ? `${t('cwTotalEstimated')} ${credits}` : t('cwTotalDefault');
-  return { rows, totalSCU };
-}
-
-function getPrereqContent(field: string, purpose: string, t: (k: TKey) => string) {
-  const f = field.toLowerCase();
-  const p = purpose.toLowerCase();
-  const items: { label: string; value: string; link?: string }[] = [];
-
-  if (f.includes('account') || f.includes('finance') ||
-      f.includes('contab') || f.includes('finanz') || f.includes('auditor') || f.includes('contabilid')) {
-    items.push(
-      { label: t('preqCPACredit'), value: t('preqCPACreditVal') },
-      { label: t('preqGPA'), value: t('preqGPAVal') },
-      { label: t('preqAcctHrs'), value: t('preqAcctHrsVal') },
-      { label: t('preqBizHrs'), value: t('preqBizHrsVal') },
-      { label: t('preqNASBA'), value: t('preqNASBAVal'), link: 'https://nasba.org/licensure/applyforalicense/' },
-    );
-  } else if (f.includes('engineer') || f.includes('tech') || f.includes('computer') ||
-             f.includes('ingeni') || f.includes('tecnolog') || f.includes('computac') || f.includes('informat') || f.includes('sistem')) {
-    items.push(
-      { label: t('preqFE'), value: t('preqFEVal') },
-      { label: t('preqGPAMin'), value: t('preqGPAMinVal') },
-      { label: t('preqABET'), value: t('preqABETVal') },
-      { label: t('preqNCEES'), value: t('preqNCEESVal'), link: 'https://ncees.org/engineering/fe/' },
-    );
-  } else if (f.includes('nurs') || f.includes('health') || f.includes('medic') ||
-             f.includes('enfermer') || f.includes('salud') || f.includes('medicina')) {
-    items.push(
-      { label: t('preqCGFNS'), value: t('preqCGFNSVal') },
-      { label: t('preqEnglish'), value: t('preqEnglishVal') },
-      { label: t('preqClinical'), value: t('preqClinicalVal') },
-      { label: t('preqNCLEX'), value: t('preqNCLEXVal'), link: 'https://www.ncsbn.org/nclex.htm' },
-    );
-  } else {
-    items.push(
-      { label: t('preqGPAGen'), value: t('preqGPAGenVal') },
-      { label: t('preqEnglishGen'), value: t('preqEnglishGenVal') },
-      { label: t('preqCredEval'), value: t('preqCredEvalVal') },
-    );
-  }
-
-  if (p.includes('immigration') || p.includes('inmigraci')) {
-    items.push({ label: t('preqUSCIS'), value: t('preqUSCISVal'), link: 'https://www.uscis.gov/working-in-the-united-states' });
-  }
-  if (p.includes('university') || p.includes('universitaria') || p.includes('admisi')) {
-    items.push({ label: t('preqGradAdm'), value: t('preqGradAdmVal') });
-  }
-
-  return items;
-}
-
-function exportDossier(result: EvalResult, usLevel: string, verifyRows: { label: string; value: string }[], prereqItems: { label: string; value: string }[], lang: Lang, t: (k: TKey) => string) {
-  const escapeHtml = (value: string) => value.replace(/[&<>"']/g, (character) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  })[character]!);
-  const locale = lang === 'es' ? 'es-ES' : 'en-US';
-  const today = new Date().toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' });
-  const html = `<!DOCTYPE html>
-<html lang="${lang}">
-<head>
-<meta charset="UTF-8"/>
-<title>VerifED Global – NACES Dossier</title>
-<style>
-  body { font-family: Georgia, serif; max-width: 780px; margin: 40px auto; padding: 0 30px; color: #1a1a2e; line-height: 1.6; }
-  .header { border-bottom: 3px solid #4f46e5; padding-bottom: 20px; margin-bottom: 32px; }
-  .logo { font-size: 24px; font-weight: 900; color: #4f46e5; letter-spacing: -0.5px; }
-  .subtitle { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
-  .ref { font-size: 11px; color: #9ca3af; float: right; margin-top: -40px; }
-  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; color: #4f46e5; margin: 28px 0 10px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-  td { padding: 8px 10px; font-size: 13px; border-bottom: 1px solid #f3f4f6; }
-  td:first-child { font-weight: 600; color: #374151; width: 42%; }
-  td:last-child { color: #1f2937; }
-  .badge { display: inline-block; background: #ede9fe; color: #5b21b6; border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 700; margin: 4px 4px 4px 0; }
-  .notice { font-size: 11px; color: #6b7280; margin-top: 40px; padding-top: 16px; border-top: 1px solid #e5e7eb; }
-  .footer { margin-top: 60px; text-align: center; font-size: 11px; color: #9ca3af; }
-</style>
-</head>
-<body>
-<div class="header">
-  <div class="logo">VerifED Global</div>
-  <div class="subtitle">${t('dossierSubtitle')}</div>
-  <div class="ref">${t('dossierGenerated')} ${today}<br/>REF-2026-US</div>
-</div>
-
-<h2>${t('dossierSecCredential')}</h2>
-<table>
-  <tr><td>${t('dossierRowInstitution')}</td><td>${escapeHtml(result.institution)}</td></tr>
-  <tr><td>${t('dossierRowCountry')}</td><td>${escapeHtml(result.country)}</td></tr>
-  <tr><td>${t('dossierRowDegree')}</td><td>${escapeHtml(result.degree)}</td></tr>
-  <tr><td>${t('dossierRowField')}</td><td>${escapeHtml(result.field)}</td></tr>
-  <tr><td>${t('dossierRowUSEq')}</td><td><strong>${escapeHtml(usLevel)}</strong></td></tr>
-  ${result.purpose ? `<tr><td>${t('dossierRowGoal')}</td><td>${escapeHtml(result.purpose)}</td></tr>` : ''}
-</table>
-
-<h2>${t('dossierSecVerification')}</h2>
-<table>
-  ${verifyRows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${escapeHtml(r.value)}</td></tr>`).join('')}
-</table>
-
-<h2>${t('dossierSecNACES')}</h2>
-<table>
-  <tr><td>World Education Services (WES)</td><td><a href="https://www.wes.org">wes.org</a></td></tr>
-  <tr><td>Educational Credential Evaluators (ECE)</td><td><a href="https://www.ece.org">ece.org</a></td></tr>
-  <tr><td>Josef Silny &amp; Associates</td><td><a href="https://www.jsilny.org">jsilny.org</a></td></tr>
-  <tr><td>SpanTran</td><td><a href="https://spantran.com">spantran.com</a></td></tr>
-</table>
-
-<h2>${t('dossierSecRegulatory')}</h2>
-<table>
-  ${prereqItems.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${escapeHtml(r.value)}</td></tr>`).join('')}
-</table>
-
-<h2>${t('dossierSecInsight')}</h2>
-<p style="font-size:13px; color:#374151;">${getInsight(result.field, t).replace(/\n/g, '<br/>')}</p>
-
-<h2>${t('dossierSecTags')}</h2>
-<div>
-  <span class="badge">🎓 ${escapeHtml(usLevel)}</span>
-  <span class="badge">📚 ${escapeHtml(result.field)}</span>
-  <span class="badge">📍 ${escapeHtml(result.country)}</span>
-  ${result.purpose ? `<span class="badge">🎯 ${escapeHtml(result.purpose)}</span>` : ''}
-</div>
-
-<p class="notice">
-  ${t('dossierDisclaimer')}
-</p>
-
-<div class="footer">${t('dossierFooter')}</div>
-</body>
-</html>`;
-
-  const blob = new Blob([html], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `VerifED-Global-Dossier-${result.institution.replace(/[^a-z0-9]+/gi, '-').slice(0, 80) || 'institution'}.html`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-// ─── Evaluator View ───────────────────────────────────────────────────────────
-
-// ─── NACES Agency Outreach ────────────────────────────────────────────────────
-const NACES_AGENCIES = [
-  { name: 'Academic Evaluation Services, Inc.', since: 'May 2008', url: 'https://aes-edu.org/' },
-  { name: 'Center for Applied Research, Evaluation & Education, Inc.', since: 'March 1987', url: 'https://www.iescaree.com/' },
-  { name: 'Center for Educational Documentation', since: 'June 2026', url: 'https://cedevaluations.com/' },
-  { name: 'Educational Credential Evaluators, Inc.', since: 'March 1987', url: 'https://www.ece.org/' },
-  { name: 'Educational Perspectives, nfp', since: 'April 2003', url: 'https://www.edperspective.org/' },
-  { name: 'Educational Records Evaluation Service, Inc.', since: 'April 1993', url: 'http://www.eres.com/' },
-  { name: 'Foreign Academic Credential Service, Inc.', since: 'March 1987', url: 'https://facsusa.com/' },
-  { name: 'Foundation for International Services, Inc.', since: 'March 1987', url: 'https://www.fis-web.com/' },
-  { name: 'Global Credential Evaluators, Inc.', since: 'March 2004', url: 'https://gceus.com/' },
-  { name: 'Globe Language Services', since: 'May 2022', url: 'https://www.globelanguage.com/' },
-  { name: 'Institute of Foreign Credential Services, Inc.', since: 'May 2022', url: 'https://ifcsevals.com/' },
-  { name: 'International Consultants of Delaware, Inc.', since: 'March 1987', url: 'https://www.icdeval.com/' },
-  { name: 'International Education Evaluations, Inc.', since: 'May 2018', url: 'https://www.myiee.org/' },
-  { name: 'International Education Research Foundation, Inc.', since: 'March 1987', url: 'https://ierf.org/' },
-  { name: 'Josef Silny and Associates, Inc. International Education Consultants', since: 'April 1989', url: 'http://www.jsilny.com/' },
-  { name: 'SpanTran: The Evaluation Company', since: 'April 1996', url: 'https://evalcompany.com/' },
-  { name: 'Transcript Research', since: 'September 2011', url: 'https://transcriptresearch.com/' },
-  { name: 'World Education Services, Inc.', since: 'March 1987', url: 'https://www.wes.org/' },
-];
-
-function getSignedInUser(): { username: string; email: string } {
-  const username = localStorage.getItem(STORAGE_KEY) || '';
-  let email = '';
-  try {
-    const u = getUsers().find((x) => x.username.toLowerCase() === username.toLowerCase());
-    email = u?.email || '';
-  } catch { /* store unreadable — draft still works without email */ }
-  if (!email) email = localStorage.getItem('ge_email') || '';
-  return { username, email };
-}
-
-function buildAgencyDraft(agency: string, result: EvalResult, user: { username: string; email: string }) {
-  const subject = `Credential Evaluation Inquiry — ${result.degree} in ${result.field} (${result.country})`;
-  const body = [
-    `Dear ${agency} Evaluation Team,`,
-    '',
-    `My name is ${user.username}. I earned a ${result.degree} in ${result.field} from ${result.institution} in ${result.country}, and I am seeking a course-by-course credential evaluation${result.purpose ? ` for ${result.purpose.toLowerCase()}` : ''} in the United States.`,
-    '',
-    'Could you please advise me on:',
-    '• The documents required from my institution and country',
-    '• Your current fees and processing times',
-    '• Whether my documents must be sent directly by my institution',
-    '• Any translation requirements for my transcripts',
-    '',
-    `You can reach me at this email address${user.email ? ` (${user.email})` : ''}.`,
-    '',
-    'Thank you for your time and assistance.',
-    '',
-    'Sincerely,',
-    user.username,
-  ].join('\n');
-  return { subject, body };
-}
-
-function AgencyOutreach({ result }: { result: EvalResult }) {
-  const { lang, t } = useLang();
-  const [copied, setCopied] = useState<string | null>(null);
-  const user = getSignedInUser();
-  const [contacted, setContacted] = useState<Record<string, string>>(() => loadContacted(user.username));
-
-  // Restore checkmarks from the central database (best-effort). Server entries
-  // fill in agencies not marked locally; local marks always win, so offline
-  // behavior is unchanged. If the merge added anything, persist and push back.
-  useEffect(() => {
-    if (!user.username) return;
-    let cancelled = false;
-    void apiFetchContacted(user.username).then((remote) => {
-      if (cancelled || !remote) return;
-      setContacted((prev) => {
-        const merged = mergeContacted(remote, prev);
-        if (merged === null) return prev;
-        try { localStorage.setItem(contactedStorageKey(user.username), JSON.stringify(merged)); } catch { /* storage full/unavailable */ }
-        void apiSaveContacted(user.username, merged);
-        return merged;
-      });
-    });
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.username]);
-
-  function toggleContacted(agencyName: string) {
-    setContacted((prev) => {
-      const next = { ...prev };
-      const removals: string[] = [];
-      if (next[agencyName]) {
-        delete next[agencyName];
-        // Tell the server to remove this key explicitly, so the union merge
-        // on the server side doesn't keep it from a stale entry.
-        removals.push(agencyName);
-      } else {
-        next[agencyName] = new Date().toISOString().slice(0, 10);
-      }
-      try { localStorage.setItem(contactedStorageKey(user.username), JSON.stringify(next)); } catch { /* storage full/unavailable */ }
-      if (user.username) void apiSaveContacted(user.username, next, removals);
-      return next;
-    });
-  }
-
-  function formatContactedDate(iso: string): string {
-    const d = new Date(`${iso}T00:00:00`);
-    if (isNaN(d.getTime())) return iso;
-    return d.toLocaleDateString(lang === 'es' ? 'es' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  }
-
-  async function copyDraft(agencyName: string) {
-    const { subject, body } = buildAgencyDraft(agencyName, result, user);
-    const text = `Subject: ${subject}\n\n${body}`;
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(text);
-      } else {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-      }
-      setCopied(agencyName);
-      setTimeout(() => setCopied(null), 2000);
-    } catch {
-      setCopied(null);
-    }
-  }
-
-  return (
-    <div className="mt-6 pt-5 border-t border-slate-800/80">
-      <div className="flex items-center gap-2 mb-1.5">
-        <span className="text-indigo-400">✉️</span>
-        <h4 className="text-white font-bold text-xs uppercase tracking-wider">{t('agencyTitle')}</h4>
-      </div>
-      <p className="text-xs text-slate-400 leading-relaxed mb-4">
-        {t('agencyDescPre')}{user.email ? <> {t('agencyDescEmail')} (<span className="text-slate-300 font-mono">{user.email}</span>)</> : ''}{t('agencyDescSuf')}
-      </p>
-      <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
-        {NACES_AGENCIES.map((agency) => {
-          const contactedDate = contacted[agency.name];
-          const slug = agency.name.slice(0, 12).toLowerCase().replace(/[^a-z]+/g, '-');
-          return (
-            <div key={agency.name} className={`flex items-center gap-3 p-3 rounded-xl border ${contactedDate ? 'bg-emerald-950/40 border-emerald-700/40' : 'bg-slate-900/70 border-slate-800/70'}`} data-testid={`agency-${slug}`}>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-white font-semibold truncate">{agency.name}</p>
-                <p className="text-[10px] text-slate-500">{t('agencyMemberSince')} {agency.since}</p>
-                {contactedDate && (
-                  <p className="text-[10px] text-emerald-400 font-semibold" data-testid={`agency-contacted-date-${slug}`}>{t('agencyContacted')} · {formatContactedDate(contactedDate)}</p>
-                )}
-              </div>
-              <div className="flex items-center gap-1.5 flex-shrink-0">
-                <button
-                  type="button"
-                  onClick={() => toggleContacted(agency.name)}
-                  title={contactedDate ? t('agencyContacted') : t('agencyMark')}
-                  aria-pressed={!!contactedDate}
-                  data-testid={`agency-toggle-contacted-${slug}`}
-                  className={`text-[10px] font-bold px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer ${contactedDate ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30' : 'bg-slate-800 text-slate-300 border-slate-700 hover:text-white'}`}
-                >
-                  {contactedDate ? t('agencyContacted') : t('agencyMark')}
-                </button>
-                <button type="button" onClick={() => copyDraft(agency.name)} title="Copy pre-written email draft" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 hover:bg-indigo-500/25 transition-colors cursor-pointer">{t('agencyDraft')}</button>
-                <button type="button" onClick={() => copyDraft(agency.name)} title="Copy email draft" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:text-white transition-colors cursor-pointer">
-                  {copied === agency.name ? t('agencyCopied') : t('agencyCopy')}
-                </button>
-                <a href={agency.url} target="_blank" rel="noopener noreferrer" title="Visit agency website" className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:text-white transition-colors">{t('agencySite')}</a>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <p className="text-[10px] text-slate-500 mt-3 leading-relaxed">
-        {t('agencyTip')}
-      </p>
-    </div>
-  );
-}
-
 function EvaluatorView() {
   const { lang, t } = useLang();
-  // Prefill from what the user already told us (sign-up questions or a
-  // previous evaluation) — never ask the same question twice.
-  const saved = useMemo<EvalProfile>(() => {
-    try { return JSON.parse(localStorage.getItem('ge_profile') || 'null') || {}; } catch { return {}; }
-  }, []);
-  const [country, setCountry] = useState(saved.country || '');
-  const [institution, setInstitution] = useState(saved.institution || '');
-  const [degree, setDegree] = useState(saved.degree || '');
-  const [field, setField] = useState(saved.field || '');
-  const [credits, setCredits] = useState('');
-  const [purpose, setPurpose] = useState(saved.purpose || '');
-  // Evidence is ephemeral and must be checked again after a reload; never
-  // reconstruct a verified-looking report from saved self-reported inputs.
-  const [result, setResult] = useState<EvalResult | null>(null);
-  const [institutionVerification, setInstitutionVerification] = useState<InstitutionVerificationResult | null>(null);
-  const [continueUnverified, setContinueUnverified] = useState(false);
-  const [countryErr, setCountryErr] = useState('');
-  const evalUser = getSignedInUser();
-  const roadmapStepsKey = `ge_roadmap_steps_${evalUser.username.toLowerCase() || 'anon'}`;
-  const [checkedSteps, setCheckedSteps] = useState<boolean[]>(() => {
-    try {
-      const raw = localStorage.getItem(roadmapStepsKey);
-      const parsed = raw ? JSON.parse(raw) : null;
-      if (Array.isArray(parsed)) return [Boolean(parsed[0]), Boolean(parsed[1]), Boolean(parsed[2]), Boolean(parsed[3])];
-    } catch { /* corrupted — start fresh */ }
-    return [false, false, false, false];
+  const username = localStorage.getItem(STORAGE_KEY) || '';
+  const [loaded] = useState(() => {
+    try { return { profile: loadEducationProfile(username), error: false }; }
+    catch { return { profile: {} as EvalProfile, error: true }; }
   });
-  const [expandedStep, setExpandedStep] = useState<number | null>(null);
-  const [downloaded, setDownloaded] = useState(false);
-
-  // Restore roadmap step checkmarks from the central database (best-effort).
-  // Server entries fill in steps not checked locally; local marks always win.
-  // If the merge added anything, persist locally and push back.
-  useEffect(() => {
-    if (!evalUser.username) return;
-    let cancelled = false;
-    void apiFetchRoadmapSteps(evalUser.username).then((remote) => {
-      if (cancelled || !Array.isArray(remote) || remote.length === 0) return;
-      setCheckedSteps((prev) => {
-        const merged: boolean[] = prev.map((local, i) => local || Boolean(remote[i]));
-        const anyNew = merged.some((v, i) => v && !prev[i]);
-        if (!anyNew) return prev;
-        try { localStorage.setItem(roadmapStepsKey, JSON.stringify(merged)); } catch { /* storage full/unavailable */ }
-        void apiSaveRoadmapSteps(evalUser.username, merged);
-        return merged;
-      });
-    });
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [evalUser.username]);
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!isValidCountry(country)) {
-      setCountryErr(t('errCountry'));
-      return;
-    }
-    if ((!institutionVerification?.selected || institutionVerification.status !== 'verified') && !continueUnverified) return;
-    setCountryErr('');
-    // A confirmed candidate is the identity the visitor selected, even when
-    // the search text contained a spelling error. Keep reports, saved profiles,
-    // dossiers, and matching inputs consistent with that selected identity.
-    const confirmedName = institutionVerification?.status === 'verified'
-      ? institutionVerification.selected?.name : undefined;
-    const reportInstitution = confirmedName || institution;
-    // Store only raw inputs — derived strings (usLevel, insight, roadmap) are computed
-    // at render time from the active language, so toggling language after submission
-    // always shows text in the current locale without re-submitting the form.
-    setResult({ country, institution: reportInstitution, degree, field, purpose });
-    const resetSteps: boolean[] = [false, false, false, false];
-    setCheckedSteps(resetSteps);
-    setExpandedStep(null);
-    setDownloaded(false);
-    // Persist evaluation details so the admin board can show school/country/intention.
-    const profile = { country, institution: reportInstitution, degree, field, purpose };
-    try { localStorage.setItem('ge_profile', JSON.stringify(profile)); } catch { /* storage full/blocked */ }
-    const username = localStorage.getItem(STORAGE_KEY);
-    if (username) void apiSaveProfile(username, profile);
-    // Reset roadmap steps on new evaluation (new inputs = fresh progress)
-    try { localStorage.setItem(roadmapStepsKey, JSON.stringify(resetSteps)); } catch { /* storage full/blocked */ }
-    if (username) void apiSaveRoadmapSteps(username, resetSteps);
-    if (window.innerWidth < 1024) {
-      setTimeout(() => { document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' }); }, 100);
-    }
+  const [profile, setProfile] = useState<EvalProfile>(loaded.profile);
+  const [active, setActive] = useState<Qualification | null>(null);
+  const [syncNotice, setSyncNotice] = useState<'local' | 'synced' | null>(null);
+  async function save(profile: EvalProfile) {
+    storeEducationProfile(username, profile);
+    const pendingKey = `${educationProfileKey(username)}_pending`;
+    localStorage.setItem(pendingKey, 'true');
+    setProfile(profile);
+    try {
+      await apiSaveEducationProfile(username, profile);
+      localStorage.removeItem(pendingKey);
+      setSyncNotice('synced');
+    } catch { setSyncNotice('local'); }
   }
-
-  function toggleStep(i: number) {
-    const next = !checkedSteps[i];
-    setCheckedSteps((prev) => {
-      const updated = prev.map((v, idx) => (idx === i ? next : v));
-      try { localStorage.setItem(roadmapStepsKey, JSON.stringify(updated)); } catch { /* storage full/unavailable */ }
-      if (evalUser.username) void apiSaveRoadmapSteps(evalUser.username, updated);
-      return updated;
-    });
-    setExpandedStep(next ? i : (expandedStep === i ? null : expandedStep));
-  }
-
-  return (
-    <div>
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-xs text-slate-300 mb-6 shadow-sm">
-          <span className="text-indigo-400 font-semibold">{t('evalBadge')}</span>
-        </div>
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
-          {t('evalH1')}{' '}
-          <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">{t('evalH2')}</span>
-        </h1>
-        <p className="text-slate-400 text-lg md:text-xl font-normal leading-relaxed">
-          {t('evalSubtitle')}
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Input Card */}
-        <section className="lg:col-span-5">
-          <div className="glass-panel p-8 rounded-3xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-violet-500 to-fuchsia-500" />
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white font-bold text-lg tracking-tight">{t('evalFormTitle')}</h2>
-              <span className="text-xs text-indigo-400 font-mono bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-indigo-500/20">{t('evalFormStep')}</span>
-            </div>
-            <form onSubmit={handleSubmit} className="space-y-5" data-testid="form-eval">
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLCountry')}</label>
-                <CountryPicker value={country} onChange={(v) => { setCountry(v); setInstitutionVerification(null); setContinueUnverified(false); setResult(null); if (countryErr) setCountryErr(''); }} data-testid="input-country" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPCountry')} required />
-                {countryErr && <p className="mt-1.5 text-red-400 text-xs font-medium" data-testid="error-country">{countryErr}</p>}
-              </div>
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLInstitution')}</label>
-                <input value={institution} onChange={(e) => { setInstitution(e.target.value); setInstitutionVerification(null); setContinueUnverified(false); setResult(null); }} data-testid="input-institution" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPInstitution')} required />
-                <InstitutionVerification
-                  name={institution}
-                  country={country}
-                  lang={lang}
-                  onChange={(value) => { setInstitutionVerification(value); if (value) setContinueUnverified(false); }}
-                  onContinueUnverified={() => { setInstitutionVerification(null); setContinueUnverified(true); }}
-                />
-                {continueUnverified && <p role="status" className="mt-2 rounded-lg border border-amber-500/40 bg-amber-950/30 p-3 text-xs font-semibold text-amber-200">{lang === 'es' ? 'Continuará con una institución no verificada. El informe mantendrá esta advertencia.' : 'You will continue with an unverified institution. The report will retain this warning.'}</p>}
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLDegree')}</label>
-                  <input value={degree} onChange={(e) => setDegree(e.target.value)} data-testid="input-degree" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPDegree')} required />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLField')}</label>
-                  <input value={field} onChange={(e) => setField(e.target.value)} data-testid="input-field" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPField')} required />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLCredits')} <span className="text-slate-500 font-normal">{t('evalLCreditsOpt')}</span></label>
-                  <input value={credits} onChange={(e) => setCredits(e.target.value)} data-testid="input-credits" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" placeholder={t('evalPCredits')} />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('evalLGoal')}</label>
-                  <select value={purpose} onChange={(e) => setPurpose(e.target.value)} data-testid="select-purpose" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
-                    <option value="">{t('evalOptGoal')}</option>
-                    <option value="University Admission">{t('evalGoal1')}</option>
-                    <option value="Employment & HR">{t('evalGoal2')}</option>
-                    <option value="Professional Licensing">{t('evalGoal3')}</option>
-                    <option value="Immigration (USCIS)">{t('evalGoal4')}</option>
-                  </select>
-                </div>
-              </div>
-              <button type="submit" disabled={!institutionVerification?.selected && !continueUnverified} data-testid="button-eval-submit" className="w-full mt-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-4 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center space-x-2">
-                <span>{t('evalBtn')}</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-              </button>
-              {!institutionVerification?.selected && !continueUnverified && <p className="text-center text-xs text-amber-300">{lang === 'es' ? 'Compruebe la institución primero. Si no hay evidencia, podrá continuar con una advertencia explícita.' : 'Check the institution first. If evidence is unavailable, you may then continue with an explicit warning.'}</p>}
-            </form>
-          </div>
-        </section>
-
-        {/* Results Column */}
-        <section className="lg:col-span-7" id="results-section">
-          {result && (institutionVerification || continueUnverified) ? (() => {
-            // Derive all display strings from the current language at render time.
-            // This ensures toggling EN↔ES after submission immediately re-renders in the new locale.
-            const usLevel = getUsLevel(result.degree, result.institution, result.field, t);
-            const insight = getInsight(result.field, t);
-            const roadmap = getRoadmap(result.country, result.institution, result.field, result.purpose, t);
-            return (
-            <div className="space-y-6" data-testid="results-container">
-              {continueUnverified && (
-                <div role="alert" data-testid="report-unverified-warning" className="rounded-2xl border-2 border-amber-500/50 bg-amber-950/40 p-5 text-sm font-semibold text-amber-100">
-                  {lang === 'es'
-                    ? 'Institución no verificada: no se confirmó una coincidencia respaldada por fuentes. Esto no significa que la institución sea falsa. El expediente conserva esta incertidumbre para revisión profesional.'
-                    : 'Unverified institution: no source-backed match was confirmed. This does not mean the institution is fake. The dossier preserves this uncertainty for professional review.'}
-                </div>
-              )}
-              <div className="glass-panel p-8 rounded-3xl border-l-4 border-l-indigo-500 relative overflow-hidden shadow-2xl">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> {t('evalCrawlComplete')}
-                  </span>
-                  <span className="text-xs text-slate-400 font-mono bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-800">REF-2026-US</span>
-                </div>
-                <div className="text-2xl md:text-3xl font-bold text-white leading-snug mb-6" data-testid="text-summary">
-                  {t('evalSummaryPre')} {usLevel}.
-                  <span className="block mt-3 text-sm font-normal leading-relaxed text-slate-400">
-                    {t('evalSummaryPost')}
-                  </span>
-                  <span className="block mt-2 text-xs font-normal leading-relaxed text-slate-500">
-                    {result.institution} ({result.country}) · {result.field}
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-2.5 pt-4 border-t border-slate-800/80" data-testid="badges-container">
-                  <span className="px-3.5 py-1.5 rounded-xl bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-xs font-bold">🎓 {usLevel}</span>
-                  <span className="px-3.5 py-1.5 rounded-xl bg-slate-900 text-slate-300 border border-slate-800 text-xs font-bold">📚 {result.field}</span>
-                  <span className="px-3.5 py-1.5 rounded-xl bg-slate-900 text-slate-300 border border-slate-800 text-xs font-bold">📍 {result.country}</span>
-                  {result.purpose && <span className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 text-xs font-bold">🎯 {GOAL_TX_KEYS[result.purpose] ? t(GOAL_TX_KEYS[result.purpose]!) : result.purpose}</span>}
-                </div>
-              </div>
-
-              <div className="glass-panel p-8 rounded-3xl" data-testid="insight-card">
-                <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-3 flex items-center">
-                  <span className="text-indigo-400 mr-2 text-lg">📊</span> {t('evalInsightTitle')}
-                </h3>
-                <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line" data-testid="text-insight">{insight}</p>
-              </div>
-
-              <div className="glass-panel p-8 rounded-3xl relative overflow-hidden" data-testid="roadmap-section">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-white font-bold text-sm uppercase tracking-wider flex items-center">
-                    <span className="text-indigo-400 mr-2 text-lg">🛰️</span> {t('evalRoadmapTitle')}
-                  </h3>
-                  <span className="text-[10px] uppercase font-bold px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">{t('evalRoadmapSynced')}</span>
-                </div>
-                <p className="text-xs text-slate-400 mb-6">{t('evalRoadmapDesc')}</p>
-
-                {(() => {
-                  const verifyContent = getVerifyContent(institutionVerification, result.institution, result.country, result.degree, t);
-                  const courseworkContent = getCourseworkContent(result.field, result.field, t);
-                  const prereqContent = getPrereqContent(result.field, result.purpose, t);
-
-                  const steps = [
-                    {
-                      title: roadmap[0].title,
-                      desc: roadmap[0].desc,
-                      icon: '🔍',
-                      content: (
-                        <div className="mt-4 space-y-3">
-                          <div className="flex items-center gap-2 mb-3">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                            <span className="text-xs font-bold text-emerald-400">{verifyContent.status}</span>
-                          </div>
-                          <table className="w-full text-xs">
-                            <tbody>
-                              {verifyContent.rows.map((row) => (
-                                <tr key={row.label} className="border-b border-slate-800/60">
-                                  <td className="py-2 pr-4 text-slate-400 font-semibold w-2/5">{row.label}</td>
-                                  <td className="py-2 text-slate-200">{row.value}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                           {verifyContent.action && <a href={verifyContent.action.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
-                            {verifyContent.action.label} →
-                           </a>}
-                        </div>
-                      ),
-                    },
-                    {
-                      title: roadmap[1].title,
-                      desc: roadmap[1].desc,
-                      icon: '📐',
-                      content: (
-                        <div className="mt-4">
-                          <p className="text-xs text-slate-400 mb-3">{courseworkContent.totalSCU}</p>
-                          <table className="w-full text-xs">
-                            <thead>
-                              <tr className="border-b border-slate-700">
-                                <th className="text-left py-2 pr-3 text-slate-400 font-semibold">{t('cwColSubject')}</th>
-                                <th className="text-left py-2 pr-3 text-indigo-400 font-semibold">{t('cwColSCU')}</th>
-                                <th className="text-left py-2 text-slate-400 font-semibold hidden sm:table-cell">{t('cwColNotes')}</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {courseworkContent.rows.map((row) => (
-                                <tr key={row.regional} className="border-b border-slate-800/60">
-                                  <td className="py-2 pr-3 text-slate-200">{row.regional}</td>
-                                  <td className="py-2 pr-3 font-bold text-indigo-300">{row.usSCU}</td>
-                                  <td className="py-2 text-slate-500 hidden sm:table-cell">{row.notes}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                          <a href="https://www.naces.org/members" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
-                            {t('cwNACESLink')}
-                          </a>
-                          <AgencyOutreach result={result} />
-                        </div>
-                      ),
-                    },
-                    {
-                      title: roadmap[2].title,
-                      desc: roadmap[2].desc,
-                      icon: '⚖️',
-                      content: (
-                        <div className="mt-4 space-y-2">
-                          {prereqContent.map((item) => (
-                            <div key={item.label} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-3 py-2 border-b border-slate-800/60">
-                              <span className="text-xs font-semibold text-slate-400 w-full sm:w-2/5 flex-shrink-0">{item.label}</span>
-                              <span className="text-xs text-slate-200 flex-1">
-                                {item.link ? (
-                                  <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">{item.value} →</a>
-                                ) : item.value}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      ),
-                    },
-                    {
-                      title: roadmap[3].title,
-                      desc: roadmap[3].desc,
-                      icon: '📦',
-                      content: (
-                        <div className="mt-4">
-                          <p className="text-xs text-slate-300 leading-relaxed mb-4">
-                            {t('dossierDesc')}
-                          </p>
-                          <div className="grid grid-cols-2 gap-2 mb-5">
-                            {(['dossierItem1', 'dossierItem2', 'dossierItem3', 'dossierItem4', 'dossierItem5', 'dossierItem6'] as const).map((key) => (
-                              <div key={key} className="flex items-center gap-2 text-xs text-slate-300">
-                                <span className="text-emerald-400 flex-shrink-0">✓</span> {t(key)}
-                              </div>
-                            ))}
-                          </div>
-                          <button
-                            onClick={() => { exportDossier(result, getUsLevel(result.degree, result.institution, result.field, t), verifyContent.rows, prereqContent, lang, t); setDownloaded(true); }}
-                            data-testid="button-export-dossier"
-                            className="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-emerald-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
-                          >
-                            {downloaded ? (
-                              <><span>{t('dossierDownloaded')}</span></>
-                            ) : (
-                              <>
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                                <span>{t('dossierDownload')}</span>
-                              </>
-                            )}
-                          </button>
-                          {downloaded && <p className="text-xs text-slate-400 text-center mt-2">{t('dossierOpenNote')}</p>}
-                        </div>
-                      ),
-                    },
-                  ];
-
-                  return (
-                    <div className="space-y-3">
-                      {steps.map((step, idx) => (
-                        <div key={idx} data-testid={`roadmap-step-${idx}`} className={`rounded-2xl border transition-all ${checkedSteps[idx] ? 'bg-indigo-500/5 border-indigo-500/40' : 'bg-slate-900/70 border-slate-800/80'}`}>
-                          <button
-                            type="button"
-                            onClick={() => toggleStep(idx)}
-                            className="w-full flex items-start gap-3.5 p-4 text-left cursor-pointer"
-                          >
-                            <div className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all ${checkedSteps[idx] ? 'bg-indigo-600 border-indigo-600' : 'border-slate-600 bg-transparent'}`}>
-                              {checkedSteps[idx] && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-0.5">
-                                <span className="text-sm">{step.icon}</span>
-                                <strong className={`text-xs md:text-sm font-bold transition-colors ${checkedSteps[idx] ? 'text-indigo-300' : 'text-white'}`}>{idx + 1}. {step.title}</strong>
-                              </div>
-                              <p className="text-xs text-slate-400 leading-relaxed">{step.desc}</p>
-                            </div>
-                            <svg className={`w-4 h-4 text-slate-500 flex-shrink-0 mt-1 transition-transform ${checkedSteps[idx] ? 'rotate-180 text-indigo-400' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                          </button>
-                          {checkedSteps[idx] && (
-                            <div className="px-4 pb-5 border-t border-indigo-500/20">
-                              {step.content}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })()}
-              </div>
-            </div>
-          ); })() : (
-            <div className="glass-panel p-16 text-center rounded-3xl flex flex-col items-center justify-center min-h-[500px] border-dashed border-2 border-slate-800/80" data-testid="placeholder-state">
-              <div className="w-20 h-20 rounded-2xl bg-slate-900/90 border border-slate-700/60 flex items-center justify-center text-3xl text-indigo-400 mb-6 shadow-xl scraper-pulse">🛰️</div>
-              <h3 className="font-bold text-white text-xl mb-2">{t('evalEmptyTitle')}</h3>
-              <p className="text-slate-400 text-sm max-w-sm leading-relaxed">{t('evalEmptyDesc')}</p>
-            </div>
-          )}
-        </section>
-      </div>
-
-      {result && result.purpose === 'University Admission' && (
-        <Suspense fallback={<div role="status" className="h-40 rounded-2xl border border-slate-800 bg-slate-900/40" aria-label="Loading" />}>
-        <ComparablePrograms
-          es={lang === 'es'}
-          profile={{
-            country: result.country,
-            institution: result.institution,
-            degree: result.degree,
-            field: result.field,
-            purpose: result.purpose
-          }}
-        />
-        </Suspense>
-      )}
-
-      <ContactSection />
-      <JobBoardsSection field={result?.field} />
+  if (loaded.error) return <p role="alert" className="rounded-xl border border-amber-500 p-6 text-amber-100">{lang === 'es' ? 'No se pudo leer su perfil educativo guardado. No se ha sobrescrito. Contacte con soporte antes de volver a introducir sus titulaciones.' : 'Your saved education profile could not be read. It has not been overwritten. Contact support before re-entering your qualifications.'}</p>;
+  return <div className="space-y-8">
+    <div className="mx-auto max-w-3xl text-center">
+      <h1 className="text-3xl font-bold text-white">{lang === 'es' ? 'Su educación. Sus próximos pasos en EE. UU.' : 'Your education. Your next steps in the U.S.'}</h1>
+      <p className="mt-3 text-slate-400">{lang === 'es' ? 'Titulaciones separadas, orientación con fuentes y límites claros. No es una evaluación oficial.' : 'Separate qualifications, cited guidance and clear limits. Not an official evaluation.'}</p>
     </div>
-  );
+    <QualificationWorkflow lang={lang} username={username} initialProfile={profile} onProfileChange={save} onActiveQualification={setActive} />
+    {syncNotice && <p role="status" className="text-sm text-slate-300">{syncNotice === 'local'
+      ? (lang === 'es' ? 'Guardado en este dispositivo. No se pudo sincronizar; vuelva a guardar cuando haya conexión para tener los cambios en otros dispositivos.' : 'Saved on this device. Sync unavailable; save again when connected to make changes available on other devices.')
+      : (lang === 'es' ? 'Sincronizado con su cuenta.' : 'Synced to your account.')}</p>}
+    {active && profile.purpose === 'University Admission' && <Suspense fallback={<p>{lang === 'es' ? 'Cargando…' : 'Loading…'}</p>}>
+      <ComparablePrograms es={lang === 'es'} profile={{ country: active.country, institution: active.institution, degree: active.awardName, field: active.field, purpose: profile.purpose }} />
+    </Suspense>}
+    <ContactSection />
+    <JobBoardsSection field={active?.field} />
+  </div>;
 }
+
 
 // ─── Admin Page ───────────────────────────────────────────────────────────────
 
@@ -3122,7 +2280,15 @@ export default function App() {
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) { setUsername(saved); setAppView('app'); }
+    if (saved) {
+      // Claim legacy data for its signed-in owner before another account can use
+      // the same browser. Preserve it in the new per-account storage.
+      try {
+        const profile = loadEducationProfile(saved);
+        if (Object.keys(profile).length) storeEducationProfile(saved, profile);
+      } catch { /* The evaluator displays a blocking message and preserves the raw data. */ }
+      setUsername(saved); setAppView('app');
+    }
 
     try { getUsers(); }
     catch (e) { setUserStoreError(e instanceof Error ? e.message : String(e)); }

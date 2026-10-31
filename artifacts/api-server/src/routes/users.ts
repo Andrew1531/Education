@@ -1,4 +1,5 @@
 import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
+import { SaveEducationProfileBody } from "@workspace/api-zod";
 import { randomBytes, pbkdf2, createHash, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
 import { eq, sql, type SQL } from "drizzle-orm";
@@ -57,6 +58,7 @@ interface UserRow {
   degree: string | null;
   field: string | null;
   purpose: string | null;
+  qualifications?: unknown[] | null;
 }
 
 function publicUser(u: UserRow) {
@@ -70,6 +72,7 @@ function publicUser(u: UserRow) {
     degree: u.degree,
     field: u.field,
     purpose: u.purpose,
+    qualifications: u.qualifications,
   };
 }
 
@@ -258,7 +261,14 @@ router.post("/auth/profile", async (req, res) => {
   if (!verifyUserToken(username, req.header("x-auth-token"))) {
     return res.status(401).json({ error: "unauthorized" });
   }
-  const profile = cleanProfile(req.body?.profile);
+  const parsed = SaveEducationProfileBody.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "invalid_profile" });
+  const ids = parsed.data.profile.qualifications?.map(q => q.id) || [];
+  if (new Set(ids).size !== ids.length) return res.status(400).json({ error: "duplicate_qualification_id" });
+  // Empty strings and an empty qualifications array are intentional clears.
+  // Institution snapshots are client-supplied records, not server certification.
+  const profile = parsed.data.profile.qualifications !== undefined
+    ? parsed.data.profile : cleanProfile(parsed.data.profile);
   if (Object.keys(profile).length === 0) return res.json({ ok: true });
   const [updated] = await db
     .update(usersTable)

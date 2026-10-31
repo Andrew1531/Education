@@ -81,4 +81,14 @@ describe('InstitutionVerification', () => {
     fireEvent.click(screen.getByTestId('button-continue-unverified'));
     expect(continueUnverified).toHaveBeenCalledOnce();
   });
+  it.each(['en', 'es'] as const)('preserves unavailable-source uncertainty and allows continuation in %s', async lang => {
+    apiVerifyInstitution.mockRejectedValueOnce(new Error('sources_unavailable'));
+    const onOutcome = vi.fn(), onContinue = vi.fn();
+    render(<InstitutionVerification name="Real College" country="India" lang={lang} onChange={vi.fn()} onOutcome={onOutcome} onContinueUnverified={onContinue} />);
+    fireEvent.click(screen.getByTestId('button-check-institution'));
+    await waitFor(() => expect(onOutcome).toHaveBeenCalledWith('unavailable'));
+    expect(screen.queryByText(/will not be generated without evidence/)).toBeNull();
+    fireEvent.click(screen.getByTestId('button-continue-unverified'));
+    expect(onContinue).toHaveBeenCalledOnce();
+  });
 });

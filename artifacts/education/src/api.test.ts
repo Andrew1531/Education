@@ -165,6 +165,16 @@ describe('roadmap progress sync auth', () => {
 });
 
 describe('apiSignin — cross-device profile prefill', () => {
+  it('restores separate qualifications and preserves an explicit empty list', async () => {
+    const q = { id: 'q1', awardName: 'Doctor en Medicina', institution: 'Universidad', country: 'Ecuador', field: 'Medicina', duration: '6 años', completion: 'completed', awardType: 'professional', evidenceStatus: 'unavailable' };
+    for (const qualifications of [[q], []]) {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+        token: 'test-token', user: { country: 'Ecuador', qualifications },
+      }), { status: 200, headers: { 'content-type': 'application/json' } })));
+      const result = await apiSignin('alice', 'pw');
+      expect(result.ok && result.profile?.qualifications).toEqual(qualifications);
+    }
+  });
   const jsonResponse = (status: number, body: unknown) =>
     new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 

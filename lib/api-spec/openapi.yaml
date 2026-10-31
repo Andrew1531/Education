@@ -13,6 +13,27 @@ tags:
   - name: institutions
     description: Public, source-backed institution verification
 paths:
+  /auth/profile:
+    post:
+      operationId: saveEducationProfile
+      summary: Save the authenticated owner's education profile
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/EducationProfileInput" }
+      responses:
+        "200":
+          description: Profile saved
+        "400":
+          description: Invalid profile
+        "401":
+          description: Invalid owner token
   /healthz:
     get:
       operationId: healthCheck
@@ -65,6 +86,44 @@ paths:
                 $ref: "#/components/schemas/ApiError"
 components:
   schemas:
+    EducationProfileInput:
+      type: object
+      required: [username, profile]
+      properties:
+        username: { type: string, minLength: 1 }
+        profile: { $ref: "#/components/schemas/EducationProfile" }
+    EducationProfile:
+      type: object
+      properties:
+        country: { type: string, maxLength: 300 }
+        institution: { type: string, maxLength: 300 }
+        degree: { type: string, maxLength: 300 }
+        field: { type: string, maxLength: 300 }
+        purpose: { type: string, maxLength: 300 }
+        qualifications:
+          type: array
+          maxItems: 50
+          items: { $ref: "#/components/schemas/Qualification" }
+    Qualification:
+      type: object
+      required: [id, awardName, institution, country, field, duration, completion, awardType, evidenceStatus]
+      properties:
+        id: { type: string, minLength: 1, maxLength: 100 }
+        awardName: { type: string, maxLength: 300 }
+        institution: { type: string, maxLength: 300 }
+        country: { type: string, maxLength: 300 }
+        field: { type: string, maxLength: 300 }
+        duration: { type: string, maxLength: 300 }
+        completion:
+          type: string
+          enum: [completed, in_progress, not_completed, unknown]
+        awardType:
+          type: string
+          enum: [academic, professional, unknown]
+        evidenceStatus:
+          type: string
+          enum: [not_checked, corroborated, not_found, ambiguous, unavailable]
+        verification: { $ref: "#/components/schemas/InstitutionVerificationResponse" }
     HealthStatus:
       type: object
       properties:

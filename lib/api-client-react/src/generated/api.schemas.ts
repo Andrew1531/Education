@@ -5,34 +5,44 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-export interface HealthStatus {
-  status: string;
-}
+export type QualificationCompletion = typeof QualificationCompletion[keyof typeof QualificationCompletion];
 
-export interface ApiError {
-  error: string;
-}
 
-export interface InstitutionVerificationRequest {
-  /**
-     * @minLength 2
-     * @maxLength 200
-     */
-  name: string;
-  /**
-     * @minLength 2
-     * @maxLength 100
-     */
-  country: string;
-  /** @pattern ^Q[1-9][0-9]*$ */
-  selectedEntityId?: string;
-}
+export const QualificationCompletion = {
+  completed: 'completed',
+  in_progress: 'in_progress',
+  not_completed: 'not_completed',
+  unknown: 'unknown',
+} as const;
 
-export interface EvidenceSource {
-  name: string;
-  url: string;
-  retrievedAt: string;
-}
+export type QualificationAwardType = typeof QualificationAwardType[keyof typeof QualificationAwardType];
+
+
+export const QualificationAwardType = {
+  academic: 'academic',
+  professional: 'professional',
+  unknown: 'unknown',
+} as const;
+
+export type QualificationEvidenceStatus = typeof QualificationEvidenceStatus[keyof typeof QualificationEvidenceStatus];
+
+
+export const QualificationEvidenceStatus = {
+  not_checked: 'not_checked',
+  corroborated: 'corroborated',
+  not_found: 'not_found',
+  ambiguous: 'ambiguous',
+  unavailable: 'unavailable',
+} as const;
+
+export type InstitutionVerificationResponseStatus = typeof InstitutionVerificationResponseStatus[keyof typeof InstitutionVerificationResponseStatus];
+
+
+export const InstitutionVerificationResponseStatus = {
+  verified: 'verified',
+  ambiguous: 'ambiguous',
+  not_found: 'not_found',
+} as const;
 
 export type InstitutionCandidateWebsiteAvailability = typeof InstitutionCandidateWebsiteAvailability[keyof typeof InstitutionCandidateWebsiteAvailability];
 
@@ -40,6 +50,12 @@ export type InstitutionCandidateWebsiteAvailability = typeof InstitutionCandidat
 export const InstitutionCandidateWebsiteAvailability = {
   not_checked: 'not_checked',
 } as const;
+
+export interface EvidenceSource {
+  name: string;
+  url: string;
+  retrievedAt: string;
+}
 
 export interface InstitutionCandidate {
   entityId: string;
@@ -64,15 +80,6 @@ export interface InstitutionCandidate {
   sources: EvidenceSource[];
 }
 
-export type InstitutionVerificationResponseStatus = typeof InstitutionVerificationResponseStatus[keyof typeof InstitutionVerificationResponseStatus];
-
-
-export const InstitutionVerificationResponseStatus = {
-  verified: 'verified',
-  ambiguous: 'ambiguous',
-  not_found: 'not_found',
-} as const;
-
 export interface InstitutionVerificationResponse {
   status: InstitutionVerificationResponseStatus;
   message: string;
@@ -80,5 +87,71 @@ export interface InstitutionVerificationResponse {
   selected: InstitutionCandidate | null;
   candidates: InstitutionCandidate[];
   retrievedAt: string;
+}
+
+export interface Qualification {
+  /**
+     * @minLength 1
+     * @maxLength 100
+     */
+  id: string;
+  /** @maxLength 300 */
+  awardName: string;
+  /** @maxLength 300 */
+  institution: string;
+  /** @maxLength 300 */
+  country: string;
+  /** @maxLength 300 */
+  field: string;
+  /** @maxLength 300 */
+  duration: string;
+  completion: QualificationCompletion;
+  awardType: QualificationAwardType;
+  evidenceStatus: QualificationEvidenceStatus;
+  verification?: InstitutionVerificationResponse;
+}
+
+export interface EducationProfile {
+  /** @maxLength 300 */
+  country?: string;
+  /** @maxLength 300 */
+  institution?: string;
+  /** @maxLength 300 */
+  degree?: string;
+  /** @maxLength 300 */
+  field?: string;
+  /** @maxLength 300 */
+  purpose?: string;
+  /** @maxItems 50 */
+  qualifications?: Qualification[];
+}
+
+export interface EducationProfileInput {
+  /** @minLength 1 */
+  username: string;
+  profile: EducationProfile;
+}
+
+export interface HealthStatus {
+  status: string;
+}
+
+export interface ApiError {
+  error: string;
+}
+
+export interface InstitutionVerificationRequest {
+  /**
+     * @minLength 2
+     * @maxLength 200
+     */
+  name: string;
+  /**
+     * @minLength 2
+     * @maxLength 100
+     */
+  country: string;
+  /** @pattern ^Q[1-9][0-9]*$ */
+  selectedEntityId?: string;
 }
 

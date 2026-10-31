@@ -14,6 +14,8 @@ export const usersTable = pgTable("users", {
   degree: text("degree"),
   field: text("field"),
   purpose: text("purpose"),
+  // Null means a legacy profile; [] means the owner explicitly removed all awards.
+  qualifications: jsonb("qualifications").$type<unknown[]>(),
   // NACES agencies the user has marked as contacted: { [agencyName]: "YYYY-MM-DD" }
   contactedAgencies: jsonb("contacted_agencies").$type<Record<string, string>>(),
   // Roadmap step checkboxes: boolean[] indexed by step position

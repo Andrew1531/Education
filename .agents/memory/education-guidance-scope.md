@@ -20,3 +20,9 @@ Match users with U.S. institutions offering programs in the same field at the sa
 **Why:** When asked which program levels matches should include, the user selected “Same level as earned qualification”.
 
 **How to apply:** Keep academic-level and field matching separate from institutional prestige, admissions eligibility, and official credential equivalency. Explain uncertain foreign qualification levels rather than silently assigning a U.S. level.
+
+Keep original award names and distinguish academic awards from professional titles; never assign a U.S. degree level from a translated title alone.
+
+**Why:** The uniform-guidance requirement explicitly excludes unsupported conversions, including treating a professional title as an academic doctorate.
+
+**How to apply:** Use references to explain U.S. terminology, not as evidence of a specific foreign award's equivalence. Keep user-reported qualifications, historical public institution evidence, official evaluation and licensing decisions distinct in both languages and exports.

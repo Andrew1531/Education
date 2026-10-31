@@ -7,6 +7,7 @@ import { logger } from "./logger";
  * server selects must be guaranteed here before requests are served.
  */
 export async function ensureSchema(): Promise<void> {
+  await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS qualifications jsonb");
   await pool.query(
     "ALTER TABLE users ADD COLUMN IF NOT EXISTS contacted_agencies jsonb",
   );
