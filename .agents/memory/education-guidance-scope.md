@@ -8,3 +8,9 @@ Keep the experience uniform across countries and focus on what users have earned
 **Why:** The user said, “I want to keep everything uniformed, and just want to take what they have earned and apply it to the United States system.”
 
 **How to apply:** Prefer shared qualification inputs and U.S.-context guidance over separate registry workflows for each country. Preserve country and award differences when assessing evidence; a uniform interface is not permission to invent equivalencies.
+
+Support entered education up to and including master's-level qualifications.
+
+**Why:** The user said, “I want people to enter has high as a masters level accreditation”.
+
+**How to apply:** Treat master's level as the requested upper educational scope, not an assertion of accreditation or U.S. equivalency. Do not automatically classify foreign professional titles or specialties as master's degrees.
