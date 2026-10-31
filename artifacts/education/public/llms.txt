@@ -28,7 +28,9 @@ Goals discussed include employment, professional licensing, university admission
 - References to NACES, WES, ECE, or other organizations do not imply affiliation or endorsement.
 - Users should confirm requirements directly with the receiving organization and obtain an official evaluation where required.
 - An institution lookup failure or missing directory entry does not establish that an institution is fake or closed. Website listings do not establish accreditation or degree authenticity.
-- Do not describe a school search, ranking, recommendation, or school-email service as an available feature based on development previews.
+- For the university-admission goal, the app offers a limited directory of comparable U.S. programs sourced from official university pages. Users explicitly select their earned comparison level, through master's, and field. Results match those selections, not institutional prestige or an official U.S. equivalency. Coverage is limited; no listed match does not mean no such program exists.
+- Do not claim nationwide school coverage, verified admission eligibility, rankings, or school-email delivery. The comparable-program directory does not send outreach.
+- Institution identity checks can use the public Research Organization Registry (ROR), with an independent backend source where available. Directory records and listed official websites are evidence of institutional identity, not proof of degree authenticity, accreditation, or live website availability.
 
 ## Español
 

@@ -14,3 +14,9 @@ Check every institution users enter for evidence that it is real. Keep this inst
 **Why:** Real colleges failed lookup because Wikidata did not correct a transposed spelling and Wikimedia returned HTTP 429 from the running API even after earlier live checks succeeded. A passing mocked test does not establish live provider availability.
 
 **How to apply:** Check the running endpoint with the user's exact input, distinguish provider errors from negative matches, require confirmation for spelling suggestions, and preserve explicit uncertainty in reports. Do not hardcode individual schools to hide coverage problems.
+
+Institution identity checks on the public static site must not depend solely on the optional backend.
+
+**Why:** A healthy workspace API does not establish that GitHub Pages visitors can reach that API. The user specifically needs real institutions checked on the live site.
+
+**How to apply:** Verify public-browser access to the evidence source, not just server-side requests or mocked tests. Keep directory identity, current operation, live website availability, accreditation, and individual credential authenticity as separate claims.

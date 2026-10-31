@@ -391,10 +391,10 @@ describe('Evaluator — Spanish field-name classifiers', () => {
 
 // ─── Dossier export — Spanish HTML ────────────────────────────────────────────
 
-describe('SchoolFinder — language-aware results', () => {
+describe('ComparablePrograms — language-aware results', () => {
   beforeEach(() => { seedLoggedInUser(); });
 
-  it('renders SchoolFinder in Spanish when purpose is University Admission', async () => {
+  it('renders comparable programs in Spanish when purpose is University Admission', async () => {
     await act(async () => { render(<App />); });
     await waitFor(() => {
       expect(screen.queryByTestId('form-eval')).not.toBeNull();
@@ -410,19 +410,18 @@ describe('SchoolFinder — language-aware results', () => {
 
     await waitFor(() => {
       expect(screen.queryByTestId('results-container')).not.toBeNull();
-      // Ensure SchoolFinder shows up
-      expect(screen.queryByTestId('container-schoolfinder')).not.toBeNull();
+      expect(screen.queryByTestId('container-comparable-programs')).not.toBeNull();
     });
 
     // It should be in English first
-    expect(screen.queryByText(/Búsqueda de Universidades/i)).toBeNull();
-    expect(screen.queryByText(/University Search/i)).not.toBeNull();
+    expect(screen.queryByText(/Programas de EE. UU. comparables/i)).toBeNull();
+    expect(screen.queryByText(/Comparable U.S. programs/i)).not.toBeNull();
 
     // Toggle to Spanish
     await toggleLanguage();
 
     await waitFor(() => {
-      expect(screen.queryByText(/Búsqueda de Universidades/i)).not.toBeNull();
+      expect(screen.queryByText(/Programas de EE. UU. comparables/i)).not.toBeNull();
     });
   });
 });

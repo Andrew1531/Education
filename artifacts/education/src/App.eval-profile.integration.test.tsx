@@ -69,6 +69,7 @@ afterEach(() => {
 async function submitEvaluator(opts: {
   country: string;
   institution: string;
+  verifiedName?: string;
   degree: string;
   field: string;
   purpose?: string;
@@ -78,7 +79,7 @@ async function submitEvaluator(opts: {
     status: 'verified', message: 'corroborated', accreditationChecked: false,
     retrievedAt: '2026-01-01T00:00:00.000Z',
     selected: {
-      entityId: 'Q123', name: opts.institution, description: 'university', aliases: [],
+      entityId: 'Q123', name: opts.verifiedName || opts.institution, description: 'university', aliases: [],
       country: opts.country, countryMatch: true, higherEducationType: 'university',
       officialWebsite: 'https://example.edu/', websiteAvailability: 'not_checked',
       closureDate: null, wikipediaUrl: null, archiveUrl: null,
@@ -104,6 +105,24 @@ async function submitEvaluator(opts: {
 }
 
 // ─── 1 · /auth/profile is called with country and purpose ────────────────────
+
+describe('Confirmed institution identity', () => {
+  it('uses the selected canonical name in the report and persisted profile', async () => {
+    seedLoggedIn();
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonOk({ ok: true })));
+    await act(async () => { render(<App />); });
+    await submitEvaluator({
+      country: 'United States', institution: 'Barcaly College',
+      verifiedName: 'Barclay College', degree: 'Bachelor of Science',
+      field: 'Computer Science', purpose: 'University Admission',
+    });
+    await waitFor(() => expect(screen.queryByTestId('results-container')).not.toBeNull());
+    expect(screen.getByTestId('results-container').textContent).toContain('Barclay College');
+    expect(screen.getByTestId('results-container').textContent).not.toContain('Barcaly College');
+    expect(JSON.parse(localStorage.getItem('ge_profile')!).institution).toBe('Barclay College');
+    expect(screen.getByTestId('text-selected-institution-name').textContent).toContain('selected institution');
+  });
+});
 
 describe('EvaluatorView submit — /auth/profile receives country and purpose', () => {
   it('calls /auth/profile with the submitted country and purpose', async () => {

@@ -6,6 +6,7 @@
 //    as before.
 import type { StoredUser } from './userStore';
 import { z } from 'zod';
+import { verifyWithPublicDirectory } from './institutionDirectory';
 
 // VITE_API_URL is baked in at build time (GitHub Actions sets it to the
 // published backend URL). In the Replit dev environment the API is served
@@ -194,19 +195,35 @@ export async function apiVerifyInstitution(
   country: string,
   selectedEntityId?: string,
 ): Promise<InstitutionVerification> {
-  const res = await apiFetch('/institutions/verify', {
-    method: 'POST',
-    body: JSON.stringify({ name, country, selectedEntityId }),
-  }, 15_000);
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    if (res.status === 429) throw new Error('rate_limited');
-    if (res.status === 503) throw new Error('sources_unavailable');
-    throw new Error(data.error || 'verification_failed');
+  let directoryResult: InstitutionVerification | null = null;
+  // Public CORS-enabled lookup works on GitHub Pages even without a backend.
+  // A historical/Wikidata candidate selected by the user still goes to that
+  // provider; IDs are never silently translated between directories.
+  if (!selectedEntityId || selectedEntityId.startsWith('https://ror.org/')) {
+    try {
+      directoryResult = InstitutionVerificationSchema.parse(
+        await verifyWithPublicDirectory(name, country, selectedEntityId));
+      if (directoryResult.status !== 'not_found' || selectedEntityId) return directoryResult;
+    } catch { /* Try the independent existing evidence provider below. */ }
   }
-  const parsed = InstitutionVerificationSchema.safeParse(await res.json());
-  if (!parsed.success) throw new Error('malformed_verification_response');
-  return parsed.data;
+  try {
+    const res = await apiFetch('/institutions/verify', {
+      method: 'POST',
+      body: JSON.stringify({ name, country, selectedEntityId }),
+    }, 10_000);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 429) throw new Error('rate_limited');
+      if (res.status === 503) throw new Error('sources_unavailable');
+      throw new Error(data.error || 'verification_failed');
+    }
+    const parsed = InstitutionVerificationSchema.safeParse(await res.json());
+    if (!parsed.success) throw new Error('malformed_verification_response');
+    return parsed.data;
+  } catch (error) {
+    if (directoryResult && !selectedEntityId) return directoryResult;
+    throw error;
+  }
 }
 
 /**

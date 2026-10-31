@@ -36,6 +36,7 @@ export function InstitutionVerification({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const requestId = useRef(0);
+  const autoTimer = useRef<number | undefined>(undefined);
   const es = lang === 'es';
 
   useEffect(() => {
@@ -44,12 +45,21 @@ export function InstitutionVerification({
     setError('');
     setLoading(false);
     onChange(null);
+    // Check each settled entry, not just visitors who notice the manual button.
+    // Changing either input invalidates the evidence immediately.
+    autoTimer.current = name.trim().length >= 3 && country.trim().length >= 2
+      ? window.setTimeout(() => void check(), 1000) : undefined;
+    return () => {
+      window.clearTimeout(autoTimer.current);
+      requestId.current += 1;
+    };
     // onChange is intentionally excluded: callers may provide an inline setter,
     // while only an input identity change should invalidate evidence.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, country]);
 
   async function check(selectedEntityId?: string) {
+    window.clearTimeout(autoTimer.current);
     const id = ++requestId.current;
     setLoading(true);
     setError('');
@@ -63,7 +73,7 @@ export function InstitutionVerification({
       const code = err instanceof Error ? err.message : '';
       setError(code === 'rate_limited'
         ? (es ? 'Demasiadas consultas. Espere un minuto e inténtelo de nuevo.' : 'Too many checks. Wait a minute and retry.')
-        : (es ? 'Las fuentes públicas no están disponibles ahora. Inténtelo de nuevo; no se generará un informe sin evidencia.' : 'Public evidence sources are unavailable right now. Retry; a report will not be generated without evidence.'));
+        : (es ? 'Las fuentes públicas no están disponibles ahora. Reintente o continúe con la institución marcada como no verificada.' : 'Public evidence sources are unavailable right now. Retry or continue with the institution clearly marked unverified.'));
       onChange(null);
     } finally {
       if (id === requestId.current) setLoading(false);
@@ -75,7 +85,7 @@ export function InstitutionVerification({
     <div className="mt-3 rounded-xl border border-slate-700/80 bg-slate-950/50 p-3" data-testid="institution-verification">
       <div className="flex items-center justify-between gap-3">
         <p className="text-[11px] leading-relaxed text-slate-400">
-          {es ? 'Comprobación pública de país y tipo de educación superior. No comprueba acreditación.' : 'Public check of country and higher-education type. Accreditation is not checked.'}
+          {es ? 'Se comprueba cada institución con directorios públicos. Solo se envían el nombre de la institución y el país, no sus datos personales. No comprueba acreditación.' : 'Each institution is checked against public directories. Only the institution name and country are sent, not your personal details. Accreditation is not checked.'}
         </p>
         <button
           type="button"
@@ -128,13 +138,27 @@ export function InstitutionVerification({
       {selected && (
         <div className="mt-3 rounded-lg border border-emerald-500/30 bg-emerald-950/20 p-3" data-testid="institution-verified">
           <p className="text-xs font-bold text-emerald-300">
-            ✓ {es ? 'País y tipo de educación superior corroborados' : 'Country and higher-education type corroborated'}
+            ✓ {es ? 'Identidad, país y categoría educativa corroborados' : 'Identity, country, and education category corroborated'}
           </p>
           <p className="mt-1 text-sm font-semibold text-white">{selected.name}</p>
+          {selected.name.trim().toLowerCase() !== name.trim().toLowerCase() && (
+            <p className="mt-1 text-[11px] text-indigo-200" data-testid="text-selected-institution-name">
+              {es ? 'El informe usará el nombre de la institución seleccionada que se muestra arriba, no el texto original de búsqueda.' : 'Your report will use the selected institution name above, not the original search spelling.'}
+            </p>
+          )}
           <p className="text-xs text-slate-400">{selected.higherEducationType} · {selected.country}</p>
           <p className="mt-2 text-[11px] text-slate-400">
-            {es ? 'Wikidata incluye un sitio oficial; su disponibilidad en vivo no se comprobó para evitar solicitudes inseguras a dominios arbitrarios.' : 'Wikidata lists an official website; live availability was not checked to avoid unsafe requests to arbitrary domains.'}
+            {es ? 'El directorio incluye un sitio oficial; su disponibilidad en vivo no se comprobó. Esta comprobación no verifica su título ni su equivalencia en EE. UU.' : 'The directory lists an official website; live availability was not checked. This check does not verify your individual degree or its U.S. equivalency.'}
           </p>
+          {selected.description && (
+            <p className="mt-2 text-[11px] text-slate-400">
+              {es && selected.entityId.startsWith('https://ror.org/')
+                ? selected.description.includes('as inactive')
+                  ? 'ROR registra esta institución educativa como inactiva. Es evidencia histórica de identidad; no se estableció una fecha de cierre.'
+                  : 'Institución educativa registrada en ROR. El registro no demuestra de forma independiente que siga operando ni su estado de acreditación.'
+                : selected.description}
+            </p>
+          )}
           {selected.closureDate && (
             <p className="mt-2 text-xs text-amber-300">
               {es ? `Wikidata informa una fecha de cierre: ${selected.closureDate}.` : `Wikidata reports a closure date: ${selected.closureDate}.`}

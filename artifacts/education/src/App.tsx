@@ -37,7 +37,7 @@ import {
 } from './api';
 import { contactedStorageKey, loadContacted, mergeContacted } from './contactedSync';
 // Only shown after an admission-goal result; load its UI kit on demand.
-const SchoolFinder = lazy(() => import('./SchoolFinder').then((m) => ({ default: m.SchoolFinder })));
+const ComparablePrograms = lazy(() => import('./programs/ComparablePrograms').then((m) => ({ default: m.ComparablePrograms })));
 import { InstitutionVerification } from './InstitutionVerification';
 
 // Guides are public long-form content: keep them in their own chunk so the
@@ -2262,16 +2262,22 @@ function EvaluatorView() {
     }
     if ((!institutionVerification?.selected || institutionVerification.status !== 'verified') && !continueUnverified) return;
     setCountryErr('');
+    // A confirmed candidate is the identity the visitor selected, even when
+    // the search text contained a spelling error. Keep reports, saved profiles,
+    // dossiers, and matching inputs consistent with that selected identity.
+    const confirmedName = institutionVerification?.status === 'verified'
+      ? institutionVerification.selected?.name : undefined;
+    const reportInstitution = confirmedName || institution;
     // Store only raw inputs — derived strings (usLevel, insight, roadmap) are computed
     // at render time from the active language, so toggling language after submission
     // always shows text in the current locale without re-submitting the form.
-    setResult({ country, institution, degree, field, purpose });
+    setResult({ country, institution: reportInstitution, degree, field, purpose });
     const resetSteps: boolean[] = [false, false, false, false];
     setCheckedSteps(resetSteps);
     setExpandedStep(null);
     setDownloaded(false);
     // Persist evaluation details so the admin board can show school/country/intention.
-    const profile = { country, institution, degree, field, purpose };
+    const profile = { country, institution: reportInstitution, degree, field, purpose };
     try { localStorage.setItem('ge_profile', JSON.stringify(profile)); } catch { /* storage full/blocked */ }
     const username = localStorage.getItem(STORAGE_KEY);
     if (username) void apiSaveProfile(username, profile);
@@ -2592,8 +2598,8 @@ function EvaluatorView() {
 
       {result && result.purpose === 'University Admission' && (
         <Suspense fallback={<div role="status" className="h-40 rounded-2xl border border-slate-800 bg-slate-900/40" aria-label="Loading" />}>
-        <SchoolFinder 
-          username={getSignedInUser().username || null}
+        <ComparablePrograms
+          es={lang === 'es'}
           profile={{
             country: result.country,
             institution: result.institution,
@@ -2601,7 +2607,6 @@ function EvaluatorView() {
             field: result.field,
             purpose: result.purpose
           }}
-          t={t}
         />
         </Suspense>
       )}
