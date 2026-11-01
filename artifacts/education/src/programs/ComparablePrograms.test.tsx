@@ -16,6 +16,23 @@ function pick(level: string, field: string) {
 }
 
 describe('ComparablePrograms', () => {
+  it.each([
+    ['certificate', 'accounting', 'uaf-accounting-cert', false],
+    ['associate', 'engineering', 'uafs-engineering-as', false],
+    ['bachelor', 'biology', 'wsu-biology-bs', false],
+    ['master', 'engineering', 'wsu-mechanical-ms', false],
+    ['master', 'dentistry', 'iu-dentistry-msd', true],
+  ])('renders sourced %s %s results and the admissions caveat', (level, field, id, es) => {
+    render(<ComparablePrograms profile={profile} es={es} />);
+    pick(level as string, field as string);
+    fireEvent.click(screen.getByTestId('button-cp-search'));
+    const p = PROGRAMS.find(p => p.id === id)!;
+    const card = screen.getByTestId(`card-cp-program-${id}`);
+    expect(card.textContent).toContain(p.title);
+    expect(card.textContent).toContain(p.admissionsNote[es ? 'es' : 'en']);
+    expect(screen.getByTestId(`link-cp-source-${id}`).getAttribute('href')).toBe(p.sourceUrl);
+  });
+
   it('requires explicit level; does not prefill field from non-exact text', () => {
     render(<ComparablePrograms profile={profile} es={false} />);
     expect((screen.getByTestId('select-cp-level') as HTMLSelectElement).value).toBe('');

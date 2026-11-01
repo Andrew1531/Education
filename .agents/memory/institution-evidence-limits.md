@@ -20,3 +20,9 @@ Institution identity checks on the public static site must not depend solely on 
 **Why:** A healthy workspace API does not establish that GitHub Pages visitors can reach that API. The user specifically needs real institutions checked on the live site.
 
 **How to apply:** Verify public-browser access to the evidence source, not just server-side requests or mocked tests. Keep directory identity, current operation, live website availability, accreditation, and individual credential authenticity as separate claims.
+
+Official program content can be readable through research fetching while the workspace's direct HTTP client fails TLS certificate-chain validation.
+
+**Why:** Official Alaska and Indiana university pages returned usable award evidence through research fetching but failed certificate validation in direct Node/curl requests.
+
+**How to apply:** Preserve an unconfirmed live-link finding separately from editorial content verification. Never bypass TLS checks, refresh review dates from HTTP success alone, or infer program closure from certificate errors.
