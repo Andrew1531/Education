@@ -1,7 +1,7 @@
-import { PROGRAMS } from './catalog';
+import { PROGRAMS } from './catalog.ts';
 import type { Opportunity } from '../api';
-import { validAccountEmail } from './accountEmailIdentity';
-export { validAccountEmail } from './accountEmailIdentity';
+import { validAccountEmail } from './accountEmailIdentity.ts';
+export { validAccountEmail } from './accountEmailIdentity.ts';
 
 export interface CorrespondenceProfile {
   country?: string; institution?: string; degree?: string; field?: string; purpose?: string;

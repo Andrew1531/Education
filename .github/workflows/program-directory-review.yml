@@ -22,7 +22,7 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Check links and editorial freshness
+      - name: Check program links, admissions mailboxes and editorial freshness
         run: pnpm --filter @workspace/education review:programs
       - name: Publish maintainer summary
         if: always()

@@ -91,3 +91,37 @@ caveats after changes, including international admissions, licensing and exact a
 level. Update only the reviewed record's `checkedAt`; successful HTTP checks never
 refresh editorial dates automatically. If records reviewed together later diverge,
 split their shared date rather than re-dating unchecked records.
+
+## Admissions email sources
+
+The same command and weekly workflow also check every entry in `ADMISSIONS_CONTACTS`
+in `accountEmail.ts`, including entries not currently used by a saved program.
+The combined summary includes each contact ID, exact mailbox, official source URL,
+HTTP status/final URL when available, last human review date and findings.
+The JSON report preserves program results and adds a `contacts` report with all
+contact results and its own `needsReview` count. Either report having findings
+causes exit code 1. Reports never modify the registry.
+
+Contact review uses the same 180-day freshness rule (also flagging invalid/future
+dates). It fetches each distinct contact source once, with at most four concurrent
+GETs, a 15-second timeout and a 2 MB body limit. No email, SMTP probe or mailbox
+validation service is used. TLS verification remains required.
+
+- `present`: the exact mailbox appears in fetched HTML/text, case-insensitively,
+  including common HTML entities and percent-encoded mailto addresses. This does
+  **not** establish deliverability, ownership or the appropriate admissions role.
+- `missing`: the mailbox was not found in a successful source response. Inspect
+  manually: JavaScript rendering, obfuscation and soft error pages can hide content.
+  This is not proof the mailbox was removed or stopped working.
+- `unconfirmed`: network/TLS/read failures, non-success HTTP responses (including
+  404/410), redirects requiring destination review, unsupported/oversized/empty
+  responses or detected access challenges. Retry or open from a trusted environment;
+  never turn an unavailable page into a claim that its mailbox is missing.
+
+For every flagged contact, open the official source and confirm the exact public
+admissions address and its intended audience (undergraduate, graduate or specific
+program). For redirects, verify the final page remains the relevant official source.
+Only a human may change a recipient or source URL, or refresh that individual
+entry's `checkedAt` after reviewing its evidence. Do not guess replacement addresses,
+send test messages, bulk-refresh dates, or remove an entry solely on an automated
+finding. Review due dates remain flagged even when an address is present.
