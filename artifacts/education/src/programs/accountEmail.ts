@@ -45,6 +45,19 @@ export const ADMISSIONS_CONTACTS = {
     sourceUrl: 'https://uafs.edu/admissions/',
     checkedAt: '2026-11-01',
   },
+  // Published as Admissions Services (not the separate current-student
+  // undergraduate/graduate advising mailboxes). Serves both admission levels.
+  umgcAdmissions: {
+    recipient: 'studentsfirst@umgc.edu',
+    sourceUrl: 'https://www.umgc.edu/contact/a-to-z-directory',
+    checkedAt: '2026-11-01',
+  },
+  // Office of Graduate Education on the M.S.D. page; not university-wide.
+  indianaDentistryGraduate: {
+    recipient: 'dsgrad@iu.edu',
+    sourceUrl: 'https://dentistry.iu.edu/academics/degrees-programs/ms-dentistry/index.html',
+    checkedAt: '2026-11-01',
+  },
 } as const;
 
 export function accountEmailDrafts(items: Opportunity[], profile: CorrespondenceProfile, es: boolean): AccountEmailDraft[] {
@@ -57,8 +70,12 @@ export function accountEmailDrafts(items: Opportunity[], profile: Correspondence
       ? graduate ? ADMISSIONS_CONTACTS.wichitaGraduate : ADMISSIONS_CONTACTS.wichitaUndergraduate
       : program.institution === 'University of Alaska Fairbanks'
         ? graduate ? ADMISSIONS_CONTACTS.alaskaGraduate : ADMISSIONS_CONTACTS.alaskaUndergraduate
-        : program.institution === 'University of Arkansas – Fort Smith' ? ADMISSIONS_CONTACTS.fortSmith : null;
-    const id = `${program.institution}:${contact?.recipient || 'contact-page'}`;
+        : program.institution === 'University of Arkansas – Fort Smith' && !graduate ? ADMISSIONS_CONTACTS.fortSmith
+          : program.institution === 'University of Maryland Global Campus' ? ADMISSIONS_CONTACTS.umgcAdmissions
+            : program.institution === 'Indiana University Indianapolis' && program.id === 'iu-dentistry-msd' && graduate
+              ? ADMISSIONS_CONTACTS.indianaDentistryGraduate : null;
+    // Even a shared admissions mailbox must not combine graduate and undergraduate inquiries.
+    const id = `${program.institution}:${graduate ? 'graduate' : 'undergraduate'}:${contact?.recipient || 'contact-page'}`;
     const existing = grouped.get(id);
     if (existing) { if (!existing.programs.includes(program.title)) existing.programs.push(program.title); continue; }
     const sourceUrl = contact?.sourceUrl || (program.institution === 'University of Maryland Global Campus'

@@ -61,8 +61,12 @@ describe('AccountEmailComposer', () => {
     const href = screen.getByTestId('link-gmail-0').getAttribute('href')!;
     expect(href).toContain('authuser=ana%40example.com');
     expect(href).toContain('admissions%40wichita.edu');
-    // Contact-page-only record: no consent/compose, but copy available.
-    expect(screen.queryByTestId('checkbox-consent-1')).toBeNull();
+    // The newly sourced UMGC address also requires its own consent.
+    expect(screen.queryByTestId('link-gmail-1')).toBeNull();
+    expect(screen.getByTestId('text-recipient-1').textContent).toBe('studentsfirst@umgc.edu');
+    expect(screen.getByTestId('link-source-1').getAttribute('href')).toBe('https://www.umgc.edu/contact/a-to-z-directory');
+    fireEvent.click(screen.getByTestId('checkbox-consent-1'));
+    expect(screen.getByTestId('link-gmail-1').getAttribute('href')).toContain('studentsfirst%40umgc.edu');
     expect(screen.getByTestId('button-copy-message-1')).toHaveProperty('type', 'button');
   });
 
