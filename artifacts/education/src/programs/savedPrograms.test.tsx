@@ -18,6 +18,7 @@ beforeEach(() => {
   localStorage.clear();
   vi.spyOn(api, 'apiFetchOpportunities').mockResolvedValue(null);
   vi.spyOn(api, 'apiFetchSchoolOutreachHistory').mockResolvedValue([]);
+  vi.spyOn(api, 'apiSchoolReplyVerification').mockResolvedValue({ email: null, verified: false });
   vi.spyOn(api, 'apiUpsertSchoolOpportunity').mockResolvedValue();
   vi.spyOn(api, 'apiDeleteSchoolOpportunity').mockResolvedValue();
 });

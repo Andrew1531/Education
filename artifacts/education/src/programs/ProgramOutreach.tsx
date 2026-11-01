@@ -4,6 +4,7 @@ import { apiReviewSchoolContacts, apiSendReviewedSchoolOutreach, apiFetchSchoolO
 import { programIdentity } from '@workspace/program-catalog';
 import { AccountEmailComposer } from './AccountEmailComposer';
 import type { CorrespondenceProfile } from './accountEmail';
+import { ReplyAddressControls } from './ReplyAddressControls';
 
 interface Props {
   username: string;
@@ -25,6 +26,7 @@ export function ProgramOutreach({ username, items, remote, busy, profileKey, pro
   const [contacts, setContacts] = useState<SchoolContact[]>([]);
   const [preview, setPreview] = useState<OutreachPreview | null>(null);
   const [consent, setConsent] = useState(false);
+  const [includeReplyAddress, setIncludeReplyAddress] = useState(false);
   const [working, setWorking] = useState(false);
   const [error, setError] = useState('');
   const [results, setResults] = useState<Result[]>([]);
@@ -44,7 +46,7 @@ export function ProgramOutreach({ username, items, remote, busy, profileKey, pro
     setResults([]); setError(''); setAttempted(false); setWorking(false);
   }
   useEffect(() => {
-    reset(); setSelected([]); setHistory([]);
+    reset(); setSelected([]); setHistory([]); setIncludeReplyAddress(false);
     let active = true;
     let refreshing = false;
     const refresh = async () => {
@@ -68,7 +70,7 @@ export function ProgramOutreach({ username, items, remote, busy, profileKey, pro
     reset(); setWorking(true);
     const v = version.current;
     try {
-      const response = await apiReviewSchoolContacts(username, selected);
+      const response = await apiReviewSchoolContacts(username, selected, includeReplyAddress);
       if (v !== version.current) return;
       setContacts(response.contacts); setPreview(response.preview);
       setRequestId(crypto.randomUUID());
@@ -98,7 +100,8 @@ export function ProgramOutreach({ username, items, remote, busy, profileKey, pro
         const notAttempted = ['school_outreach_preview_changed', 'unverified_school_recipient',
           'school_outreach_sender_unavailable', 'school_outreach_rate_limited', 'school_rate_limiter_unavailable',
           'school_outreach_storage_unavailable', 'school_not_saved', 'school_outreach_purpose_not_allowed',
-          'unauthorized', 'Not authenticated', 'college_scorecard_api_key_not_configured'].includes(code);
+          'unauthorized', 'Not authenticated', 'college_scorecard_api_key_not_configured',
+          'school_reply_email_not_verified_or_consented', 'arbitrary_reply_to_not_allowed'].includes(code);
         setError(notAttempted ? 'sendNotAttempted' : 'send'); setConsent(false);
         setResults(selected.map(id => ({ schoolId: id,
           result: !notAttempted && schools.some(s => s.schoolId === id) ? 'unknown' : 'not_attempted' })));
@@ -127,6 +130,8 @@ export function ProgramOutreach({ username, items, remote, busy, profileKey, pro
   return <section className="space-y-4 border-t border-slate-700 pt-6" data-testid="section-program-outreach">
     <h4 className="text-lg font-bold text-white">{L('Saved programs and schools', 'Programas e instituciones guardados')}</h4>
     {saved.length > 0 && <AccountEmailComposer username={username} items={saved} profile={profile} es={es} disabled={working || busy} />}
+    {saved.length > 0 && <ReplyAddressControls key={username} username={username} remote={remote} disabled={working || busy}
+      es={es} included={includeReplyAddress} onInclude={value => { reset(); setIncludeReplyAddress(value); }} />}
     <p className="text-sm text-slate-300">{L('Review official contacts before sharing. No email is sent just by saving or selecting a program. Up to 10 selections.',
       'Revise los contactos oficiales antes de compartir. Guardar o seleccionar un programa no envía ningún correo. Hasta 10 selecciones.')}</p>
     {!saved.length && <p className="text-sm text-slate-400">{L('No saved programs yet.', 'Aún no hay programas guardados.')}</p>}
@@ -156,6 +161,9 @@ export function ProgramOutreach({ username, items, remote, busy, profileKey, pro
       <h5 className="font-bold text-white">{L('Exact information to be shared', 'Información exacta que se compartirá')}</h5>
       <p className="text-xs text-slate-400">{L('This preview uses your profile saved on the server. If it is outdated, save your profile and review again. No official equivalency or admission decision is included.', 'Esta vista previa usa su perfil guardado en el servidor. Si está desactualizado, guarde su perfil y vuelva a revisar. No incluye una equivalencia oficial ni una decisión de admisión.')}</p>
       <pre className="whitespace-pre-wrap break-words text-sm text-slate-200">{preview.text}</pre>
+      <p className="break-all text-sm text-slate-200">{preview.replyTo
+        ? L(`Schools can reply to: ${preview.replyTo}`, `Las instituciones pueden responder a: ${preview.replyTo}`)
+        : L('No personal reply address will be shared.', 'No se compartirá un correo personal de respuesta.')}</p>
       <p className="text-sm font-semibold text-slate-200">{L('Subject:', 'Asunto:')} VerifED credential information / información de credenciales</p>
       {contacts.map(c => <div key={c.schoolId} className="text-sm text-slate-300">
         <p className="font-semibold">{saved.find(o => o.id === c.schoolId)?.title} · {c.schoolName}</p>
@@ -168,9 +176,12 @@ export function ProgramOutreach({ username, items, remote, busy, profileKey, pro
       </div>)}
       <label className="flex items-start gap-3 text-sm text-slate-200">
         <input type="checkbox" checked={consent} disabled={working || attempted} onChange={e => setConsent(e.target.checked)} />
-        {L('I reviewed this exact information and the recipients above. I consent to sharing it with those verified contacts.', 'Revisé esta información exacta y los destinatarios indicados. Doy mi consentimiento para compartirla con esos contactos verificados.')}
+        {preview.replyTo
+          ? L(`I reviewed this exact information and the recipients above. I consent to sharing it, including my reply address ${preview.replyTo}, with those verified contacts so they can reply to me.`,
+            `Revisé esta información exacta y los destinatarios indicados. Doy mi consentimiento para compartirla, incluido mi correo de respuesta ${preview.replyTo}, con esos contactos verificados para que puedan responderme.`)
+          : L('I reviewed this exact information and the recipients above. I consent to sharing it with those verified contacts. No personal reply address is included.', 'Revisé esta información exacta y los destinatarios indicados. Doy mi consentimiento para compartirla con esos contactos verificados. No se incluye un correo personal de respuesta.')}
       </label>
-      <button className={btn} onClick={send} disabled={!consent || working || attempted || !contacts.some(c => c.status === 'verified' && c.recipients[0])}>
+      <button className={btn} onClick={send} disabled={!remote || !consent || working || attempted || !contacts.some(c => c.status === 'verified' && c.recipients[0])}>
         {L('Send reviewed information', 'Enviar la información revisada')}
       </button>
       <p className="text-xs text-slate-400">{L('Acceptance by the provider does not confirm delivery or a school response. Never resend an unknown outcome automatically.', 'La aceptación del proveedor no confirma la entrega ni una respuesta de la institución. Nunca reenvíe automáticamente un resultado desconocido.')}</p>

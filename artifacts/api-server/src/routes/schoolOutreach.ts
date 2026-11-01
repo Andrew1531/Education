@@ -10,6 +10,7 @@ import { db, pool, usersTable, type Opportunity, type SchoolOutreachOutcome } fr
 import { verifyUserToken } from "../lib/userToken";
 import { resolvePublicSchool, ScorecardKeyNotConfiguredError } from "./schools";
 import { withDelivery } from "./resendWebhook";
+import { replyVerificationRouter, verifiedReplyEmail } from "../lib/applicantReply";
 
 const router: IRouter = Router();
 const connector = new ReplitConnectors();
@@ -146,7 +147,7 @@ export async function contactsForSchool(schoolId: string): Promise<{
   return { school, contacts, fallbackUrl: links[0]?.toString() ?? official.toString() };
 }
 
-async function consumeRateLimit(username: string, ip: string, action: "contacts" | "send", limit: number): Promise<boolean> {
+async function consumeRateLimit(username: string, ip: string, action: "contacts" | "send" | "reply_request" | "reply_confirm", limit: number): Promise<boolean> {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -197,6 +198,14 @@ router.post("/auth/schools/contacts", async (req, res): Promise<void> => {
   if (!verifyUserToken(username, req.header("x-auth-token"))) { res.status(401).json({ error: "unauthorized" }); return; }
   const auth = await authorizedUser(username, ids);
   if (auth.error) { res.status(auth.error === "not_found" ? 404 : 403).json({ error: auth.error }); return; }
+  if (req.body.includeReplyAddress !== undefined && typeof req.body.includeReplyAddress !== "boolean") {
+    res.status(400).json({ error: "invalid_school_contacts_request" }); return;
+  }
+  const replyTo = req.body.includeReplyAddress === true
+    ? await verifiedReplyEmail(auth.user!.id, auth.user!.email) : null;
+  if (req.body.includeReplyAddress === true && !replyTo) {
+    res.status(403).json({ error: "school_reply_email_not_verified" }); return;
+  }
   try {
     if (!await consumeRateLimit(username, req.ip ?? "", "contacts", 30)) {
       res.status(429).json({ error: "school_contacts_rate_limited" }); return;
@@ -217,33 +226,36 @@ router.post("/auth/schools/contacts", async (req, res): Promise<void> => {
   }));
   const schools = contacts.filter(c => c.status === "verified" && c.recipients[0])
     .map(c => ({ schoolId: c.schoolId, email: c.recipients[0]!.email }));
-  const content = packageFor(auth.user!);
+  const content = packageFor(auth.user!, replyTo);
   const expiresAt = Date.now() + 15 * 60_000;
-  res.json({ contacts, preview: { text: content.text, expiresAt,
-    token: previewToken(username, schools, content.text, expiresAt) } });
+  res.json({ contacts, preview: { text: content.text, replyTo, expiresAt,
+    token: previewToken(username, schools, content.text, expiresAt, replyTo) } });
 });
 
-function previewToken(username: string, schools: unknown, text: string, expiresAt: number): string {
+export function previewToken(username: string, schools: unknown, text: string, expiresAt: number, replyTo: string | null = null): string {
   return createHmac("sha256", process.env.SESSION_SECRET!)
-    .update(JSON.stringify([username, schools, text, expiresAt])).digest("hex");
+    .update(JSON.stringify([username, schools, text, expiresAt, replyTo])).digest("hex");
 }
 
-export function validPreview(username: string, schools: unknown, text: string, preview: unknown): boolean {
+export function validPreview(username: string, schools: unknown, text: string, preview: unknown, replyTo: string | null = null): boolean {
   if (!preview || typeof preview !== "object") return false;
-  const p = preview as { token?: unknown; expiresAt?: unknown };
+  const p = preview as { token?: unknown; expiresAt?: unknown; replyTo?: unknown };
+  if ((p.replyTo ?? null) !== replyTo) return false;
   if (typeof p.token !== "string" || !/^[a-f0-9]{64}$/.test(p.token) ||
       typeof p.expiresAt !== "number" || p.expiresAt <= Date.now() ||
       p.expiresAt > Date.now() + 15 * 60_000) return false;
-  return timingSafeEqual(Buffer.from(p.token), Buffer.from(previewToken(username, schools, text, p.expiresAt)));
+  return timingSafeEqual(Buffer.from(p.token), Buffer.from(previewToken(username, schools, text, p.expiresAt, replyTo)));
 }
 
 function esc(s: string | null | undefined): string {
   return String(s || "Not provided").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }
-function packageFor(user: { institution: string | null; country: string | null; degree: string | null; field: string | null; purpose: string | null }) {
+function packageFor(user: { institution: string | null; country: string | null; degree: string | null; field: string | null; purpose: string | null }, replyTo: string | null = null) {
   const fields = [["Institution / Institución", user.institution], ["Country / País", user.country], ["Entered credential / Credencial ingresada", user.degree], ["Field / Campo", user.field], ["Purpose / Propósito", user.purpose]];
   const disclaimer = "VerifED is forwarding self-reported information and is not an official equivalency or admission determination. / VerifED transmite información autodeclarada y no es una determinación oficial de equivalencia o admisión.";
-  const text = `${disclaimer}\n\n${fields.map(([k, v]) => `${k}: ${v || "Not provided / No proporcionado"}`).join("\n")}`;
+  const text = `${disclaimer}\n\n${fields.map(([k, v]) => `${k}: ${v || "Not provided / No proporcionado"}`).join("\n")}\n\n${replyTo
+    ? `Applicant reply address / Correo de respuesta del solicitante: ${replyTo}`
+    : "No applicant reply address shared / No se comparte un correo de respuesta del solicitante"}`;
   return { text, html: `<pre style="white-space:pre-wrap">${esc(text)}</pre>` };
 }
 
@@ -255,6 +267,18 @@ async function sender(): Promise<string | null> {
   const domain = data.data?.find((d) => d.status === "verified" && d.name)?.name;
   return domain ? `VerifED <outreach@${domain}>` : null;
 }
+
+router.use(replyVerificationRouter(consumeRateLimit, async (email, code) => {
+  const from = await sender();
+  if (!from) return false;
+  const response = await connector.proxy("resend", "/emails", {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: { from, to: [email], subject: "VerifED email verification / Verificación de correo",
+      text: `Your VerifED code is ${code}. It expires in 10 minutes. Do not share it. This does not send anything to schools.\n\nSu código de VerifED es ${code}. Caduca en 10 minutos. No lo comparta. Esto no envía nada a las instituciones.` },
+  });
+  const data = response.ok ? await response.json().catch(() => ({})) as { id?: string } : {};
+  return response.ok && !!data.id;
+}));
 
 router.post("/auth/school-outreach", async (req, res): Promise<void> => {
   const username = typeof req.body?.username === "string" ? req.body.username.trim() : "";
@@ -269,8 +293,17 @@ router.post("/auth/school-outreach", async (req, res): Promise<void> => {
   const normalized = schools.map((s) => ({ schoolId: s.schoolId, email: s.email.toLowerCase() }));
   const auth = await authorizedUser(username, normalized.map((s) => s.schoolId));
   if (auth.error) { res.status(auth.error === "not_found" ? 404 : 403).json({ error: auth.error }); return; }
-  const content = packageFor(auth.user!);
-  if (!validPreview(username, normalized, content.text, req.body?.preview)) {
+  // The client can select a verified address, never supply a new mailbox.
+  const requestedReply = req.body?.preview?.replyTo;
+  const replyTo = requestedReply == null ? null : await verifiedReplyEmail(auth.user!.id, auth.user!.email);
+  if (requestedReply != null && (!replyTo || requestedReply !== replyTo || req.body.replyConsent !== replyTo)) {
+    res.status(403).json({ error: "school_reply_email_not_verified_or_consented" }); return;
+  }
+  if (req.body.replyTo !== undefined) {
+    res.status(400).json({ error: "arbitrary_reply_to_not_allowed" }); return;
+  }
+  const content = packageFor(auth.user!, replyTo);
+  if (!validPreview(username, normalized, content.text, req.body?.preview, replyTo)) {
     res.status(409).json({ error: "school_outreach_preview_changed" }); return;
   }
   const requestHash = createHash("sha256").update(JSON.stringify([normalized, content.text])).digest("hex");
@@ -349,7 +382,8 @@ router.post("/auth/school-outreach", async (req, res): Promise<void> => {
       const response = await connector.proxy("resend", "/emails", {
         method: "POST",
         headers: { "content-type": "application/json", "Idempotency-Key": providerKey },
-        body: { from, to: [contact.email], subject: "VerifED credential information / información de credenciales", html: content.html, text: content.text },
+        body: { from, to: [contact.email], ...(replyTo ? { reply_to: replyTo } : {}),
+          subject: "VerifED credential information / información de credenciales", html: content.html, text: content.text },
       });
       const payload = response.ok ? await response.json().catch(() => ({})) as { id?: string } : {};
       outcomes.push({ packageVersion: "1", schoolId: request.schoolId, schoolName: found!.school!.name,

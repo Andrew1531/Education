@@ -7,6 +7,29 @@ import { logger } from "./logger";
  * server selects must be guaranteed here before requests are served.
  */
 export async function ensureSchema(): Promise<void> {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS applicant_reply_verification (
+      username text PRIMARY KEY,
+      user_id integer NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      email text NOT NULL,
+      code_hash text,
+      expires_at timestamptz NOT NULL,
+      attempts integer NOT NULL DEFAULT 0,
+      verified_at timestamptz
+    )
+  `);
+  // Old username-only proofs cannot safely be assigned to today's account:
+  // the username may have been deleted and registered again in the meantime.
+  await pool.query(`
+    ALTER TABLE applicant_reply_verification
+      ADD COLUMN IF NOT EXISTS user_id integer REFERENCES users(id) ON DELETE CASCADE
+  `);
+  await pool.query("DELETE FROM applicant_reply_verification WHERE user_id IS NULL");
+  await pool.query("ALTER TABLE applicant_reply_verification ALTER COLUMN user_id SET NOT NULL");
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS applicant_reply_verification_user_idx
+      ON applicant_reply_verification (user_id)
+  `);
   await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS qualifications jsonb");
   await pool.query(
     "ALTER TABLE users ADD COLUMN IF NOT EXISTS contacted_agencies jsonb",

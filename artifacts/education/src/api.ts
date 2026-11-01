@@ -523,14 +523,14 @@ export const SchoolContactSchema = z.object({
 });
 export type SchoolContact = z.infer<typeof SchoolContactSchema>;
 
-export interface OutreachPreview { text: string; token: string; expiresAt: number }
+export interface OutreachPreview { text: string; token: string; expiresAt: number; replyTo?: string | null }
 
-export async function apiReviewSchoolContacts(username: string, schoolIds: string[]): Promise<{ contacts: SchoolContact[]; preview: OutreachPreview }> {
+export async function apiReviewSchoolContacts(username: string, schoolIds: string[], includeReplyAddress = false): Promise<{ contacts: SchoolContact[]; preview: OutreachPreview }> {
   const token = getUserToken(username);
   if (!token) throw new Error('Not authenticated');
   const res = await apiFetch('/auth/schools/contacts', {
     method: 'POST',
-    body: JSON.stringify({ username, schoolIds }),
+    body: JSON.stringify({ username, schoolIds, includeReplyAddress }),
     headers: { 'x-auth-token': token },
   }, 30_000);
   if (!res.ok) {
@@ -546,12 +546,32 @@ export async function apiReviewSchoolContacts(username: string, schoolIds: strin
   if (!parsed.success) {
     throw new Error('Malformed school contacts response');
   }
-  const preview = z.object({ text: z.string(), token: z.string(), expiresAt: z.number() }).parse(data.preview);
+  const preview = z.object({ text: z.string(), token: z.string(), expiresAt: z.number(),
+    replyTo: z.string().nullable().optional() }).parse(data.preview);
   return { contacts: parsed.data, preview };
 }
 
 export async function apiFetchSchoolContacts(username: string, schoolIds: string[]): Promise<SchoolContact[]> {
   return (await apiReviewSchoolContacts(username, schoolIds)).contacts;
+}
+
+export async function apiSchoolReplyVerification(username: string, action?: 'request' | 'confirm', code?: string): Promise<{
+  email: string | null; verified: boolean; codeSent?: boolean;
+}> {
+  const token = getUserToken(username);
+  if (!token) throw new Error('Not authenticated');
+  const res = await apiFetch(action ? '/auth/school-reply-verification'
+    : `/auth/school-reply-verification?username=${encodeURIComponent(username)}`, {
+    method: action ? 'POST' : 'GET',
+    headers: { 'x-auth-token': token },
+    ...(action ? { body: JSON.stringify({ username, action, code }) } : {}),
+  }, 30_000);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'reply_verification_unavailable');
+  }
+  return z.object({ email: z.string().nullable(), verified: z.boolean(),
+    codeSent: z.boolean().optional() }).parse(await res.json());
 }
 
 export const OutreachResultSchema = z.object({
@@ -576,7 +596,8 @@ export async function apiSendReviewedSchoolOutreach(
   if (!token) throw new Error('Not authenticated');
   const res = await apiFetch('/auth/school-outreach', {
     method: 'POST',
-    body: JSON.stringify({ username, requestId, schools, consent, preview }),
+    body: JSON.stringify({ username, requestId, schools, consent, preview,
+      ...(consent && preview?.replyTo ? { replyConsent: preview.replyTo } : {}) }),
     headers: { 'x-auth-token': token },
   }, 120_000);
   if (!res.ok) {

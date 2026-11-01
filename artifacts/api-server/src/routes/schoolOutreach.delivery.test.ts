@@ -10,6 +10,8 @@ const state = vi.hoisted(() => ({
   throwProvider: false,
   senderAvailable: true,
   sends: [] as unknown[],
+  verifiedEmail: null as string | null,
+  verifiedUserId: 1,
 }));
 vi.mock('@workspace/db', () => ({
   usersTable: {},
@@ -17,6 +19,9 @@ vi.mock('@workspace/db', () => ({
   pool: {
     connect: async () => ({ query: async () => ({ rows: [{ count: '0' }] }), release() {} }),
     query: async (sql: string, args: unknown[]) => {
+      if (sql.includes('SELECT 1 FROM applicant_reply_verification')) {
+        return { rows: state.verifiedUserId === args[0] && state.verifiedEmail === args[1] ? [{}] : [] };
+      }
       if (sql.startsWith('INSERT INTO school_outreach_requests')) {
         const id = args[0] as string;
         if (state.intents.has(id)) return { rows: [] };
@@ -63,12 +68,13 @@ import app from '../app';
 import { issueUserToken } from '../lib/userToken';
 
 const ids = ['umgc-cs-bs', 'umgc-business-bs'];
-const contacts = () => request(app).post('/api/auth/schools/contacts')
-  .set('x-auth-token', issueUserToken('owner')!).send({ username: 'owner', schoolIds: ids });
-const send = (preview: unknown, requestId = 'request-123456789abcdef') =>
+const contacts = (includeReplyAddress = false) => request(app).post('/api/auth/schools/contacts')
+  .set('x-auth-token', issueUserToken('owner')!).send({ username: 'owner', schoolIds: ids, includeReplyAddress });
+const send = (preview: unknown, requestId = 'request-123456789abcdef', extra = {}) =>
   request(app).post('/api/auth/school-outreach').set('x-auth-token', issueUserToken('owner')!).send({
     username: 'owner', requestId, consent: true, preview,
     schools: ids.map(schoolId => ({ schoolId, email: 'admissions@umgc.edu' })),
+    ...extra,
   });
 
 describe('sourced program contact review and send (all email mocked)', () => {
@@ -76,12 +82,13 @@ describe('sourced program contact review and send (all email mocked)', () => {
     process.env.SESSION_SECRET = 'outreach-fixture-only';
     process.env.NODE_ENV = 'test';
     delete process.env.SCHOOL_OUTREACH_FROM;
-    state.users = [{ username: 'owner', country: 'Mexico', degree: 'Original award',
+    state.users = [{ id: 1, username: 'owner', email: 'applicant@example.org', country: 'Mexico', degree: 'Original award',
       institution: 'Original institution', field: 'Computing', purpose: 'University Admission',
       opportunities: ids.map(id => ({ id, kind: 'school', url: 'https://attacker.invalid' })) }];
     state.intents.clear(); state.sends = [];
     state.providerStatus = 200; state.throwProvider = false;
     state.senderAvailable = true;
+    state.verifiedEmail = null;
     state.html = '<p>Admissions <a href="mailto:admissions@umgc.edu">Contact admissions</a></p>';
   });
   it('reviews official program IDs without a government key or trusting saved URLs', async () => {
@@ -100,6 +107,56 @@ describe('sourced program contact review and send (all email mocked)', () => {
     expect(state.sends[0]).toMatchObject({ body: { text: review.body.preview.text, to: ['admissions@umgc.edu'] } });
     expect((await send(review.body.preview)).body.results).toEqual(res.body.results);
     expect(state.sends).toHaveLength(1); // durable replay: no duplicate send
+    expect((state.sends[0] as { body: object }).body).not.toHaveProperty('reply_to');
+  });
+  it('only reviews an opted-in account address after verification', async () => {
+    expect((await contacts(true)).status).toBe(403);
+    state.verifiedEmail = 'applicant@example.org';
+    const review = await contacts(true);
+    expect(review.status).toBe(200);
+    expect(review.body.preview.replyTo).toBe('applicant@example.org');
+    expect(review.body.preview.text).toContain('Applicant reply address / Correo de respuesta del solicitante: applicant@example.org');
+    const optedOut = await contacts();
+    expect(optedOut.body.preview.replyTo).toBeNull();
+    expect(optedOut.body.preview.text).not.toContain('applicant@example.org');
+  });
+  it('requires exact-address consent and sets the provider reply_to only from the verified account', async () => {
+    state.verifiedEmail = 'applicant@example.org';
+    const review = await contacts(true);
+    expect((await send(review.body.preview)).status).toBe(403);
+    expect((await send(review.body.preview, undefined, { replyConsent: 'other@example.org' })).status).toBe(403);
+    const response = await send(review.body.preview, undefined, { replyConsent: 'applicant@example.org' });
+    expect(response.status).toBe(200);
+    expect(state.sends).toHaveLength(1);
+    expect(state.sends[0]).toMatchObject({ body: { reply_to: 'applicant@example.org', text: review.body.preview.text } });
+  });
+  it('rejects address tampering, removal, account changes and loss of verification before sending', async () => {
+    state.verifiedEmail = 'applicant@example.org';
+    const review = await contacts(true);
+    expect((await send({ ...review.body.preview, replyTo: 'attacker@example.org' },
+      undefined, { replyConsent: 'attacker@example.org' })).status).toBe(403);
+    expect((await send({ ...review.body.preview, replyTo: null })).status).toBe(409);
+    state.users[0].email = 'changed@example.org';
+    expect((await send(review.body.preview, undefined, { replyConsent: 'applicant@example.org' })).status).toBe(403);
+    state.users[0].email = 'applicant@example.org';
+    state.verifiedEmail = null;
+    expect((await send(review.body.preview, undefined, { replyConsent: 'applicant@example.org' })).status).toBe(403);
+    expect(state.sends).toHaveLength(0);
+  });
+  it('requires a replacement account with the same username and email to verify afresh', async () => {
+    state.verifiedEmail = 'applicant@example.org';
+    const review = await contacts(true);
+    expect(review.status).toBe(200);
+    // A new signup gets a new immutable ID even with the same username/email.
+    state.users[0].id = 2;
+    expect((await contacts(true)).status).toBe(403);
+    expect((await send(review.body.preview, undefined, { replyConsent: 'applicant@example.org' })).status).toBe(403);
+    expect(state.sends).toHaveLength(0);
+  });
+  it('rejects arbitrary top-level reply_to input even with an opted-out signed preview', async () => {
+    const review = await contacts();
+    expect((await send(review.body.preview, undefined, { replyTo: 'attacker@example.org' })).status).toBe(400);
+    expect(state.sends).toHaveLength(0);
   });
   it('refuses stale profile information even if the browser still consents', async () => {
     const review = await contacts();
