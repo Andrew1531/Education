@@ -330,7 +330,7 @@ export function ComparablePrograms({ profile, es, username }: Props) {
       {username && <ProgramOutreach key={username} username={username} items={saved.items}
         remote={saved.mode === 'remote'} busy={saved.busy || saved.mode === 'loading'}
         onWorkingChange={setOutreachBusy}
-        profileKey={JSON.stringify(profile)} es={es} remove={item => { void saved.change(item, true); }} />}
+        profileKey={JSON.stringify(profile)} profile={profile} es={es} remove={item => { void saved.change(item, true); }} />}
     </section>
   );
 }

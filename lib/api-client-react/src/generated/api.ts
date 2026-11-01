@@ -27,6 +27,7 @@ import type {
   HealthStatus,
   InstitutionVerificationRequest,
   InstitutionVerificationResponse,
+  ResendDeliveryEvent,
   SchoolContactsInput,
   SchoolOutreachInput,
   SchoolOutreachResponse,
@@ -59,6 +60,74 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getReceiveResendDeliveryEventUrl = () => {
+
+
+
+
+  return `/api/webhooks/resend`
+}
+
+/**
+ * Provider-only raw-body endpoint authenticated with Svix headers, not user tokens.
+ */
+export const receiveResendDeliveryEvent = async (resendDeliveryEvent: ResendDeliveryEvent, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getReceiveResendDeliveryEventUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(resendDeliveryEvent)
+  }
+);}
+
+
+
+
+
+export const getReceiveResendDeliveryEventMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof receiveResendDeliveryEvent>>, TError,{data: BodyType<ResendDeliveryEvent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof receiveResendDeliveryEvent>>, TError,{data: BodyType<ResendDeliveryEvent>}, TContext> => {
+
+const mutationKey = ['receiveResendDeliveryEvent'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof receiveResendDeliveryEvent>>, {data: BodyType<ResendDeliveryEvent>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  receiveResendDeliveryEvent(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ReceiveResendDeliveryEventMutationResult = NonNullable<Awaited<ReturnType<typeof receiveResendDeliveryEvent>>>
+    export type ReceiveResendDeliveryEventMutationBody = BodyType<ResendDeliveryEvent>
+    export type ReceiveResendDeliveryEventMutationError = ErrorType<void>
+
+    export const useReceiveResendDeliveryEvent = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof receiveResendDeliveryEvent>>, TError,{data: BodyType<ResendDeliveryEvent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof receiveResendDeliveryEvent>>,
+        TError,
+        {data: BodyType<ResendDeliveryEvent>},
+        TContext
+      > => {
+      return useMutation(getReceiveResendDeliveryEventMutationOptions(options));
+    }
 
 export const getReviewSchoolContactsUrl = () => {
 

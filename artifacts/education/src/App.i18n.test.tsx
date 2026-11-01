@@ -11,7 +11,8 @@ describe('Language switching with uniform education guidance', () => {
     await renderQualifications();
     fireEvent.change(screen.getByTestId('input-goal'), { target: { value: 'University Admission' } });
     await addQualification('Original award');
-    expect(await screen.findByTestId('container-comparable-programs')).not.toBeNull();
+    // This panel is a lazy-loaded chunk; allow cold compilation under a parallel suite.
+    expect(await screen.findByTestId('container-comparable-programs', {}, { timeout: 5000 })).not.toBeNull();
     expect(screen.queryByText(/Comparable U.S. programs at your level/)).not.toBeNull();
     await toggleQualificationLanguage();
     expect(screen.queryByText(/Programas de EE. UU. comparables a su nivel/)).not.toBeNull();

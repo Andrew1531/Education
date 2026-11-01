@@ -7,6 +7,7 @@
 import type { StoredUser } from './userStore';
 import { z } from 'zod';
 import type { Qualification } from './qualificationGuidance';
+import { rememberAccountEmail } from './programs/accountEmailIdentity';
 import { verifyWithPublicDirectory } from './institutionDirectory';
 
 // VITE_API_URL is baked in at build time (GitHub Actions sets it to the
@@ -248,6 +249,7 @@ export async function apiSignup(username: string, email: string, password: strin
   if (res.status === 201) {
     const data = await res.json().catch(() => ({}));
     saveUserToken(username, data.token);
+    rememberAccountEmail(username, typeof data.user?.email === 'string' ? data.user.email : email);
     return { ok: true };
   }
   const data = await res.json().catch(() => ({}));
@@ -259,6 +261,7 @@ export async function apiSignin(username: string, password: string): Promise<{ o
   if (res.ok) {
     const data = await res.json().catch(() => ({}));
     saveUserToken(username, data.token);
+    rememberAccountEmail(username, data.user?.email);
     // Carry the user's saved evaluation details back so the evaluator can be
     // prefilled on any device they sign in from.
     const u = (data.user || {}) as Record<string, unknown>;

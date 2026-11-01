@@ -5,6 +5,7 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { SchoolOutreachOutcomeDeliveryStatus } from './schoolOutreachOutcomeDeliveryStatus';
 import type { SchoolOutreachOutcomeResult } from './schoolOutreachOutcomeResult';
 
 export interface SchoolOutreachOutcome {
@@ -17,4 +18,6 @@ export interface SchoolOutreachOutcome {
   packageVersion?: string;
   /** @nullable */
   providerMessageId?: string | null;
+  deliveryStatus?: SchoolOutreachOutcomeDeliveryStatus;
+  deliveryUpdatedAt?: string;
 }

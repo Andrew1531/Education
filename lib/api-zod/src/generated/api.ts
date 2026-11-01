@@ -9,6 +9,26 @@ import * as zod from 'zod';
 
 
 /**
+ * Provider-only raw-body endpoint authenticated with Svix headers, not user tokens.
+ */
+export const ReceiveResendDeliveryEventHeader = zod.object({
+  "svix-id": zod.string(),
+  "svix-timestamp": zod.string(),
+  "svix-signature": zod.string()
+})
+
+export const ReceiveResendDeliveryEventBody = zod.object({
+  "type": zod.string(),
+  "created_at": zod.string(),
+  "data": zod.object({
+  "email_id": zod.string()
+})
+})
+
+export const ReceiveResendDeliveryEventResponse = zod.unknown()
+
+
+/**
  * @summary Verify official recipients and preview the exact server-held profile
  */
 export const ReviewSchoolContactsHeader = zod.object({
@@ -82,7 +102,9 @@ export const SendReviewedSchoolOutreachResponse = zod.object({
   "result": zod.enum(['sent', 'failed', 'unknown', 'not_attempted']),
   "sentAt": zod.string(),
   "packageVersion": zod.string().optional(),
-  "providerMessageId": zod.string().nullish()
+  "providerMessageId": zod.string().nullish(),
+  "deliveryStatus": zod.enum(['delivered', 'bounced', 'complained', 'failed', 'delayed']).optional(),
+  "deliveryUpdatedAt": zod.string().optional()
 })),
   "meaning": zod.string().optional(),
   "historySaved": zod.boolean().optional()
@@ -106,7 +128,9 @@ export const GetSchoolOutreachHistoryResponse = zod.object({
   "result": zod.enum(['sent', 'failed', 'unknown', 'not_attempted']),
   "sentAt": zod.string(),
   "packageVersion": zod.string().optional(),
-  "providerMessageId": zod.string().nullish()
+  "providerMessageId": zod.string().nullish(),
+  "deliveryStatus": zod.enum(['delivered', 'bounced', 'complained', 'failed', 'delayed']).optional(),
+  "deliveryUpdatedAt": zod.string().optional()
 }))
 })
 

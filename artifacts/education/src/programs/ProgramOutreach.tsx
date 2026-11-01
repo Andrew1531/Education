@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { apiReviewSchoolContacts, apiSendReviewedSchoolOutreach, apiFetchSchoolOutreachHistory,
   type Opportunity, type SchoolContact, type OutreachPreview, type OutreachHistoryItem, type OutreachResult } from '../api';
 import { programIdentity } from '@workspace/program-catalog';
+import { AccountEmailComposer } from './AccountEmailComposer';
+import type { CorrespondenceProfile } from './accountEmail';
 
 interface Props {
   username: string;
@@ -9,6 +11,7 @@ interface Props {
   remote: boolean;
   busy: boolean;
   profileKey: string;
+  profile?: CorrespondenceProfile;
   es: boolean;
   remove: (item: Opportunity) => void;
   onWorkingChange?: (working: boolean) => void;
@@ -16,7 +19,7 @@ interface Props {
 const btn = 'rounded-lg border border-slate-600 px-3 py-2 text-sm text-indigo-200 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed';
 type Result = OutreachResult | { schoolId: string; result: 'not_attempted' };
 
-export function ProgramOutreach({ username, items, remote, busy, profileKey, es, remove, onWorkingChange }: Props) {
+export function ProgramOutreach({ username, items, remote, busy, profileKey, profile = {}, es, remove, onWorkingChange }: Props) {
   const L = (en: string, sp: string) => es ? sp : en;
   const [selected, setSelected] = useState<string[]>([]);
   const [contacts, setContacts] = useState<SchoolContact[]>([]);
@@ -104,6 +107,7 @@ export function ProgramOutreach({ username, items, remote, busy, profileKey, es,
 
   return <section className="space-y-4 border-t border-slate-700 pt-6" data-testid="section-program-outreach">
     <h4 className="text-lg font-bold text-white">{L('Saved programs and schools', 'Programas e instituciones guardados')}</h4>
+    {saved.length > 0 && <AccountEmailComposer username={username} items={saved} profile={profile} es={es} disabled={working || busy} />}
     <p className="text-sm text-slate-300">{L('Review official contacts before sharing. No email is sent just by saving or selecting a program. Up to 10 selections.',
       'Revise los contactos oficiales antes de compartir. Guardar o seleccionar un programa no envía ningún correo. Hasta 10 selecciones.')}</p>
     {!saved.length && <p className="text-sm text-slate-400">{L('No saved programs yet.', 'Aún no hay programas guardados.')}</p>}

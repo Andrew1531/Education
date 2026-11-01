@@ -5,6 +5,16 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export type ResendDeliveryEventData = {
+  email_id: string;
+};
+
+export interface ResendDeliveryEvent {
+  type: string;
+  created_at: string;
+  data: ResendDeliveryEventData;
+}
+
 export interface SchoolContactsInput {
   username: string;
   /**
@@ -82,6 +92,17 @@ export const SchoolOutreachOutcomeResult = {
   not_attempted: 'not_attempted',
 } as const;
 
+export type SchoolOutreachOutcomeDeliveryStatus = typeof SchoolOutreachOutcomeDeliveryStatus[keyof typeof SchoolOutreachOutcomeDeliveryStatus];
+
+
+export const SchoolOutreachOutcomeDeliveryStatus = {
+  delivered: 'delivered',
+  bounced: 'bounced',
+  complained: 'complained',
+  failed: 'failed',
+  delayed: 'delayed',
+} as const;
+
 export interface SchoolOutreachOutcome {
   schoolId: string;
   schoolName: string;
@@ -92,6 +113,8 @@ export interface SchoolOutreachOutcome {
   packageVersion?: string;
   /** @nullable */
   providerMessageId?: string | null;
+  deliveryStatus?: SchoolOutreachOutcomeDeliveryStatus;
+  deliveryUpdatedAt?: string;
 }
 
 export interface SchoolOutreachResponse {
