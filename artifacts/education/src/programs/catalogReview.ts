@@ -16,6 +16,7 @@ export interface LinkReview {
   finalUrl?: string;
   status?: number;
   result: 'reachable' | 'redirected' | 'broken' | 'unconfirmed';
+  diagnostic?: string;
 }
 
 /** Run only from the maintainer check, not from visitors' browsers. */
@@ -28,8 +29,9 @@ export async function reviewLink(url: string, fetcher: typeof fetch = fetch): Pr
       : !response.ok ? 'unconfirmed'
       : response.redirected ? 'redirected' : 'reachable';
     return { url, finalUrl: response.url || url, status: response.status, result };
-  } catch {
-    return { url, result: 'unconfirmed' };
+  } catch (error) {
+    const err = error as { name?: string; cause?: { code?: string } };
+    return { url, result: 'unconfirmed', diagnostic: err.cause?.code || err.name || 'Network request failed' };
   }
 }
 

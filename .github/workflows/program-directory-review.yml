@@ -1,0 +1,39 @@
+name: Review official program sources
+
+on:
+  schedule:
+    - cron: '0 13 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Check links and editorial freshness
+        run: node --experimental-strip-types artifacts/education/scripts/review-programs.ts
+      - name: Publish maintainer summary
+        if: always()
+        run: |
+          if [ -f generated-artifacts/program-review/summary.md ]; then
+            cat generated-artifacts/program-review/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: official-program-source-review
+          path: generated-artifacts/program-review/
+          if-no-files-found: warn
+          retention-days: 30

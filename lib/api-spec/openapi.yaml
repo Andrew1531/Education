@@ -13,6 +13,23 @@ tags:
   - name: institutions
     description: Public, source-backed institution verification
 paths:
+  /webhooks/resend:
+    post:
+      operationId: receiveResendDeliveryEvent
+      description: Provider-only raw-body endpoint authenticated with Svix headers, not user tokens.
+      parameters:
+        - { in: header, name: svix-id, required: true, schema: { type: string } }
+        - { in: header, name: svix-timestamp, required: true, schema: { type: string } }
+        - { in: header, name: svix-signature, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ResendDeliveryEvent" }
+      responses:
+        "200": { description: Authenticated event recorded or ignored }
+        "400": { description: Invalid signature or payload }
+        "503": { description: Signing secret or database unavailable }
   /auth/schools/contacts:
     post:
       operationId: reviewSchoolContacts
@@ -145,6 +162,17 @@ paths:
                 $ref: "#/components/schemas/ApiError"
 components:
   schemas:
+    ResendDeliveryEvent:
+      type: object
+      required: [type, created_at, data]
+      properties:
+        type: { type: string }
+        created_at: { type: string }
+        data:
+          type: object
+          required: [email_id]
+          properties:
+            email_id: { type: string }
     SchoolContactsInput:
       type: object
       required: [username, schoolIds]
@@ -221,6 +249,8 @@ components:
         sentAt: { type: string }
         packageVersion: { type: string }
         providerMessageId: { type: [string, "null"] }
+        deliveryStatus: { type: string, enum: [delivered, bounced, complained, failed, delayed] }
+        deliveryUpdatedAt: { type: string }
     SchoolOutreachResponse:
       type: object
       required: [results]
