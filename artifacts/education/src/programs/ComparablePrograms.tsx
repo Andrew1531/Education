@@ -1,15 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ExternalLink, FileSearch, GraduationCap, Info, MapPin, Search, ShieldAlert, BookOpenCheck } from 'lucide-react';
 import { PROGRAMS, FIELDS } from './catalog';
-import type { ProgramField, ProgramRecord } from './catalog';
+import type { CertificateType, ProgramField, ProgramRecord } from './catalog';
 import { useSavedPrograms, programOpportunity } from './useSavedPrograms';
 import { ProgramOutreach } from './ProgramOutreach';
 import {
   LEVEL_CHOICES,
   LEVEL_LABELS,
+  CERTIFICATE_TYPE_LABELS,
   catalogLocations,
   formatCheckedAt,
   isMatchableLevel,
+  isKnownCertificateType,
   matchPrograms,
   profileKey,
   suggestField,
@@ -41,6 +43,7 @@ export function ComparablePrograms({ profile, es, username }: Props) {
   const [outreachBusy, setOutreachBusy] = useState(false);
 
   const [level, setLevel] = useState<LevelChoice | ''>('');
+  const [certificateType, setCertificateType] = useState<CertificateType | ''>('');
   const [field, setField] = useState<ProgramField | ''>(suggested ?? '');
   const [location, setLocation] = useState('all');
   const [results, setResults] = useState<ProgramRecord[] | null>(null);
@@ -49,6 +52,7 @@ export function ComparablePrograms({ profile, es, username }: Props) {
   // New profile → reset everything so no stale matches survive.
   useEffect(() => {
     setLevel('');
+    setCertificateType('');
     setField(suggested ?? '');
     setLocation('all');
     setResults(null);
@@ -57,20 +61,23 @@ export function ComparablePrograms({ profile, es, username }: Props) {
 
   const locations = useMemo(() => catalogLocations(PROGRAMS), []);
   const fieldKeys = Object.keys(FIELDS) as ProgramField[];
-  const canSearch = isMatchableLevel(level) && !!field && field !== 'other';
+  const canSearch = isMatchableLevel(level) && !!field && field !== 'other'
+    && (level !== 'certificate' || isKnownCertificateType(certificateType));
 
   const clearResults = () => { setResults(null); setSearchedFor(''); };
 
   const onSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSearch) return;
-    setResults(matchPrograms(PROGRAMS, { level, field, location }));
-    setSearchedFor(JSON.stringify([key, level, field, location]));
+    setResults(matchPrograms(PROGRAMS, { level, certificateType, field, location }));
+    setSearchedFor(JSON.stringify([key, level, certificateType, field, location]));
   };
 
-  const fresh = results !== null && searchedFor === JSON.stringify([key, level, field, location]);
+  const fresh = results !== null && searchedFor === JSON.stringify([key, level, certificateType, field, location]);
   const fieldLabel = field ? FIELDS[field][es ? 'es' : 'en'] : '';
-  const levelLabel = level ? LEVEL_LABELS[level][es ? 'es' : 'en'] : '';
+  const levelLabel = level === 'certificate' && certificateType
+    ? CERTIFICATE_TYPE_LABELS[certificateType][es ? 'es' : 'en']
+    : level ? LEVEL_LABELS[level][es ? 'es' : 'en'] : '';
 
   return (
     <section
@@ -125,7 +132,7 @@ export function ComparablePrograms({ profile, es, username }: Props) {
               id="cp-level"
               className={selectCls}
               value={level}
-              onChange={(e) => { setLevel(e.target.value as LevelChoice | ''); clearResults(); }}
+              onChange={(e) => { setLevel(e.target.value as LevelChoice | ''); setCertificateType(''); clearResults(); }}
               data-testid="select-cp-level"
             >
               <option value="">{L('Choose a level…', 'Elija un nivel…')}</option>
@@ -133,6 +140,32 @@ export function ComparablePrograms({ profile, es, username }: Props) {
                 <option key={l} value={l}>{LEVEL_LABELS[l][es ? 'es' : 'en']}</option>
               ))}
             </select>
+            {level === 'certificate' && (
+              <div className="space-y-2">
+                <label htmlFor="cp-certificate-type" className="text-sm font-semibold text-slate-200">
+                  {L('Certificate type', 'Tipo de certificado')}
+                </label>
+                <select
+                  id="cp-certificate-type"
+                  className={selectCls}
+                  value={certificateType}
+                  onChange={(e) => { setCertificateType(e.target.value as CertificateType | ''); clearResults(); }}
+                  data-testid="select-cp-certificate-type"
+                  aria-describedby="cp-certificate-hint"
+                >
+                  <option value="">{L('Choose a certificate type…', 'Elija un tipo de certificado…')}</option>
+                  {(Object.keys(CERTIFICATE_TYPE_LABELS) as CertificateType[]).map(type => (
+                    <option key={type} value={type}>{CERTIFICATE_TYPE_LABELS[type][es ? 'es' : 'en']}</option>
+                  ))}
+                </select>
+                <p id="cp-certificate-hint" className="text-xs text-slate-400">
+                  {L(
+                    'Use the award’s documented academic level, not a translated title. Graduate certificates are not master’s degrees.',
+                    'Use el nivel académico documentado del certificado, no un título traducido. Los certificados de posgrado no son maestrías.',
+                  )}
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -184,6 +217,14 @@ export function ComparablePrograms({ profile, es, username }: Props) {
           )}
         </p>
 
+        {level === 'certificate' && certificateType === 'uncertain' && (
+          <div role="status" className="rounded-xl border border-amber-500/30 bg-amber-950/25 p-4 text-sm text-amber-100" data-testid="text-cp-uncertain-certificate">
+            {L(
+              'We cannot show comparable certificates until the type is known. We will not infer undergraduate or graduate level from a translated title or claim U.S. equivalency. Ask the awarding institution, a credential evaluation service or the receiving school to clarify the academic level.',
+              'No podemos mostrar certificados comparables hasta conocer el tipo. No inferimos el nivel de pregrado o posgrado de un título traducido ni afirmamos equivalencia en EE. UU. Consulte el nivel académico con la institución que lo otorgó, un servicio de evaluación de credenciales o la institución receptora.',
+            )}
+          </div>
+        )}
         {level === 'unknown' && (
           <div role="status" className="rounded-xl border border-amber-500/30 bg-amber-950/25 p-4 text-sm text-amber-100" data-testid="text-cp-unknown-level">
             {L(
@@ -244,8 +285,8 @@ export function ComparablePrograms({ profile, es, username }: Props) {
                   <p className="mt-3 flex items-start gap-2 rounded-lg bg-indigo-950/40 px-3 py-2 text-xs text-indigo-100" data-testid={`text-cp-reason-${p.id}`}>
                     <GraduationCap className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" aria-hidden />
                     {L(
-                      `Same level (${LEVEL_LABELS[p.level].en}) and same field (${FIELDS[p.field].en}) as you selected.`,
-                      `Mismo nivel (${LEVEL_LABELS[p.level].es}) y mismo campo (${FIELDS[p.field].es}) que seleccionó.`,
+                      `Same level (${p.level === 'certificate' && p.certificateType ? CERTIFICATE_TYPE_LABELS[p.certificateType].en : LEVEL_LABELS[p.level].en}) and same field (${FIELDS[p.field].en}) as you selected.`,
+                      `Mismo nivel (${p.level === 'certificate' && p.certificateType ? CERTIFICATE_TYPE_LABELS[p.certificateType].es : LEVEL_LABELS[p.level].es}) y mismo campo (${FIELDS[p.field].es}) que seleccionó.`,
                     )}
                   </p>
                   <p className="mt-3 flex items-start gap-2 text-sm leading-relaxed text-slate-300" data-testid={`text-cp-note-${p.id}`}>

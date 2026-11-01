@@ -16,6 +16,55 @@ function pick(level: string, field: string) {
 }
 
 describe('ComparablePrograms', () => {
+  it.each([false, true])('requires certificate type and explains uncertainty in both languages (es=%s)', es => {
+    render(<ComparablePrograms profile={{ ...profile, degree: 'Graduate Certificate / Certificado de posgrado' }} es={es} />);
+    pick('certificate', 'accounting');
+    const type = screen.getByLabelText(es ? 'Tipo de certificado' : 'Certificate type') as HTMLSelectElement;
+    const search = screen.getByTestId('button-cp-search') as HTMLButtonElement;
+    expect(type.value).toBe('');
+    expect(search.disabled).toBe(true);
+    expect(type.textContent).toContain(es ? 'Certificado de pregrado' : 'Undergraduate certificate');
+    expect(type.textContent).toContain(es ? 'Certificado de posgrado' : 'Graduate certificate');
+    fireEvent.change(type, { target: { value: 'uncertain' } });
+    expect(search.disabled).toBe(true);
+    expect(screen.getByTestId('text-cp-uncertain-certificate').textContent)
+      .toContain(es ? 'No inferimos' : 'We will not infer');
+    fireEvent.submit(screen.getByTestId('form-comparable-programs'));
+    expect(screen.queryByTestId('list-cp-results')).toBeNull();
+
+    fireEvent.change(type, { target: { value: 'undergraduate' } });
+    expect(search.disabled).toBe(false);
+    fireEvent.click(search);
+    expect(screen.getByTestId('text-cp-reason-uaf-accounting-cert').textContent)
+      .toContain(es ? 'Certificado de pregrado' : 'Undergraduate certificate');
+    fireEvent.change(type, { target: { value: 'graduate' } });
+    expect(screen.queryByTestId('list-cp-results')).toBeNull();
+    fireEvent.click(search);
+    expect(screen.getByTestId('text-cp-empty').textContent)
+      .toContain(es ? 'certificado de posgrado' : 'graduate certificate');
+    fireEvent.change(type, { target: { value: 'uncertain' } });
+    expect(screen.queryByTestId('text-cp-empty')).toBeNull();
+    expect(search.disabled).toBe(true);
+  });
+
+  it('resets certificate type on level and profile changes', () => {
+    const { rerender } = render(<ComparablePrograms profile={profile} es={false} />);
+    pick('certificate', 'accounting');
+    fireEvent.change(screen.getByTestId('select-cp-certificate-type'), { target: { value: 'undergraduate' } });
+    fireEvent.click(screen.getByTestId('button-cp-search'));
+    fireEvent.change(screen.getByTestId('select-cp-level'), { target: { value: 'bachelor' } });
+    expect(screen.queryByTestId('select-cp-certificate-type')).toBeNull();
+    expect(screen.queryByTestId('list-cp-results')).toBeNull();
+    pick('certificate', 'accounting');
+    expect((screen.getByTestId('select-cp-certificate-type') as HTMLSelectElement).value).toBe('');
+    fireEvent.change(screen.getByTestId('select-cp-certificate-type'), { target: { value: 'undergraduate' } });
+    fireEvent.click(screen.getByTestId('button-cp-search'));
+    rerender(<ComparablePrograms profile={{ ...profile, degree: 'Another certificate' }} es={false} />);
+    expect(screen.queryByTestId('list-cp-results')).toBeNull();
+    pick('certificate', 'accounting');
+    expect((screen.getByTestId('select-cp-certificate-type') as HTMLSelectElement).value).toBe('');
+  });
+
   it.each([
     ['certificate', 'accounting', 'uaf-accounting-cert', false],
     ['associate', 'engineering', 'uafs-engineering-as', false],
@@ -25,6 +74,9 @@ describe('ComparablePrograms', () => {
   ])('renders sourced %s %s results and the admissions caveat', (level, field, id, es) => {
     render(<ComparablePrograms profile={profile} es={es} />);
     pick(level as string, field as string);
+    if (level === 'certificate') {
+      fireEvent.change(screen.getByTestId('select-cp-certificate-type'), { target: { value: 'undergraduate' } });
+    }
     fireEvent.click(screen.getByTestId('button-cp-search'));
     const p = PROGRAMS.find(p => p.id === id)!;
     const card = screen.getByTestId(`card-cp-program-${id}`);

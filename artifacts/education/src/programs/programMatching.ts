@@ -1,9 +1,19 @@
-import type { ProgramField, ProgramLevel, ProgramRecord } from './catalog';
+import type { CertificateType, ProgramField, ProgramLevel, ProgramRecord } from './catalog';
 import { FIELDS } from './catalog';
 
 export type LevelChoice = ProgramLevel | 'unknown';
 
 export const LEVEL_CHOICES: LevelChoice[] = ['certificate', 'associate', 'bachelor', 'master', 'unknown'];
+
+export const CERTIFICATE_TYPE_LABELS: Record<CertificateType, { en: string; es: string }> = {
+  undergraduate: { en: 'Undergraduate certificate', es: 'Certificado de pregrado' },
+  graduate: { en: 'Graduate certificate', es: 'Certificado de posgrado' },
+  uncertain: { en: 'Not sure', es: 'No estoy seguro' },
+};
+
+export function isKnownCertificateType(value: string | null | undefined): value is 'undergraduate' | 'graduate' {
+  return value === 'undergraduate' || value === 'graduate';
+}
 
 export const LEVEL_LABELS: Record<LevelChoice, { en: string; es: string }> = {
   certificate: { en: 'Certificate', es: 'Certificado' },
@@ -44,6 +54,7 @@ export function isMatchableLevel(level: LevelChoice | '' | null | undefined): le
 
 export interface MatchQuery {
   level: LevelChoice | '';
+  certificateType?: CertificateType | '';
   field: ProgramField | '';
   location?: string;
 }
@@ -51,9 +62,12 @@ export interface MatchQuery {
 /** Strict same-level, same-field filter. Never returns another level. */
 export function matchPrograms(programs: readonly ProgramRecord[], q: MatchQuery): ProgramRecord[] {
   if (!isMatchableLevel(q.level) || !q.field || q.field === 'other') return [];
+  // Unresolved types cannot establish a same-type comparison in either direction.
+  if (q.level === 'certificate' && !isKnownCertificateType(q.certificateType)) return [];
   const loc = q.location && q.location !== 'all' ? q.location : '';
   return programs
     .filter((p) => p.level === q.level && p.field === q.field && (!loc || p.location === loc))
+    .filter((p) => p.level !== 'certificate' || (isKnownCertificateType(p.certificateType) && p.certificateType === q.certificateType))
     .slice()
     .sort((a, b) => a.institution.localeCompare(b.institution));
 }

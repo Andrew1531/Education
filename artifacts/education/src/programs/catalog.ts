@@ -5,6 +5,7 @@
  */
 import { programIdentity } from '@workspace/program-catalog';
 export type ProgramLevel = 'certificate' | 'associate' | 'bachelor' | 'master';
+export type CertificateType = 'undergraduate' | 'graduate' | 'uncertain';
 export type ProgramField = 'computer_science' | 'business' | 'accounting' | 'psychology' |
   'nursing' | 'education' | 'engineering' | 'biology' | 'arts' | 'law' | 'dentistry' | 'other';
 
@@ -14,6 +15,8 @@ export interface ProgramRecord {
   location: string;
   field: ProgramField;
   level: ProgramLevel;
+  /** Editorially sourced, never inferred from a title. Missing means unresolved. */
+  certificateType?: CertificateType;
   title: string;
   url: string;
   sourceUrl: string;
@@ -67,6 +70,7 @@ function uaf(id: string, field: 'accounting' | 'business', level: 'certificate' 
   return {
     id, institution: 'University of Alaska Fairbanks', location: 'Fairbanks, Alaska',
     field, level, title, url, sourceUrl: url, checkedAt,
+    ...(level === 'certificate' ? { certificateType: 'undergraduate' as const } : {}),
     admissionsNote: {
       en: `This is an ${level === 'certificate' ? 'undergraduate certificate, not a graduate certificate or degree' : 'applied associate degree, not a bachelor’s degree'}. Ask admissions about international credentials, placement and transfer credit; further-degree admission and professional licensing are separate decisions.`,
       es: `Este programa es ${level === 'certificate' ? 'un certificado de pregrado, no un certificado de posgrado ni un grado académico' : 'un título asociado aplicado, no una licenciatura'}. Consulte con admisiones sobre credenciales internacionales, ubicación y créditos transferibles; la admisión a otros títulos y las licencias profesionales son decisiones aparte.`,

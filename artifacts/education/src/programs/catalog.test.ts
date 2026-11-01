@@ -36,7 +36,7 @@ const coverage: [ProgramLevel, ProgramField, string][] = [
 
 describe('same-level coverage', () => {
   it.each(coverage)('finds %s %s in %s without substituting levels or fields', (level, field, location) => {
-    const matches = matchPrograms(PROGRAMS, { level, field, location });
+    const matches = matchPrograms(PROGRAMS, { level, field, location, certificateType: level === 'certificate' ? 'undergraduate' : undefined });
     expect(matches.length).toBeGreaterThan(0);
     expect(matches.every(p => p.level === level && p.field === field && p.location === location)).toBe(true);
     expect(catalogLocations(PROGRAMS)).toContain(location);
@@ -59,6 +59,7 @@ describe('same-level coverage', () => {
   });
   it('does not present undergraduate certificates as graduate awards', () => {
     for (const p of PROGRAMS.filter(p => p.level === 'certificate')) {
+      expect(p.certificateType).toBe('undergraduate');
       expect(p.title).toContain('Undergraduate Certificate');
       expect(p.admissionsNote.en).toContain('not a graduate certificate');
       expect(p.admissionsNote.es).toContain('no un certificado de posgrado');

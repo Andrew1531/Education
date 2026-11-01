@@ -17,6 +17,29 @@ const sample: ProgramRecord[] = [
 ];
 
 describe('matchPrograms', () => {
+  const certificates = [
+    rec({ id: 'ug', level: 'certificate', certificateType: 'undergraduate', title: 'Certificado de posgrado' }),
+    rec({ id: 'grad', level: 'certificate', certificateType: 'graduate', title: 'Undergraduate Certificate' }),
+    rec({ id: 'uncertain', level: 'certificate', certificateType: 'uncertain', title: 'Graduate Certificate' }),
+    rec({ id: 'missing', level: 'certificate', title: 'Undergraduate Certificate' }),
+    rec({ id: 'other-field', level: 'certificate', certificateType: 'graduate', field: 'business' }),
+    rec({ id: 'other-location', level: 'certificate', certificateType: 'graduate', location: 'Ohio' }),
+    rec({ id: 'degree', level: 'master' }),
+  ];
+  it.each(['undergraduate', 'graduate'] as const)('matches only explicit %s certificate metadata, never titles', certificateType => {
+    expect(matchPrograms(certificates, { level: 'certificate', certificateType, field: 'nursing', location: 'Texas' })
+      .map(p => p.id)).toEqual([certificateType === 'undergraduate' ? 'ug' : 'grad']);
+  });
+  it.each(['uncertain', '', undefined] as const)('refuses unresolved certificate queries (%s)', certificateType => {
+    expect(matchPrograms(certificates, { level: 'certificate', certificateType, field: 'nursing' })).toEqual([]);
+  });
+  it('does not confuse a graduate certificate with a master degree', () => {
+    expect(matchPrograms(certificates, { level: 'master', certificateType: 'graduate', field: 'nursing' })
+      .map(p => p.id)).toEqual(['degree']);
+  });
+  it('preserves the graduate certificate gap in the real catalog', () => {
+    expect(matchPrograms(PROGRAMS, { level: 'certificate', certificateType: 'graduate', field: 'business' })).toEqual([]);
+  });
   it('returns only same level and same field, sorted alphabetically', () => {
     expect(matchPrograms(sample, { level: 'bachelor', field: 'nursing' }).map((p) => p.id)).toEqual(['4', '1']);
   });
