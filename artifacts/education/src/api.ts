@@ -560,6 +560,8 @@ export const OutreachResultSchema = z.object({
   recipient: z.string().optional(),
   recipientSourceUrl: z.string().optional(),
   providerMessageId: z.string().nullable().optional(),
+  deliveryStatus: z.enum(['delivered', 'bounced', 'complained', 'failed', 'delayed']).optional(),
+  deliveryUpdatedAt: z.string().optional(),
 });
 export type OutreachResult = z.infer<typeof OutreachResultSchema>;
 
@@ -604,6 +606,8 @@ export interface OutreachHistoryItem {
   recipientSourceUrl?: string;
   result: 'sent' | 'failed' | 'unknown' | 'not_attempted';
   providerMessageId?: string | null;
+  deliveryStatus?: 'delivered' | 'bounced' | 'complained' | 'failed' | 'delayed';
+  deliveryUpdatedAt?: string;
   sentAt: string;
 }
 

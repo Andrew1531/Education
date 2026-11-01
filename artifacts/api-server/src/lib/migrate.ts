@@ -49,6 +49,19 @@ export async function ensureSchema(): Promise<void> {
     CREATE INDEX IF NOT EXISTS school_outreach_requests_owner_idx
       ON school_outreach_requests (username, created_at)
   `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS school_outreach_delivery_events (
+      event_id text PRIMARY KEY,
+      provider_message_id text NOT NULL,
+      status text NOT NULL CHECK (status IN ('delivered','bounced','complained','failed','delayed')),
+      occurred_at timestamptz NOT NULL,
+      received_at timestamptz NOT NULL DEFAULT now()
+    )
+  `);
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS school_outreach_delivery_message_idx
+      ON school_outreach_delivery_events (provider_message_id, occurred_at)
+  `);
   // Keep the DB safe even if a future writer bypasses the API validation.
   await pool.query(`
     DO $$ BEGIN

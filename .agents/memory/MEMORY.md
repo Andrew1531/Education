@@ -5,3 +5,4 @@
 - [Institution evidence limits](institution-evidence-limits.md) — directory misses and throttling are not proof a college is fake; preserve uncertainty without blocking guidance.
 - [Uniform education guidance](education-guidance-scope.md) — one shared qualification workflow focused on U.S. context, not country-by-country registry integrations.
 - [School communication email](school-communication-email.md) — the user wants the applicant’s account email to be the means of communication with schools.
+- [Webhook verification compatibility](webhook-verification.md) — verify first, parse separately; Svix changed its return-value contract.

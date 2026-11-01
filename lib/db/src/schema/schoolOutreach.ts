@@ -19,7 +19,19 @@ export interface SchoolOutreachOutcome {
   result: "sent" | "failed" | "unknown" | "not_attempted";
   providerMessageId: string | null;
   sentAt: string;
+  deliveryStatus?: "delivered" | "bounced" | "complained" | "failed" | "delayed";
+  deliveryUpdatedAt?: string;
 }
+
+export const schoolOutreachDeliveryEventsTable = pgTable("school_outreach_delivery_events", {
+  eventId: text("event_id").primaryKey(),
+  providerMessageId: text("provider_message_id").notNull(),
+  status: text("status").notNull(),
+  occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull(),
+  receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+  index("school_outreach_delivery_message_idx").on(table.providerMessageId, table.occurredAt),
+]);
 
 export const schoolOutreachRequestsTable = pgTable("school_outreach_requests", {
   idempotencyKey: text("idempotency_key").primaryKey(),

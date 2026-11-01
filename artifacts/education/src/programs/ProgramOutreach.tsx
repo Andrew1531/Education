@@ -46,10 +46,19 @@ export function ProgramOutreach({ username, items, remote, busy, profileKey, pro
   useEffect(() => {
     reset(); setSelected([]); setHistory([]);
     let active = true;
-    if (remote) void apiFetchSchoolOutreachHistory(username).then(data => {
-      if (active) setHistory(data);
-    }).catch(() => { if (active) setError('history'); });
-    return () => { active = false; version.current++; };
+    let refreshing = false;
+    const refresh = async () => {
+      if (!remote || refreshing) return;
+      refreshing = true;
+      try {
+        const data = await apiFetchSchoolOutreachHistory(username);
+        if (active) setHistory(data);
+      } catch { if (active) setError('history'); }
+      finally { refreshing = false; }
+    };
+    void refresh();
+    const timer = remote ? window.setInterval(() => { if (!document.hidden) void refresh(); }, 30_000) : undefined;
+    return () => { active = false; version.current++; window.clearInterval(timer); };
   }, [username, profileKey, savedKey, remote]);
   // Consent never survives language changes either.
   useEffect(() => { setConsent(false); }, [es]);
@@ -104,6 +113,16 @@ export function ProgramOutreach({ username, items, remote, busy, profileKey, pro
     : result === 'failed' ? L('Provider rejected the request', 'El proveedor rechazó la solicitud')
     : result === 'unknown' ? L('Outcome unknown — do not resend automatically', 'Resultado desconocido — no reenviar automáticamente')
     : L('Not attempted', 'No se intentó');
+  const deliveryStatus = (item: { deliveryStatus?: OutreachHistoryItem['deliveryStatus'] }) => {
+    switch (item.deliveryStatus) {
+      case 'delivered': return L('Delivered to the recipient’s mail server — not a school response', 'Entregado al servidor de correo del destinatario — no es una respuesta de la institución');
+      case 'bounced': return L('Bounced — delivery failed', 'Rebotado — la entrega falló');
+      case 'complained': return L('Reported as spam', 'Marcado como correo no deseado');
+      case 'failed': return L('Email delivery failed', 'La entrega del correo falló');
+      case 'delayed': return L('Delivery delayed — not confirmed', 'Entrega retrasada — no confirmada');
+      default: return '';
+    }
+  };
 
   return <section className="space-y-4 border-t border-slate-700 pt-6" data-testid="section-program-outreach">
     <h4 className="text-lg font-bold text-white">{L('Saved programs and schools', 'Programas e instituciones guardados')}</h4>
@@ -158,10 +177,20 @@ export function ProgramOutreach({ username, items, remote, busy, profileKey, pro
       <p className="text-xs text-slate-400">{L('If several programs share a recipient, only one message is sent to that email address.', 'Si varios programas comparten un destinatario, solo se envía un mensaje a esa dirección de correo.')}</p>
     </div>}
     {results.length > 0 && <div role="status" data-testid="program-outreach-results">{results.map(r => <p key={r.schoolId} className="text-sm text-slate-200">
-      {saved.find(o => o.id === r.schoolId)?.title} {('recipient' in r && r.recipient) || ''} — {status(r.result)}
+      {saved.find(o => o.id === r.schoolId)?.title} {('recipient' in r && r.recipient) || ''} — {(() => {
+        const latest = history.find(h => h.schoolId === r.schoolId && h.providerMessageId && 'providerMessageId' in r && h.providerMessageId === r.providerMessageId);
+        return latest?.deliveryStatus ? deliveryStatus(latest) : status(r.result);
+      })()}
     </p>)}</div>}
     {history.length > 0 && <details className="text-sm text-slate-300"><summary>{L('Outreach history', 'Historial de comunicaciones')}</summary>
-      {history.map((h, i) => <p key={i}>{h.schoolName} · {h.recipient} · {new Date(h.sentAt).toLocaleString(es ? 'es' : 'en')} — {status(h.result)}</p>)}
+      <p className="text-xs text-slate-400">{L('Delivery updates refresh every 30 seconds. Delivery is not a school response or an admission decision. No automatic resends.', 'Las actualizaciones de entrega se consultan cada 30 segundos. La entrega no es una respuesta de la institución ni una decisión de admisión. No hay reenvíos automáticos.')}</p>
+      {history.map((h, i) => <div key={i} className="py-2">
+        <p>{h.schoolName} · {h.recipient} · {new Date(h.sentAt).toLocaleString(es ? 'es' : 'en')} — {deliveryStatus(h) || status(h.result)}</p>
+        {h.deliveryStatus && <p className="text-xs text-slate-400">
+          {L('Original send outcome:', 'Resultado original del envío:')} {h.result === 'sent' ? L('Accepted by email provider', 'Aceptado por el proveedor de correo') : status(h.result)}
+          {h.deliveryUpdatedAt && <> · {new Date(h.deliveryUpdatedAt).toLocaleString(es ? 'es' : 'en')}</>}
+        </p>}
+      </div>)}
     </details>}
   </section>;
 }

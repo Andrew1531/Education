@@ -9,6 +9,7 @@ import { ReplitConnectors } from "@replit/connectors-sdk";
 import { db, pool, usersTable, type Opportunity, type SchoolOutreachOutcome } from "@workspace/db";
 import { verifyUserToken } from "../lib/userToken";
 import { resolvePublicSchool, ScorecardKeyNotConfiguredError } from "./schools";
+import { withDelivery } from "./resendWebhook";
 
 const router: IRouter = Router();
 const connector = new ReplitConnectors();
@@ -398,8 +399,8 @@ router.get("/auth/school-outreach-history", async (req, res): Promise<void> => {
     // Retain outcomes saved by the earlier user-profile storage format.
     const combined = [...history, ...(user.schoolOutreachHistory ?? [])];
     const unique = new Map(combined.map(item => [`${item.schoolId}:${item.recipient}:${item.sentAt}`, item]));
-    res.json({ history: [...unique.values()]
-      .sort((a, b) => Date.parse(b.sentAt) - Date.parse(a.sentAt)).slice(0, 50) });
+    res.json({ history: await withDelivery([...unique.values()]
+      .sort((a, b) => Date.parse(b.sentAt) - Date.parse(a.sentAt)).slice(0, 50)) });
   } catch {
     res.status(503).json({ error: "school_outreach_storage_unavailable" });
   }

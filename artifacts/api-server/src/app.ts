@@ -3,6 +3,7 @@ import cors from "cors";
 import pinoHttp from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { resendWebhookRouter } from "./routes/resendWebhook";
 
 const app: Express = express();
 
@@ -26,6 +27,9 @@ app.use(
   }),
 );
 app.use(cors());
+// Svix must verify the exact bytes, before the general JSON parser consumes them.
+app.use("/api/webhooks/resend", express.raw({ type: "application/json", limit: "64kb" }));
+app.use("/api", resendWebhookRouter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
