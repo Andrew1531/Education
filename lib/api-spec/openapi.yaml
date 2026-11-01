@@ -13,6 +13,65 @@ tags:
   - name: institutions
     description: Public, source-backed institution verification
 paths:
+  /auth/schools/contacts:
+    post:
+      operationId: reviewSchoolContacts
+      summary: Verify official recipients and preview the exact server-held profile
+      parameters:
+        - { in: header, name: x-auth-token, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SchoolContactsInput" }
+      responses:
+        "200":
+          description: Official contacts and a signed, expiring preview
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SchoolReview" }
+        "401": { description: Invalid owner token }
+        "403": { description: Purpose disallowed or school not saved }
+        "429": { description: Discovery rate limited }
+  /auth/school-outreach:
+    post:
+      operationId: sendReviewedSchoolOutreach
+      summary: Send only the explicitly consented, unchanged preview to reverified recipients
+      parameters:
+        - { in: header, name: x-auth-token, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SchoolOutreachInput" }
+      responses:
+        "200":
+          description: Per-recipient acceptance, rejection, or unknown outcomes, not delivery confirmation
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SchoolOutreachResponse" }
+        "401": { description: Invalid owner token }
+        "409": { description: "Changed or expired preview, or request processing or unknown" }
+        "503": { description: Required backend service unavailable }
+  /auth/school-outreach-history:
+    get:
+      operationId: getSchoolOutreachHistory
+      parameters:
+        - { in: header, name: x-auth-token, required: true, schema: { type: string } }
+        - { in: query, name: username, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: The authenticated owner's recorded outcomes
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [history]
+                properties:
+                  history:
+                    type: array
+                    items: { $ref: "#/components/schemas/SchoolOutreachOutcome" }
+        "401": { description: Invalid owner token }
   /auth/profile:
     post:
       operationId: saveEducationProfile
@@ -86,6 +145,91 @@ paths:
                 $ref: "#/components/schemas/ApiError"
 components:
   schemas:
+    SchoolContactsInput:
+      type: object
+      required: [username, schoolIds]
+      properties:
+        username: { type: string }
+        schoolIds:
+          type: array
+          minItems: 1
+          maxItems: 10
+          uniqueItems: true
+          description: Stable official program IDs or preserved numeric legacy school IDs
+          items: { type: string }
+    SchoolRecipient:
+      type: object
+      required: [email, sourceUrl]
+      properties:
+        email: { type: string }
+        sourceUrl: { type: string }
+    SchoolContact:
+      type: object
+      required: [schoolId, schoolName, status, recipients, fallbackUrl]
+      properties:
+        schoolId: { type: string }
+        schoolName: { type: [string, "null"] }
+        status: { type: string, enum: [verified, fallback, unavailable] }
+        recipients:
+          type: array
+          items: { $ref: "#/components/schemas/SchoolRecipient" }
+        fallbackUrl: { type: [string, "null"] }
+        error: { type: string }
+    SchoolOutreachPreview:
+      type: object
+      required: [text, token, expiresAt]
+      properties:
+        text: { type: string }
+        token: { type: string }
+        expiresAt: { type: number }
+    SchoolReview:
+      type: object
+      required: [contacts, preview]
+      properties:
+        contacts:
+          type: array
+          items: { $ref: "#/components/schemas/SchoolContact" }
+        preview: { $ref: "#/components/schemas/SchoolOutreachPreview" }
+    SchoolOutreachSelection:
+      type: object
+      required: [schoolId, email]
+      properties:
+        schoolId: { type: string }
+        email: { type: string }
+    SchoolOutreachInput:
+      type: object
+      required: [username, requestId, schools, consent, preview]
+      properties:
+        username: { type: string }
+        requestId: { type: string, minLength: 16, maxLength: 100 }
+        schools:
+          type: array
+          minItems: 1
+          maxItems: 10
+          items: { $ref: "#/components/schemas/SchoolOutreachSelection" }
+        consent: { type: boolean, enum: [true] }
+        preview: { $ref: "#/components/schemas/SchoolOutreachPreview" }
+    SchoolOutreachOutcome:
+      type: object
+      required: [schoolId, schoolName, recipient, recipientSourceUrl, result, sentAt]
+      properties:
+        schoolId: { type: string }
+        schoolName: { type: string }
+        recipient: { type: string }
+        recipientSourceUrl: { type: string }
+        result: { type: string, enum: [sent, failed, unknown, not_attempted] }
+        sentAt: { type: string }
+        packageVersion: { type: string }
+        providerMessageId: { type: [string, "null"] }
+    SchoolOutreachResponse:
+      type: object
+      required: [results]
+      properties:
+        results:
+          type: array
+          items: { $ref: "#/components/schemas/SchoolOutreachOutcome" }
+        meaning: { type: string }
+        historySaved: { type: boolean }
     EducationProfileInput:
       type: object
       required: [username, profile]

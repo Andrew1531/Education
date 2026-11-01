@@ -1,5 +1,6 @@
 import { Router, type IRouter } from "express";
-import { createHash } from "node:crypto";
+import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { programIdentity } from "@workspace/program-catalog";
 import { lookup } from "node:dns/promises";
 import { request as httpsRequest } from "node:https";
 import { isIP, type LookupFunction } from "node:net";
@@ -38,8 +39,12 @@ export function isSameOrigin(candidate: URL, official: URL): boolean {
 }
 
 function hostAllowed(host: string, official: string): boolean {
-  const h = host.toLowerCase(), o = official.toLowerCase();
-  return h === o || h.endsWith(`.${o}`) || o.endsWith(`.${h}`);
+  const h = host.toLowerCase(), o = official.toLowerCase().replace(/^www\./, "");
+  return h === o || h.endsWith(`.${o}`);
+}
+
+export function validOutreachId(id: string): boolean {
+  return /^\d{1,12}$/.test(id) || !!programIdentity(id);
 }
 
 async function validatedTarget(url: URL): Promise<{ address: string; family: 4 | 6 }> {
@@ -91,11 +96,16 @@ async function pinnedPage(url: URL): Promise<string> {
 
 export interface Contact { email: string; sourceUrl: string }
 export async function contactsForSchool(schoolId: string): Promise<{
-  school: Awaited<ReturnType<typeof resolvePublicSchool>>;
+  school: { name: string; website: string | null } | null;
   contacts: Contact[];
   fallbackUrl: string | null;
 }> {
-  const school = await resolvePublicSchool(schoolId);
+  // Never resolve a sourced program through an optional government API or trust
+  // a URL supplied in a saved opportunity.
+  const program = programIdentity(schoolId);
+  const school = program
+    ? { name: program.institution, website: program.contactUrl }
+    : await resolvePublicSchool(schoolId);
   if (!school?.website) return { school, contacts: [], fallbackUrl: null };
   let official: URL;
   try { official = new URL(school.website); }
@@ -110,7 +120,9 @@ export async function contactsForSchool(schoolId: string): Promise<{
   const contacts: Contact[] = [], found = new Set<string>();
   const scan = (source: string, text: string) => {
     for (const match of text.matchAll(/href\s*=\s*["']mailto:([^"'?#\s]+)[^"']*["']/gi)) {
-      const email = decodeURIComponent(match[1]!).trim().toLowerCase(), domain = email.match(EMAIL)?.[1];
+      let email: string;
+      try { email = decodeURIComponent(match[1]!).trim().toLowerCase(); } catch { continue; }
+      const domain = email.match(EMAIL)?.[1];
       const nearby = text.slice(Math.max(0, match.index! - 240), match.index! + match[0].length + 240).replace(/<[^>]+>/g, " ");
       if (domain && hostAllowed(domain, official.hostname) &&
           (CONTEXT.test(email.split("@")[0]!) || CONTEXT.test(nearby)) && !found.has(email)) {
@@ -178,7 +190,7 @@ router.post("/auth/schools/contacts", async (req, res): Promise<void> => {
   const username = typeof req.body?.username === "string" ? req.body.username.trim() : "";
   const ids = req.body?.schoolIds;
   if (!username || !Array.isArray(ids) || !ids.length || ids.length > 10 ||
-      ids.some((id) => typeof id !== "string" || !/^\d{1,12}$/.test(id)) || new Set(ids).size !== ids.length) {
+      ids.some((id) => typeof id !== "string" || !validOutreachId(id)) || new Set(ids).size !== ids.length) {
     res.status(400).json({ error: "invalid_school_contacts_request" }); return;
   }
   if (!verifyUserToken(username, req.header("x-auth-token"))) { res.status(401).json({ error: "unauthorized" }); return; }
@@ -202,11 +214,27 @@ router.post("/auth/schools/contacts", async (req, res): Promise<void> => {
         error: error instanceof ScorecardKeyNotConfiguredError ? "college_scorecard_api_key_not_configured" : "school_contact_unavailable" };
     }
   }));
-  if (contacts.some((item) => item.error === "college_scorecard_api_key_not_configured")) {
-    res.status(503).json({ error: "college_scorecard_api_key_not_configured" }); return;
-  }
-  res.json({ contacts });
+  const schools = contacts.filter(c => c.status === "verified" && c.recipients[0])
+    .map(c => ({ schoolId: c.schoolId, email: c.recipients[0]!.email }));
+  const content = packageFor(auth.user!);
+  const expiresAt = Date.now() + 15 * 60_000;
+  res.json({ contacts, preview: { text: content.text, expiresAt,
+    token: previewToken(username, schools, content.text, expiresAt) } });
 });
+
+function previewToken(username: string, schools: unknown, text: string, expiresAt: number): string {
+  return createHmac("sha256", process.env.SESSION_SECRET!)
+    .update(JSON.stringify([username, schools, text, expiresAt])).digest("hex");
+}
+
+export function validPreview(username: string, schools: unknown, text: string, preview: unknown): boolean {
+  if (!preview || typeof preview !== "object") return false;
+  const p = preview as { token?: unknown; expiresAt?: unknown };
+  if (typeof p.token !== "string" || !/^[a-f0-9]{64}$/.test(p.token) ||
+      typeof p.expiresAt !== "number" || p.expiresAt <= Date.now() ||
+      p.expiresAt > Date.now() + 15 * 60_000) return false;
+  return timingSafeEqual(Buffer.from(p.token), Buffer.from(previewToken(username, schools, text, p.expiresAt)));
+}
 
 function esc(s: string | null | undefined): string {
   return String(s || "Not provided").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
@@ -214,10 +242,8 @@ function esc(s: string | null | undefined): string {
 function packageFor(user: { institution: string | null; country: string | null; degree: string | null; field: string | null; purpose: string | null }) {
   const fields = [["Institution / Institución", user.institution], ["Country / País", user.country], ["Entered credential / Credencial ingresada", user.degree], ["Field / Campo", user.field], ["Purpose / Propósito", user.purpose]];
   const disclaimer = "VerifED is forwarding self-reported information and is not an official equivalency or admission determination. / VerifED transmite información autodeclarada y no es una determinación oficial de equivalencia o admisión.";
-  return {
-    text: `${disclaimer}\n\n${fields.map(([k, v]) => `${k}: ${v || "Not provided"}`).join("\n")}`,
-    html: `<p><strong>${esc(disclaimer)}</strong></p><table>${fields.map(([k, v]) => `<tr><th align="left">${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")}</table>`,
-  };
+  const text = `${disclaimer}\n\n${fields.map(([k, v]) => `${k}: ${v || "Not provided / No proporcionado"}`).join("\n")}`;
+  return { text, html: `<pre style="white-space:pre-wrap">${esc(text)}</pre>` };
 }
 
 async function sender(): Promise<string | null> {
@@ -234,7 +260,7 @@ router.post("/auth/school-outreach", async (req, res): Promise<void> => {
   const schools = req.body?.schools, requestId = req.body?.requestId;
   if (!username || req.body?.consent !== true || typeof requestId !== "string" || !REQUEST_ID.test(requestId) ||
       !Array.isArray(schools) || !schools.length || schools.length > 10 ||
-      schools.some((s) => !s || typeof s.schoolId !== "string" || !/^\d{1,12}$/.test(s.schoolId) || typeof s.email !== "string" || !EMAIL.test(s.email)) ||
+      schools.some((s) => !s || typeof s.schoolId !== "string" || !validOutreachId(s.schoolId) || typeof s.email !== "string" || !EMAIL.test(s.email)) ||
       new Set(schools.map((s) => s.schoolId)).size !== schools.length) {
     res.status(400).json({ error: "invalid_school_outreach_request" }); return;
   }
@@ -242,15 +268,21 @@ router.post("/auth/school-outreach", async (req, res): Promise<void> => {
   const normalized = schools.map((s) => ({ schoolId: s.schoolId, email: s.email.toLowerCase() }));
   const auth = await authorizedUser(username, normalized.map((s) => s.schoolId));
   if (auth.error) { res.status(auth.error === "not_found" ? 404 : 403).json({ error: auth.error }); return; }
-  const requestHash = createHash("sha256").update(JSON.stringify(normalized)).digest("hex");
+  const content = packageFor(auth.user!);
+  if (!validPreview(username, normalized, content.text, req.body?.preview)) {
+    res.status(409).json({ error: "school_outreach_preview_changed" }); return;
+  }
+  const requestHash = createHash("sha256").update(JSON.stringify([normalized, content.text])).digest("hex");
 
   let intent;
+  let acquired = false;
   try {
     const inserted = await pool.query(
       `INSERT INTO school_outreach_requests(idempotency_key,username,request_hash,schools,status)
        VALUES($1,$2,$3,$4::jsonb,'processing') ON CONFLICT DO NOTHING RETURNING *`,
       [requestId, username, requestHash, JSON.stringify(normalized)],
     );
+    acquired = inserted.rows.length > 0;
     intent = inserted.rows[0] ?? (await pool.query("SELECT * FROM school_outreach_requests WHERE idempotency_key=$1", [requestId])).rows[0];
   } catch {
     res.status(503).json({ error: "school_outreach_storage_unavailable" }); return;
@@ -261,12 +293,29 @@ router.post("/auth/school-outreach", async (req, res): Promise<void> => {
   if (intent.status === "completed" && Array.isArray(intent.outcomes)) {
     res.json({ results: intent.outcomes, meaning: "sent means the email provider accepted the send request" }); return;
   }
+  if (!acquired) {
+    res.status(409).json({ error: "school_outreach_processing_or_unknown" }); return;
+  }
+  const abortBeforeSend = async (status: number, error: string) => {
+    const outcomes: SchoolOutreachOutcome[] = normalized.map(s => ({
+      packageVersion: "1", schoolId: s.schoolId,
+      schoolName: programIdentity(s.schoolId)?.institution ??
+        auth.user!.opportunities?.find(o => o.kind === "school" && o.id === s.schoolId)?.organization ?? s.schoolId,
+      recipient: s.email, recipientSourceUrl: "", result: "not_attempted", providerMessageId: null,
+      sentAt: new Date().toISOString(),
+    }));
+    try {
+      await pool.query("UPDATE school_outreach_requests SET outcomes=$2::jsonb,status='completed',updated_at=now() WHERE idempotency_key=$1",
+        [requestId, JSON.stringify(outcomes)]);
+    } catch { /* If storage failed, history must conservatively remain unknown. */ }
+    res.status(status).json({ error });
+  };
   try {
     if (!await consumeRateLimit(username, req.ip ?? "", "send", 3)) {
-      res.status(429).json({ error: "school_outreach_rate_limited" }); return;
+      await abortBeforeSend(429, "school_outreach_rate_limited"); return;
     }
   } catch {
-    res.status(503).json({ error: "school_rate_limiter_unavailable" }); return;
+    await abortBeforeSend(503, "school_rate_limiter_unavailable"); return;
   }
 
   const resolved = await Promise.all(normalized.map(async (request) => {
@@ -274,21 +323,28 @@ router.post("/auth/school-outreach", async (req, res): Promise<void> => {
     catch (error) { return { request, found: null, error }; }
   }));
   if (resolved.some((item) => item.error instanceof ScorecardKeyNotConfiguredError)) {
-    res.status(503).json({ error: "college_scorecard_api_key_not_configured" }); return;
+    await abortBeforeSend(503, "college_scorecard_api_key_not_configured"); return;
   }
   if (resolved.some(({ request, found }) => !found?.school || !found.contacts.some((c) => c.email === request.email))) {
-    res.status(400).json({ error: "unverified_school_recipient" }); return;
+    await abortBeforeSend(400, "unverified_school_recipient"); return;
   }
   let from: string | null;
   try { from = await sender(); } catch { from = null; }
-  if (!from) { res.status(503).json({ error: "school_outreach_sender_unavailable" }); return; }
+  if (!from) { await abortBeforeSend(503, "school_outreach_sender_unavailable"); return; }
 
-  const content = packageFor(auth.user!), outcomes: SchoolOutreachOutcome[] = [];
+  const outcomes: SchoolOutreachOutcome[] = [];
+  const byRecipient = new Map<string, SchoolOutreachOutcome>();
   for (const { request, found } of resolved) {
     const contact = found!.contacts.find((c) => c.email === request.email)!;
+    const existing = byRecipient.get(contact.email);
+    if (existing) {
+      outcomes.push({ ...existing, schoolId: request.schoolId, schoolName: found!.school!.name,
+        recipientSourceUrl: contact.sourceUrl });
+      continue;
+    }
     const sentAt = new Date().toISOString();
     try {
-      const providerKey = createHash("sha256").update(`${requestId}:${request.schoolId}`).digest("hex");
+      const providerKey = createHash("sha256").update(`${requestId}:${contact.email}`).digest("hex");
       const response = await connector.proxy("resend", "/emails", {
         method: "POST",
         headers: { "content-type": "application/json", "Idempotency-Key": providerKey },
@@ -296,12 +352,14 @@ router.post("/auth/school-outreach", async (req, res): Promise<void> => {
       });
       const payload = response.ok ? await response.json().catch(() => ({})) as { id?: string } : {};
       outcomes.push({ packageVersion: "1", schoolId: request.schoolId, schoolName: found!.school!.name,
-        recipient: contact.email, recipientSourceUrl: contact.sourceUrl, result: response.ok ? "sent" : "failed",
+        recipient: contact.email, recipientSourceUrl: contact.sourceUrl,
+        result: response.ok && payload.id ? "sent" : response.status >= 500 || response.ok ? "unknown" : "failed",
         providerMessageId: response.ok ? payload.id ?? null : null, sentAt });
     } catch {
       outcomes.push({ packageVersion: "1", schoolId: request.schoolId, schoolName: found!.school!.name,
-        recipient: contact.email, recipientSourceUrl: contact.sourceUrl, result: "failed", providerMessageId: null, sentAt });
+        recipient: contact.email, recipientSourceUrl: contact.sourceUrl, result: "unknown", providerMessageId: null, sentAt });
     }
+    byRecipient.set(contact.email, outcomes[outcomes.length - 1]!);
   }
   try {
     await pool.query(
@@ -309,7 +367,7 @@ router.post("/auth/school-outreach", async (req, res): Promise<void> => {
       [requestId, JSON.stringify(outcomes)],
     );
   } catch {
-    res.status(503).json({ error: "school_outreach_storage_unavailable" }); return;
+    res.json({ results: outcomes, historySaved: false }); return;
   }
   res.json({ results: outcomes, meaning: "sent means the email provider accepted the send request" });
 });
@@ -321,11 +379,27 @@ router.get("/auth/school-outreach-history", async (req, res): Promise<void> => {
   const [user] = await db.select().from(usersTable).where(eq(usersTable.username, username));
   if (!user) { res.status(404).json({ error: "not_found" }); return; }
   try {
-    const rows = await pool.query<{ outcomes: SchoolOutreachOutcome[] }>(
-      "SELECT outcomes FROM school_outreach_requests WHERE username=$1 AND status='completed' ORDER BY created_at DESC LIMIT 50",
+    const rows = await pool.query<{ outcomes: SchoolOutreachOutcome[] | null; schools: Array<{ schoolId: string; email: string }>; status: string; updated_at: Date }>(
+      "SELECT outcomes,schools,status,updated_at FROM school_outreach_requests WHERE username=$1 ORDER BY created_at DESC LIMIT 50",
       [username],
     );
-    res.json({ history: rows.rows.flatMap((row) => Array.isArray(row.outcomes) ? row.outcomes : []).slice(0, 50) });
+    const history = rows.rows.flatMap((row): SchoolOutreachOutcome[] => {
+      if (Array.isArray(row.outcomes)) return row.outcomes;
+      // A crashed or still-running request must remain visible rather than
+      // appearing to have never happened and inviting duplicate outreach.
+      return (row.schools ?? []).map(s => ({
+        packageVersion: "1", schoolId: s.schoolId,
+        schoolName: programIdentity(s.schoolId)?.institution ??
+          user.opportunities?.find(o => o.kind === "school" && o.id === s.schoolId)?.organization ?? s.schoolId,
+        recipient: s.email, recipientSourceUrl: "", result: "unknown",
+        providerMessageId: null, sentAt: new Date(row.updated_at).toISOString(),
+      }));
+    });
+    // Retain outcomes saved by the earlier user-profile storage format.
+    const combined = [...history, ...(user.schoolOutreachHistory ?? [])];
+    const unique = new Map(combined.map(item => [`${item.schoolId}:${item.recipient}:${item.sentAt}`, item]));
+    res.json({ history: [...unique.values()]
+      .sort((a, b) => Date.parse(b.sentAt) - Date.parse(a.sentAt)).slice(0, 50) });
   } catch {
     res.status(503).json({ error: "school_outreach_storage_unavailable" });
   }

@@ -3,6 +3,7 @@
   "compileOnSave": false,
   "files": [],
   "references": [
+    { "path": "./lib/program-catalog" },
     {
       "path": "./lib/db"
     },

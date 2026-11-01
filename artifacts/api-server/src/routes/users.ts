@@ -347,7 +347,7 @@ router.put("/auth/opportunities/:id", async (req, res): Promise<void> => {
     COALESCE((
       SELECT jsonb_agg(item)
       FROM jsonb_array_elements(COALESCE(${usersTable.opportunities}, '[]'::jsonb)) item
-      WHERE item->>'id' <> ${id}
+      WHERE NOT (item->>'id' = ${id} AND item->>'kind' = 'school')
     ), '[]'::jsonb) || jsonb_build_array(${encoded}::jsonb)
   )`;
   const [updated] = await db.update(usersTable).set({ opportunities: merge })

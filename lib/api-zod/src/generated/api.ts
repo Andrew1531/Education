@@ -9,6 +9,109 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Verify official recipients and preview the exact server-held profile
+ */
+export const ReviewSchoolContactsHeader = zod.object({
+  "x-auth-token": zod.string()
+})
+
+export const reviewSchoolContactsBodySchoolIdsMax = 10;
+
+
+
+export const ReviewSchoolContactsBody = zod.object({
+  "username": zod.string(),
+  "schoolIds": zod.array(zod.string()).min(1).max(reviewSchoolContactsBodySchoolIdsMax).describe('Stable official program IDs or preserved numeric legacy school IDs')
+})
+
+export const ReviewSchoolContactsResponse = zod.object({
+  "contacts": zod.array(zod.object({
+  "schoolId": zod.string(),
+  "schoolName": zod.string().nullable(),
+  "status": zod.enum(['verified', 'fallback', 'unavailable']),
+  "recipients": zod.array(zod.object({
+  "email": zod.string(),
+  "sourceUrl": zod.string()
+})),
+  "fallbackUrl": zod.string().nullable(),
+  "error": zod.string().optional()
+})),
+  "preview": zod.object({
+  "text": zod.string(),
+  "token": zod.string(),
+  "expiresAt": zod.number()
+})
+})
+
+
+/**
+ * @summary Send only the explicitly consented, unchanged preview to reverified recipients
+ */
+export const SendReviewedSchoolOutreachHeader = zod.object({
+  "x-auth-token": zod.string()
+})
+
+export const sendReviewedSchoolOutreachBodyRequestIdMin = 16;
+export const sendReviewedSchoolOutreachBodyRequestIdMax = 100;
+
+export const sendReviewedSchoolOutreachBodySchoolsMax = 10;
+
+
+
+export const SendReviewedSchoolOutreachBody = zod.object({
+  "username": zod.string(),
+  "requestId": zod.string().min(sendReviewedSchoolOutreachBodyRequestIdMin).max(sendReviewedSchoolOutreachBodyRequestIdMax),
+  "schools": zod.array(zod.object({
+  "schoolId": zod.string(),
+  "email": zod.string()
+})).min(1).max(sendReviewedSchoolOutreachBodySchoolsMax),
+  "consent": zod.literal(true),
+  "preview": zod.object({
+  "text": zod.string(),
+  "token": zod.string(),
+  "expiresAt": zod.number()
+})
+})
+
+export const SendReviewedSchoolOutreachResponse = zod.object({
+  "results": zod.array(zod.object({
+  "schoolId": zod.string(),
+  "schoolName": zod.string(),
+  "recipient": zod.string(),
+  "recipientSourceUrl": zod.string(),
+  "result": zod.enum(['sent', 'failed', 'unknown', 'not_attempted']),
+  "sentAt": zod.string(),
+  "packageVersion": zod.string().optional(),
+  "providerMessageId": zod.string().nullish()
+})),
+  "meaning": zod.string().optional(),
+  "historySaved": zod.boolean().optional()
+})
+
+
+export const GetSchoolOutreachHistoryQueryParams = zod.object({
+  "username": zod.coerce.string()
+})
+
+export const GetSchoolOutreachHistoryHeader = zod.object({
+  "x-auth-token": zod.string()
+})
+
+export const GetSchoolOutreachHistoryResponse = zod.object({
+  "history": zod.array(zod.object({
+  "schoolId": zod.string(),
+  "schoolName": zod.string(),
+  "recipient": zod.string(),
+  "recipientSourceUrl": zod.string(),
+  "result": zod.enum(['sent', 'failed', 'unknown', 'not_attempted']),
+  "sentAt": zod.string(),
+  "packageVersion": zod.string().optional(),
+  "providerMessageId": zod.string().nullish()
+}))
+})
+
+
+/**
  * @summary Save the authenticated owner's education profile
  */
 export const SaveEducationProfileHeader = zod.object({

@@ -10,7 +10,7 @@ import {
   apiFetchOpportunities,
   apiUpsertSchoolOpportunity,
   apiDeleteSchoolOpportunity,
-  apiFetchSchoolContacts,
+  apiReviewSchoolContacts,
   apiSendSchoolOutreach,
   apiFetchSchoolOutreachHistory,
   type School,
@@ -19,7 +19,8 @@ import {
   type OutreachResult,
   type OutreachHistoryItem,
   type EvalProfile,
-  SchoolContact
+  SchoolContact,
+  type OutreachPreview
 } from './api';
 import { Loader2, Search, Building2, Globe, ExternalLink, Calculator, GraduationCap, Users, MapPin, BadgeCheck, Save, Check } from 'lucide-react';
 
@@ -114,6 +115,11 @@ export function SchoolFinder({ username, profile, t }: Props) {
   const [isSending, setIsSending] = useState(false);
   const [outreachResults, setOutreachResults] = useState<UIOutreachResult[]>([]);
   const [requestId, setRequestId] = useState('');
+  const [reviewedPreview, setReviewedPreview] = useState<OutreachPreview | null>(null);
+
+  useEffect(() => {
+    setShowPreview(false); setOutreachConsent(false); setReviewedPreview(null);
+  }, [username, JSON.stringify(profile)]);
 
   useEffect(() => {
     if (username) {
@@ -235,6 +241,8 @@ export function SchoolFinder({ username, profile, t }: Props) {
       return next;
     });
     setShowPreview(false);
+    setOutreachConsent(false);
+    setReviewedPreview(null);
     setOutreachResults([]);
     setRequestId(crypto.randomUUID());
   };
@@ -244,8 +252,9 @@ export function SchoolFinder({ username, profile, t }: Props) {
     setIsFetchingContacts(true);
     try {
       const schoolIds = Array.from(outreachSelected);
-      const res = await apiFetchSchoolContacts(username, schoolIds);
-      setContacts(res);
+      const res = await apiReviewSchoolContacts(username, schoolIds);
+      setContacts(res.contacts);
+      setReviewedPreview(res.preview);
       setShowPreview(true);
       if (!requestId) setRequestId(crypto.randomUUID());
     } catch (err: any) {
@@ -262,7 +271,7 @@ export function SchoolFinder({ username, profile, t }: Props) {
   };
 
   const sendOutreach = async () => {
-    if (!username || outreachSelected.size === 0 || !outreachConsent || !requestId) return;
+    if (!username || outreachSelected.size === 0 || !outreachConsent || !requestId || !reviewedPreview) return;
     
     setIsSending(true);
     setSearchError('');
@@ -281,7 +290,7 @@ export function SchoolFinder({ username, profile, t }: Props) {
         return;
       }
 
-      const results = await apiSendSchoolOutreach(username, requestId, schoolsPayload, true);
+      const results = await apiSendSchoolOutreach(username, requestId, schoolsPayload, true, reviewedPreview);
       
       const allResults: UIOutreachResult[] = Array.from(outreachSelected).map(id => {
         const found = results.find(r => r.schoolId === id);
@@ -583,13 +592,7 @@ export function SchoolFinder({ username, profile, t }: Props) {
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
               <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 text-sm text-blue-200">
                 <p className="font-medium mb-1">{t('sfPreviewData')}</p>
-                <ul className="list-disc pl-5 space-y-1 mt-2 opacity-80">
-                  <li>{t('sfPackageCountry')} {profile.country || t('sfNA')}</li>
-                  <li>{t('sfPackageInst')} {profile.institution || t('sfNA')}</li>
-                  <li>{t('sfPackageDegree')} {profile.degree || t('sfNA')}</li>
-                  <li>{t('sfPackageField')} {profile.field || t('sfNA')}</li>
-                  <li>{t('sfPackagePurpose')} {profile.purpose || t('sfNA')}</li>
-                </ul>
+                <pre className="whitespace-pre-wrap break-words text-sm">{reviewedPreview?.text}</pre>
                 <div className="mt-4 pt-3 mb-4 text-xs font-semibold bg-blue-500/20 text-blue-100 p-2 rounded border border-blue-500/30">
                   {t('sfOutreachDisclaimer')}
                 </div>
@@ -605,7 +608,7 @@ export function SchoolFinder({ username, profile, t }: Props) {
                           <span className="text-emerald-400 flex items-center gap-1">
                             <BadgeCheck className="h-3 w-3" /> {c.recipients[0].email}
                             {c.recipients[0].sourceUrl && (
-                              <a href={c.recipients[0].sourceUrl} target="_blank" rel="noreferrer" className="underline ml-2">Source</a>
+                              <a href={c.recipients[0].sourceUrl} target="_blank" rel="noreferrer" className="underline ml-2">{t('sfSourceLabel')}</a>
                             )}
                           </span>
                         ) : c.status === 'fallback' && c.fallbackUrl ? (
@@ -658,7 +661,7 @@ export function SchoolFinder({ username, profile, t }: Props) {
                   <div key={i} className="text-sm flex justify-between p-2 rounded bg-slate-800/80 border border-slate-700">
                     <span className="text-slate-300">{schoolName}</span>
                     <span className={`font-medium ${res.result === 'sent' ? 'text-emerald-400' : res.result === 'failed' ? 'text-destructive' : 'text-slate-500'}`}>
-                      {res.result === 'sent' ? t('sfOutreachSent') : res.result === 'failed' ? t('sfOutreachFailed') : t('sfOutreachUnattempted')}
+                      {res.result === 'sent' ? t('sfOutreachSent') : res.result === 'failed' ? t('sfOutreachFailed') : res.result === 'unknown' ? t('sfOutreachUnknown') : t('sfOutreachUnattempted')}
                     </span>
                   </div>
                 );

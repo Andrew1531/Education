@@ -22,9 +22,15 @@ import type {
 import type {
   ApiError,
   EducationProfileInput,
+  GetSchoolOutreachHistory200,
+  GetSchoolOutreachHistoryParams,
   HealthStatus,
   InstitutionVerificationRequest,
-  InstitutionVerificationResponse
+  InstitutionVerificationResponse,
+  SchoolContactsInput,
+  SchoolOutreachInput,
+  SchoolOutreachResponse,
+  SchoolReview
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -53,6 +59,226 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getReviewSchoolContactsUrl = () => {
+
+
+
+
+  return `/api/auth/schools/contacts`
+}
+
+/**
+ * @summary Verify official recipients and preview the exact server-held profile
+ */
+export const reviewSchoolContacts = async (schoolContactsInput: SchoolContactsInput, options?: RequestInit): Promise<SchoolReview> => {
+
+  return customFetch<SchoolReview>(getReviewSchoolContactsUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(schoolContactsInput)
+  }
+);}
+
+
+
+
+
+export const getReviewSchoolContactsMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reviewSchoolContacts>>, TError,{data: BodyType<SchoolContactsInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof reviewSchoolContacts>>, TError,{data: BodyType<SchoolContactsInput>}, TContext> => {
+
+const mutationKey = ['reviewSchoolContacts'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof reviewSchoolContacts>>, {data: BodyType<SchoolContactsInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  reviewSchoolContacts(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ReviewSchoolContactsMutationResult = NonNullable<Awaited<ReturnType<typeof reviewSchoolContacts>>>
+    export type ReviewSchoolContactsMutationBody = BodyType<SchoolContactsInput>
+    export type ReviewSchoolContactsMutationError = ErrorType<void>
+
+    /**
+ * @summary Verify official recipients and preview the exact server-held profile
+ */
+export const useReviewSchoolContacts = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reviewSchoolContacts>>, TError,{data: BodyType<SchoolContactsInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof reviewSchoolContacts>>,
+        TError,
+        {data: BodyType<SchoolContactsInput>},
+        TContext
+      > => {
+      return useMutation(getReviewSchoolContactsMutationOptions(options));
+    }
+
+export const getSendReviewedSchoolOutreachUrl = () => {
+
+
+
+
+  return `/api/auth/school-outreach`
+}
+
+/**
+ * @summary Send only the explicitly consented, unchanged preview to reverified recipients
+ */
+export const sendReviewedSchoolOutreach = async (schoolOutreachInput: SchoolOutreachInput, options?: RequestInit): Promise<SchoolOutreachResponse> => {
+
+  return customFetch<SchoolOutreachResponse>(getSendReviewedSchoolOutreachUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(schoolOutreachInput)
+  }
+);}
+
+
+
+
+
+export const getSendReviewedSchoolOutreachMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sendReviewedSchoolOutreach>>, TError,{data: BodyType<SchoolOutreachInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof sendReviewedSchoolOutreach>>, TError,{data: BodyType<SchoolOutreachInput>}, TContext> => {
+
+const mutationKey = ['sendReviewedSchoolOutreach'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof sendReviewedSchoolOutreach>>, {data: BodyType<SchoolOutreachInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  sendReviewedSchoolOutreach(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SendReviewedSchoolOutreachMutationResult = NonNullable<Awaited<ReturnType<typeof sendReviewedSchoolOutreach>>>
+    export type SendReviewedSchoolOutreachMutationBody = BodyType<SchoolOutreachInput>
+    export type SendReviewedSchoolOutreachMutationError = ErrorType<void>
+
+    /**
+ * @summary Send only the explicitly consented, unchanged preview to reverified recipients
+ */
+export const useSendReviewedSchoolOutreach = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sendReviewedSchoolOutreach>>, TError,{data: BodyType<SchoolOutreachInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof sendReviewedSchoolOutreach>>,
+        TError,
+        {data: BodyType<SchoolOutreachInput>},
+        TContext
+      > => {
+      return useMutation(getSendReviewedSchoolOutreachMutationOptions(options));
+    }
+
+export const getGetSchoolOutreachHistoryUrl = (params: GetSchoolOutreachHistoryParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/auth/school-outreach-history?${stringifiedParams}` : `/api/auth/school-outreach-history`
+}
+
+export const getSchoolOutreachHistory = async (params: GetSchoolOutreachHistoryParams, options?: RequestInit): Promise<GetSchoolOutreachHistory200> => {
+
+  return customFetch<GetSchoolOutreachHistory200>(getGetSchoolOutreachHistoryUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetSchoolOutreachHistoryQueryKey = (params?: GetSchoolOutreachHistoryParams,) => {
+    return [
+    `/api/auth/school-outreach-history`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetSchoolOutreachHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getSchoolOutreachHistory>>, TError = ErrorType<void>>(params: GetSchoolOutreachHistoryParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getSchoolOutreachHistory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetSchoolOutreachHistoryQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSchoolOutreachHistory>>> = ({ signal }) => getSchoolOutreachHistory(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getSchoolOutreachHistory>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetSchoolOutreachHistoryQueryResult = NonNullable<Awaited<ReturnType<typeof getSchoolOutreachHistory>>>
+export type GetSchoolOutreachHistoryQueryError = ErrorType<void>
+
+
+
+export function useGetSchoolOutreachHistory<TData = Awaited<ReturnType<typeof getSchoolOutreachHistory>>, TError = ErrorType<void>>(
+ params: GetSchoolOutreachHistoryParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getSchoolOutreachHistory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetSchoolOutreachHistoryQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getSaveEducationProfileUrl = () => {
 

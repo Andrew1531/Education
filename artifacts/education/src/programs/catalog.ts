@@ -3,6 +3,7 @@
  * Levels and titles below come from the linked institutions' own catalogs.
  * Never use this dataset to certify a user's foreign qualification.
  */
+import { programIdentity } from '@workspace/program-catalog';
 export type ProgramLevel = 'certificate' | 'associate' | 'bachelor' | 'master';
 export type ProgramField = 'computer_science' | 'business' | 'accounting' | 'psychology' |
   'nursing' | 'education' | 'engineering' | 'biology' | 'arts' | 'law' | 'dentistry' | 'other';
@@ -140,3 +141,10 @@ export const PROGRAMS: readonly ProgramRecord[] = [
     },
   },
 ];
+
+// A newly added listing must explicitly opt into official-source outreach.
+for (const program of PROGRAMS) {
+  if (programIdentity(program.id)?.institution !== program.institution) {
+    throw new Error(`Missing official program identity: ${program.id}`);
+  }
+}

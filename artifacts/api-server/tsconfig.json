@@ -9,6 +9,7 @@
   },
   "include": ["src"],
   "references": [
+    { "path": "../../lib/program-catalog" },
     {
       "path": "../../lib/db"
     },

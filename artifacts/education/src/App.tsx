@@ -499,7 +499,8 @@ const TX = {
     sfOutreachConsent: 'I understand this is an informational inquiry only, and not an official equivalency or admission application.',
     sfBtnContact: 'Send Inquiry',
     sfSending: 'Sending...',
-    sfOutreachSent: 'Sent',
+    sfOutreachSent: 'Accepted by email provider — delivery not confirmed',
+    sfOutreachUnknown: 'Outcome unknown — do not resend automatically',
     sfOutreachFailed: 'Failed',
     sfOutreachUnattempted: 'Not attempted',
     sfPlaceholderCip: 'Select a program category...',
@@ -947,7 +948,8 @@ const TX = {
     sfOutreachConsent: 'Entiendo que esto es solo una consulta informativa, y no una solicitud oficial de equivalencia o admisión.',
     sfBtnContact: 'Enviar Consulta',
     sfSending: 'Enviando...',
-    sfOutreachSent: 'Enviado',
+    sfOutreachSent: 'Aceptado por el proveedor de correo — entrega no confirmada',
+    sfOutreachUnknown: 'Resultado desconocido — no reenviar automáticamente',
     sfOutreachFailed: 'Fallido',
     sfOutreachUnattempted: 'No intentado',
     sfPlaceholderCip: 'Selecciona una categoría de programa...',
@@ -1767,7 +1769,7 @@ function EvaluatorView() {
       ? (lang === 'es' ? 'Guardado en este dispositivo. No se pudo sincronizar; vuelva a guardar cuando haya conexión para tener los cambios en otros dispositivos.' : 'Saved on this device. Sync unavailable; save again when connected to make changes available on other devices.')
       : (lang === 'es' ? 'Sincronizado con su cuenta.' : 'Synced to your account.')}</p>}
     {active && profile.purpose === 'University Admission' && <Suspense fallback={<p>{lang === 'es' ? 'Cargando…' : 'Loading…'}</p>}>
-      <ComparablePrograms es={lang === 'es'} profile={{ country: active.country, institution: active.institution, degree: active.awardName, field: active.field, purpose: profile.purpose }} />
+      <ComparablePrograms username={username} es={lang === 'es'} profile={{ country: active.country, institution: active.institution, degree: active.awardName, field: active.field, purpose: profile.purpose }} />
     </Suspense>}
     <ContactSection />
     <JobBoardsSection field={active?.field} />

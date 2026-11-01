@@ -16,7 +16,7 @@ export interface SchoolOutreachOutcome {
   schoolName: string;
   recipient: string;
   recipientSourceUrl: string;
-  result: "sent" | "failed";
+  result: "sent" | "failed" | "unknown" | "not_attempted";
   providerMessageId: string | null;
   sentAt: string;
 }

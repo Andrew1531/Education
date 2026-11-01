@@ -520,14 +520,16 @@ export const SchoolContactSchema = z.object({
 });
 export type SchoolContact = z.infer<typeof SchoolContactSchema>;
 
-export async function apiFetchSchoolContacts(username: string, schoolIds: string[]): Promise<SchoolContact[]> {
+export interface OutreachPreview { text: string; token: string; expiresAt: number }
+
+export async function apiReviewSchoolContacts(username: string, schoolIds: string[]): Promise<{ contacts: SchoolContact[]; preview: OutreachPreview }> {
   const token = getUserToken(username);
   if (!token) throw new Error('Not authenticated');
   const res = await apiFetch('/auth/schools/contacts', {
     method: 'POST',
     body: JSON.stringify({ username, schoolIds }),
     headers: { 'x-auth-token': token },
-  });
+  }, 30_000);
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
     if (res.status === 503 && errData.error === 'college_scorecard_api_key_not_configured') {
@@ -537,47 +539,58 @@ export async function apiFetchSchoolContacts(username: string, schoolIds: string
     throw new Error(errData.error || 'Failed to fetch school contacts');
   }
   const data = await res.json();
-  const parsed = z.array(SchoolContactSchema).safeParse(data.contacts || []);
+  const parsed = z.array(SchoolContactSchema).safeParse(data.contacts);
   if (!parsed.success) {
     throw new Error('Malformed school contacts response');
   }
-  return parsed.data;
+  const preview = z.object({ text: z.string(), token: z.string(), expiresAt: z.number() }).parse(data.preview);
+  return { contacts: parsed.data, preview };
+}
+
+export async function apiFetchSchoolContacts(username: string, schoolIds: string[]): Promise<SchoolContact[]> {
+  return (await apiReviewSchoolContacts(username, schoolIds)).contacts;
 }
 
 export const OutreachResultSchema = z.object({
   schoolId: z.string(),
-  result: z.enum(['sent', 'failed']),
+  result: z.enum(['sent', 'failed', 'unknown', 'not_attempted']),
+  recipient: z.string().optional(),
+  recipientSourceUrl: z.string().optional(),
   providerMessageId: z.string().nullable().optional(),
 });
 export type OutreachResult = z.infer<typeof OutreachResultSchema>;
 
-export async function apiSendSchoolOutreach(
+export async function apiSendReviewedSchoolOutreach(
   username: string, 
   requestId: string,
   schools: { schoolId: string; email: string }[], 
-  consent: boolean
-): Promise<OutreachResult[]> {
+  consent: boolean,
+  preview?: OutreachPreview
+): Promise<{ results: OutreachResult[]; historySaved?: boolean }> {
   const token = getUserToken(username);
   if (!token) throw new Error('Not authenticated');
   const res = await apiFetch('/auth/school-outreach', {
     method: 'POST',
-    body: JSON.stringify({ username, requestId, schools, consent }),
+    body: JSON.stringify({ username, requestId, schools, consent, preview }),
     headers: { 'x-auth-token': token },
-  });
+  }, 120_000);
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
-    if (res.status === 503 && errData.error === 'college_scorecard_api_key_not_configured') {
-      throw new Error('setup_unavailable');
-    }
-    if (res.status === 503) throw new Error('source_unavailable');
     throw new Error(errData.error || 'Failed to send outreach');
   }
   const data = await res.json();
-  const parsed = z.array(OutreachResultSchema).safeParse(data.results || []);
+  const parsed = z.array(OutreachResultSchema).safeParse(data.results);
   if (!parsed.success) {
     throw new Error('Malformed school outreach response');
   }
-  return parsed.data;
+  return { results: parsed.data, historySaved: data.historySaved };
+}
+
+export async function apiSendSchoolOutreach(
+  username: string, requestId: string, schools: { schoolId: string; email: string }[],
+  consent: boolean, preview?: OutreachPreview,
+): Promise<OutreachResult[]> {
+  return (await apiSendReviewedSchoolOutreach(username, requestId, schools, consent, preview)).results;
 }
 
 export interface OutreachHistoryItem {
@@ -586,7 +599,7 @@ export interface OutreachHistoryItem {
   schoolName: string;
   recipient?: string;
   recipientSourceUrl?: string;
-  result: 'sent' | 'failed';
+  result: 'sent' | 'failed' | 'unknown' | 'not_attempted';
   providerMessageId?: string | null;
   sentAt: string;
 }
@@ -598,11 +611,14 @@ export async function apiFetchSchoolOutreachHistory(username: string): Promise<O
     headers: { 'x-auth-token': token },
   });
   if (!res.ok) {
-    if (res.status === 503) throw new Error('DOE source unavailable (503)');
-    return [];
+    throw new Error('school_outreach_history_unavailable');
   }
   const data = await res.json();
-  return data.history || [];
+  return z.array(OutreachResultSchema.extend({
+    schoolName: z.string(),
+    sentAt: z.string(),
+    packageVersion: z.string().optional(),
+  })).parse(data.history);
 }
 
 export async function apiUpsertSchoolOpportunity(username: string, opportunity: Opportunity): Promise<void> {

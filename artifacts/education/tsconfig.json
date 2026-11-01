@@ -15,6 +15,7 @@
     }
   },
   "references": [
+    { "path": "../../lib/program-catalog" },
     {
       "path": "../../lib/api-client-react"
     }

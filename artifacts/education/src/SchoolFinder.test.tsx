@@ -70,9 +70,9 @@ describe('SchoolFinder', () => {
       { id: '1', kind: 'school', title: 'Saved U', organization: 'Saved U', status: 'saved', createdAt: '2026-01-01', updatedAt: '2026-01-01', readinessChecks: [], deadline: null }
     ]);
     
-    vi.spyOn(api, 'apiFetchSchoolContacts').mockResolvedValue([
+    vi.spyOn(api, 'apiReviewSchoolContacts').mockResolvedValue({ contacts: [
       { schoolId: '1', schoolName: 'Saved U', status: 'unavailable', recipients: [] }
-    ]);
+    ], preview: { text: 'Reviewed profile', token: 'preview', expiresAt: Date.now() + 60000 } });
 
     render(<SchoolFinder profile={mockProfile} t={mockT} username="test" />);
     
@@ -225,9 +225,9 @@ describe('SchoolFinder', () => {
       }
     ]);
     
-    vi.spyOn(api, 'apiFetchSchoolContacts').mockResolvedValue([
+    vi.spyOn(api, 'apiReviewSchoolContacts').mockResolvedValue({ contacts: [
       { schoolId: '1', schoolName: 'Saved U', status: 'verified', recipients: [{ email: 'admissions@saved.edu', sourceUrl: 'x' }] }
-    ]);
+    ], preview: { text: 'Reviewed profile', token: 'preview', expiresAt: Date.now() + 60000 } });
 
     const mockOutreach = vi.spyOn(api, 'apiSendSchoolOutreach').mockResolvedValue([
       { schoolId: '1', result: 'sent' }
@@ -277,7 +277,7 @@ describe('SchoolFinder', () => {
       fireEvent.click(sendBtn);
     });
     
-    expect(mockOutreach).toHaveBeenCalledWith('test', expect.any(String), [{ schoolId: '1', email: 'admissions@saved.edu' }], true);
+    expect(mockOutreach).toHaveBeenCalledWith('test', expect.any(String), [{ schoolId: '1', email: 'admissions@saved.edu' }], true, expect.objectContaining({ token: 'preview' }));
     
     await waitFor(() => {
       expect(screen.getByTestId('list-outreach-results')).not.toBeNull();

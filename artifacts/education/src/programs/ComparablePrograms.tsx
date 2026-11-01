@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ExternalLink, FileSearch, GraduationCap, Info, MapPin, Search, ShieldAlert, BookOpenCheck } from 'lucide-react';
 import { PROGRAMS, FIELDS } from './catalog';
 import type { ProgramField, ProgramRecord } from './catalog';
+import { useSavedPrograms, programOpportunity } from './useSavedPrograms';
+import { ProgramOutreach } from './ProgramOutreach';
 import {
   LEVEL_CHOICES,
   LEVEL_LABELS,
@@ -23,6 +25,7 @@ export interface ComparableProfile {
 }
 
 interface Props {
+  username?: string | null;
   profile: ComparableProfile;
   es: boolean;
 }
@@ -30,10 +33,12 @@ interface Props {
 const selectCls =
   'w-full rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-2.5 text-sm text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 disabled:opacity-50';
 
-export function ComparablePrograms({ profile, es }: Props) {
+export function ComparablePrograms({ profile, es, username }: Props) {
   const L = (en: string, sp: string) => (es ? sp : en);
   const key = profileKey(profile);
   const suggested = useMemo(() => suggestField(profile.field), [profile.field]);
+  const saved = useSavedPrograms(username);
+  const [outreachBusy, setOutreachBusy] = useState(false);
 
   const [level, setLevel] = useState<LevelChoice | ''>('');
   const [field, setField] = useState<ProgramField | ''>(suggested ?? '');
@@ -96,6 +101,14 @@ export function ComparablePrograms({ profile, es }: Props) {
           </p>
         </div>
       </header>
+      <div className="text-sm text-slate-300" role="status">
+        {!username ? L('Sign in to save programs to your own account.', 'Inicie sesión para guardar programas en su propia cuenta.')
+          : saved.mode === 'loading' ? L('Checking saved programs…', 'Consultando los programas guardados…')
+          : saved.mode === 'remote' ? L('Saved programs are connected to your account on the backend.', 'Los programas guardados están conectados a su cuenta en el servidor.')
+          : L('Browser-only storage for this signed-in account. Cross-device sync and email sending require a configured, reachable backend.', 'Almacenamiento solo en este navegador para esta cuenta. La sincronización entre dispositivos y el envío de correos requieren un servidor configurado y accesible.')}
+        {username && saved.mode === 'local' && <button className="ml-3 underline text-indigo-300" disabled={saved.busy} onClick={saved.retry}>{L('Retry connection', 'Reintentar conexión')}</button>}
+        {saved.error && <p role="alert" className="text-amber-200">{L('Could not confirm that changes were stored or synced. Existing saved data was not cleared. Check browser storage and retry the connection.', 'No se pudo confirmar el almacenamiento o la sincronización de los cambios. No se borraron los datos existentes. Revise el almacenamiento del navegador y reintente la conexión.')}</p>}
+      </div>
 
       <form onSubmit={onSearch} className="space-y-5" data-testid="form-comparable-programs">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -240,6 +253,15 @@ export function ComparablePrograms({ profile, es }: Props) {
                     {p.admissionsNote[es ? 'es' : 'en']}
                   </p>
                   <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 pt-4 text-sm">
+                    {username && <button
+                      className="rounded-lg border border-indigo-500 px-3 py-2 text-indigo-200 disabled:opacity-40"
+                      disabled={saved.busy || saved.mode === 'loading' || outreachBusy}
+                      data-testid={`button-save-program-${p.id}`}
+                      onClick={() => {
+                        const existing = saved.items.find(o => o.kind === 'school' && o.id === p.id);
+                        void saved.change(existing ?? programOpportunity(p), !!existing);
+                      }}
+                    >{saved.items.some(o => o.kind === 'school' && o.id === p.id) ? L('Saved · remove', 'Guardado · eliminar') : L('Save program', 'Guardar programa')}</button>}
                     <a href={p.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-indigo-300 underline-offset-4 hover:underline" data-testid={`link-cp-program-${p.id}`}>
                       {L('Official program page', 'Página oficial del programa')} <ExternalLink className="h-3.5 w-3.5" aria-hidden />
                       <span className="sr-only">{L('(opens in new tab)', '(se abre en otra pestaña)')}</span>
@@ -264,6 +286,10 @@ export function ComparablePrograms({ profile, es }: Props) {
           </div>
         )}
       </div>
+      {username && <ProgramOutreach key={username} username={username} items={saved.items}
+        remote={saved.mode === 'remote'} busy={saved.busy || saved.mode === 'loading'}
+        onWorkingChange={setOutreachBusy}
+        profileKey={JSON.stringify(profile)} es={es} remove={item => { void saved.change(item, true); }} />}
     </section>
   );
 }

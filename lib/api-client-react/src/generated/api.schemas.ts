@@ -5,6 +5,101 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export interface SchoolContactsInput {
+  username: string;
+  /**
+     * Stable official program IDs or preserved numeric legacy school IDs
+     * @minItems 1
+     * @maxItems 10
+     */
+  schoolIds: string[];
+}
+
+export interface SchoolRecipient {
+  email: string;
+  sourceUrl: string;
+}
+
+export type SchoolContactStatus = typeof SchoolContactStatus[keyof typeof SchoolContactStatus];
+
+
+export const SchoolContactStatus = {
+  verified: 'verified',
+  fallback: 'fallback',
+  unavailable: 'unavailable',
+} as const;
+
+export interface SchoolContact {
+  schoolId: string;
+  /** @nullable */
+  schoolName: string | null;
+  status: SchoolContactStatus;
+  recipients: SchoolRecipient[];
+  /** @nullable */
+  fallbackUrl: string | null;
+  error?: string;
+}
+
+export interface SchoolOutreachPreview {
+  text: string;
+  token: string;
+  expiresAt: number;
+}
+
+export interface SchoolReview {
+  contacts: SchoolContact[];
+  preview: SchoolOutreachPreview;
+}
+
+export interface SchoolOutreachSelection {
+  schoolId: string;
+  email: string;
+}
+
+export interface SchoolOutreachInput {
+  username: string;
+  /**
+     * @minLength 16
+     * @maxLength 100
+     */
+  requestId: string;
+  /**
+     * @minItems 1
+     * @maxItems 10
+     */
+  schools: SchoolOutreachSelection[];
+  consent: true;
+  preview: SchoolOutreachPreview;
+}
+
+export type SchoolOutreachOutcomeResult = typeof SchoolOutreachOutcomeResult[keyof typeof SchoolOutreachOutcomeResult];
+
+
+export const SchoolOutreachOutcomeResult = {
+  sent: 'sent',
+  failed: 'failed',
+  unknown: 'unknown',
+  not_attempted: 'not_attempted',
+} as const;
+
+export interface SchoolOutreachOutcome {
+  schoolId: string;
+  schoolName: string;
+  recipient: string;
+  recipientSourceUrl: string;
+  result: SchoolOutreachOutcomeResult;
+  sentAt: string;
+  packageVersion?: string;
+  /** @nullable */
+  providerMessageId?: string | null;
+}
+
+export interface SchoolOutreachResponse {
+  results: SchoolOutreachOutcome[];
+  meaning?: string;
+  historySaved?: boolean;
+}
+
 export type QualificationCompletion = typeof QualificationCompletion[keyof typeof QualificationCompletion];
 
 
@@ -154,4 +249,12 @@ export interface InstitutionVerificationRequest {
   /** @pattern ^Q[1-9][0-9]*$ */
   selectedEntityId?: string;
 }
+
+export type GetSchoolOutreachHistoryParams = {
+username: string;
+};
+
+export type GetSchoolOutreachHistory200 = {
+  history: SchoolOutreachOutcome[];
+};
 
