@@ -33,6 +33,19 @@ describe('link review', () => {
   });
   it('does not confuse a network timeout with a removed program', async () => {
     expect(await reviewLink(url, vi.fn().mockRejectedValue(new Error('timeout'))))
-      .toEqual({ url, result: 'unconfirmed' });
+      .toEqual({ url, result: 'unconfirmed', diagnostic: 'Error' });
+  });
+  it.each(['UNABLE_TO_VERIFY_LEAF_SIGNATURE', 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY', 'CERT_HAS_EXPIRED'])(
+    'preserves TLS diagnostic %s without treating it as a broken link', async code => {
+      const fetcher = vi.fn().mockRejectedValue(new TypeError('fetch failed', { cause: { code } }));
+      expect(await reviewLink(url, fetcher)).toEqual({ url, result: 'unconfirmed', diagnostic: code });
+      expect(fetcher).toHaveBeenCalledTimes(1);
+    },
+  );
+  it('preserves the redirect destination for manual investigation', async () => {
+    const finalUrl = 'https://catalog.example.edu/new-award/';
+    expect(await reviewLink(url, vi.fn().mockResolvedValue({
+      status: 200, ok: true, redirected: true, url: finalUrl,
+    }))).toEqual({ url, finalUrl, status: 200, result: 'redirected' });
   });
 });

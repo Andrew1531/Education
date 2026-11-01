@@ -23,12 +23,14 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Check links and editorial freshness
-        run: node --experimental-strip-types artifacts/education/scripts/review-programs.ts
+        run: pnpm --filter @workspace/education review:programs
       - name: Publish maintainer summary
         if: always()
         run: |
           if [ -f generated-artifacts/program-review/summary.md ]; then
             cat generated-artifacts/program-review/summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Program review did not produce a report. Check setup and command logs; link and editorial status are unknown.' >> "$GITHUB_STEP_SUMMARY"
           fi
       - uses: actions/upload-artifact@v4
         if: always()

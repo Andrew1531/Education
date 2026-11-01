@@ -44,6 +44,39 @@ Run `pnpm --filter @workspace/education review:programs` from the workspace root
 It checks every distinct program and source URL with a bounded GET and flags reviews
 180 days old, malformed dates and future review dates. Normal unit tests use
 mocked network responses; only this explicit command makes live requests.
+The legacy `catalog.live.test.ts` is also live only when explicitly enabled with
+`PROGRAM_LINK_REVIEW=1`; it is skipped by ordinary `pnpm test` runs.
+
+### Scheduled maintainer check
+
+`.github/workflows/program-directory-review.yml` runs the same command every
+Monday at 13:00 UTC, separately from unit tests and the deployment workflow.
+After this change is merged into the default branch, GitHub Actions can run the
+schedule; maintainers can also use **Actions → Review official program sources →
+Run workflow** to trigger it manually. Scheduled runs use the default branch and
+may be delayed by GitHub. Check that Actions and scheduled workflows are enabled
+in the repository; this does not publish the website.
+
+Each completed check writes `generated-artifacts/program-review/summary.md` and
+`report.json` (ignored by Git and deployments). The Actions run summary shows
+flagged program IDs, titles, institutions, original/final URLs, HTTP status or
+network/TLS diagnostic, last human review dates and next actions. The downloadable
+`official-program-source-review` artifact contains all results, including successful
+URLs, and is retained for 30 days. Local runs print the report and its location.
+Requests use four concurrent workers and a 15-second timeout per URL.
+
+Exit code 0 means no findings; exit code 1 means at least one link or editorial date
+needs attention, **not** that a program is invalid. The workflow uploads reports
+even when findings fail the check. If setup fails before a report is produced,
+the run summary points to the logs and explicitly leaves status unknown. Maintainers
+should inspect failed runs and configure their GitHub Actions failure notifications
+if they want alerts; this workflow does not create issues or send email itself.
+It needs read-only repository permissions and no API keys.
+
+Strict TLS verification stays enabled. Known UAF/IU certificate-chain failures are
+not suppressed or allowlisted: they remain visible as unconfirmed findings with
+the diagnostic code, and can fail a run until verified from a trusted environment.
+The command refuses `NODE_TLS_REJECT_UNAUTHORIZED=0`.
 
 - `reachable`: HTTP success only; still inspect the award title and requirements.
 - `redirected`: inspect the final URL for a moved award, homepage or unrelated page.

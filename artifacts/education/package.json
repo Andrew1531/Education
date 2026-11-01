@@ -9,7 +9,7 @@
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "review:programs": "PROGRAM_LINK_REVIEW=1 vitest run src/programs/catalog.live.test.ts"
+    "review:programs": "node --experimental-strip-types scripts/review-programs.ts"
   },
   "devDependencies": {
     "@workspace/program-catalog": "workspace:*",
