@@ -32,6 +32,7 @@ import {
 // Only shown after an admission-goal result; load its UI kit on demand.
 const ComparablePrograms = lazy(() => import('./programs/ComparablePrograms').then((m) => ({ default: m.ComparablePrograms })));
 import { QualificationWorkflow } from './QualificationWorkflow';
+import { ServiceExplorer } from './ServiceExplorer';
 import type { Qualification } from './qualificationGuidance';
 import { educationProfileKey, loadEducationProfile, restoreEducationProfile, storeEducationProfile } from './educationProfileStore';
 import { apiSaveEducationProfile } from './api';
@@ -106,7 +107,7 @@ const TX = {
     howSub: 'From your first question to your first U.S. job application — here is the complete process.',
     privTitle: 'Privacy Policy', termsTitle: 'Terms of Service',
     // About page
-    aboutBadge: '🌍 Our Mission',
+    aboutBadge: 'Our Mission',
     aboutH1: 'Starting Over in a New Country',
     aboutH2: 'Is One of the Hardest Things a Person Can Do.',
     aboutIntro: 'We know this — because the people who built VerifED Global have lived it, or watched someone they love go through it.',
@@ -125,9 +126,9 @@ const TX = {
     val3T: 'Built for the Journey', val3D: 'We are with you from your first question to your first U.S. job application.',
     aboutCtaText: 'Ready to find out how your credentials translate? Start with the evaluator — it takes less than two minutes and gives you a real picture of where you stand.',
     // How It Works page
-    howBadge: '⚡ Simple, Step-by-Step',
+    howBadge: 'Simple, Step-by-Step',
     stepLabel: 'Step',
-    whatNeedTitle: '📦 What You Will Need to Get Started',
+    whatNeedTitle: 'What You Will Need to Get Started',
     howCtaText: 'Enter each qualification to receive preliminary guidance with sources, limits and next steps. An official comparison requires review of your documents.',
     step01T: 'Create Your Account',
     step01D: 'Sign up with a username and email. Your information stays private and secure — it is used only to save your progress and correspond with you about your evaluation.',
@@ -192,7 +193,7 @@ const TX = {
     errCountry: 'Please select a country from the list (e.g., India, Nigeria, Brazil).',
     errUnexpected: 'An unexpected error occurred. Please refresh and try again.',
     // Service unavailable banner
-    svcUnavailableTitle: '🔧 Account service temporarily unavailable',
+    svcUnavailableTitle: 'Account service temporarily unavailable',
     svcUnavailableSub: 'Sign-in and registration are temporarily unavailable. Please try again later or contact support.',
     // Evaluator
     evalBadge: 'Educational Pathways Guidance: Aligning with U.S. standard frameworks',
@@ -315,7 +316,7 @@ const TX = {
     agencyDescPre: 'A personalized inquiry email has been drafted for you using your evaluation details',
     agencyDescEmail: 'and your account email',
     agencyDescSuf: '. Open it in your email app, or copy it and paste it into the contact form on the agency\'s website — it sends from your own address, so replies come straight back to you.',
-    agencyDraft: '✉️ Draft',
+    agencyDraft: 'Draft',
     agencyCopy: 'Copy',
     agencyCopied: '✓ Copied',
     agencySite: 'Site ↗',
@@ -350,7 +351,7 @@ const TX = {
     adminFieldEmail: 'Email',
     adminFieldPassword: 'Password',
     adminFieldJoined: 'Joined',
-    adminEmailMissing: '⚠ Still needed',
+    adminEmailMissing: 'Still needed',
     adminPassSet: '✓ Set ·',
     adminFieldsNeededSingular: 'field still needed:',
     adminFieldsNeededPlural: 'fields still needed:',
@@ -371,14 +372,14 @@ const TX = {
     adminDeleteBtn: 'Yes, Delete',
     // Server-mode / admin-key strings (ours from main)
     adminModeServer: '● Central database — all devices',
-    adminModeLocal: '⚠ This device only — backend offline',
-    adminKeyTitle: '🔑 Admin key required',
+    adminModeLocal: 'This device only — backend offline',
+    adminKeyTitle: 'Admin key required',
     adminKeyDesc: 'The central database is protected. Enter the admin key to view and manage accounts on this device.',
     adminKeyPlaceholder: 'Admin key…',
     adminKeyBtn: 'Unlock',
     adminKeyRejected: 'The saved key was rejected — please enter it again.',
     adminKeyNotConfigured: "The server doesn't have an admin key loaded yet — it needs to be republished on Replit after the key is saved. Until then, no key will be accepted.",
-    adminGateTitle: '🔐 Admin access',
+    adminGateTitle: 'Admin access',
     adminGateDesc: 'This area is for administrators only. Enter the admin password to continue.',
     adminGatePlaceholder: 'Admin password…',
     adminGateBtn: 'Enter',
@@ -555,7 +556,7 @@ const TX = {
     howSub: 'Desde tu primera pregunta hasta tu primera solicitud de empleo en EE.UU. — aquí está el proceso completo.',
     privTitle: 'Política de Privacidad', termsTitle: 'Términos de Servicio',
     // About page
-    aboutBadge: '🌍 Nuestra Misión',
+    aboutBadge: 'Nuestra Misión',
     aboutH1: 'Empezar de Nuevo en un País Extranjero',
     aboutH2: 'Es Una de las Cosas Más Difíciles que una Persona Puede Hacer.',
     aboutIntro: 'Lo sabemos — porque las personas que construyeron VerifED Global lo han vivido, o han visto a alguien que aman pasar por ello.',
@@ -574,9 +575,9 @@ const TX = {
     val3T: 'Construido Para el Camino', val3D: 'Estamos contigo desde tu primera pregunta hasta tu primera solicitud de empleo en EE.UU.',
     aboutCtaText: '¿Listo para descubrir cómo se traducen tus credenciales? Comienza con el evaluador — tarda menos de dos minutos y te da una imagen real de dónde estás.',
     // How It Works page
-    howBadge: '⚡ Simple, Paso a Paso',
+    howBadge: 'Simple, Paso a Paso',
     stepLabel: 'Paso',
-    whatNeedTitle: '📦 Lo Que Necesitarás Para Comenzar',
+    whatNeedTitle: 'Lo Que Necesitarás Para Comenzar',
     howCtaText: 'Ingrese cada titulación para recibir orientación preliminar con fuentes, límites y próximos pasos. Una comparación oficial requiere revisar sus documentos.',
     step01T: 'Crear Tu Cuenta',
     step01D: 'Regístrate con un nombre de usuario y correo electrónico. Tu información permanece privada y segura — solo se usa para guardar tu progreso y corresponderte sobre tu evaluación.',
@@ -641,10 +642,10 @@ const TX = {
     errCountry: 'Por favor selecciona un país de la lista (ej., India, Nigeria, Brasil).',
     errUnexpected: 'Ocurrió un error inesperado. Por favor recargue e intente de nuevo.',
     // Service unavailable banner
-    svcUnavailableTitle: '🔧 Servicio de cuentas temporalmente no disponible',
+    svcUnavailableTitle: 'Servicio de cuentas temporalmente no disponible',
     svcUnavailableSub: 'El inicio de sesión y el registro están temporalmente no disponibles. Por favor intente más tarde o contacte al soporte.',
     // Evaluator
-    evalBadge: '⚡ Plataforma Unificada: Procesando marcos NACES, USCIS y Juntas Estatales en tiempo real.',
+    evalBadge: 'Plataforma Unificada: Procesando marcos NACES, USCIS y Juntas Estatales en tiempo real.',
     evalH1: 'Tu educación en el extranjero.',
     evalH2: 'Tu próximo paso profesional en EE.UU.',
     evalSubtitle: 'Consulta los antecedentes de tu institución, descubre cómo presentar tu título extranjero a empleadores en EE.UU. y explora los requisitos de evaluación de credenciales y licencia para tu próximo paso profesional.',
@@ -764,7 +765,7 @@ const TX = {
     agencyDescPre: 'Se ha redactado un correo de consulta personalizado usando los detalles de tu evaluación',
     agencyDescEmail: 'y el correo de tu cuenta',
     agencyDescSuf: '. Ábrelo en tu aplicación de correo, o cópialo y pégalo en el formulario de contacto del sitio de la agencia — se envía desde tu propia dirección, así que las respuestas llegarán directamente a ti.',
-    agencyDraft: '✉️ Borrador',
+    agencyDraft: 'Borrador',
     agencyCopy: 'Copiar',
     agencyCopied: '✓ Copiado',
     agencySite: 'Sitio ↗',
@@ -799,7 +800,7 @@ const TX = {
     adminFieldEmail: 'Correo',
     adminFieldPassword: 'Contraseña',
     adminFieldJoined: 'Registro',
-    adminEmailMissing: '⚠ Pendiente',
+    adminEmailMissing: 'Pendiente',
     adminPassSet: '✓ Configurada ·',
     adminFieldsNeededSingular: 'campo pendiente:',
     adminFieldsNeededPlural: 'campos pendientes:',
@@ -820,14 +821,14 @@ const TX = {
     adminDeleteBtn: 'Sí, Eliminar',
     // Server-mode / admin-key strings (ours from main)
     adminModeServer: '● Base de datos central — todos los dispositivos',
-    adminModeLocal: '⚠ Solo este dispositivo — servidor sin conexión',
-    adminKeyTitle: '🔑 Clave de administrador requerida',
+    adminModeLocal: 'Solo este dispositivo — servidor sin conexión',
+    adminKeyTitle: 'Clave de administrador requerida',
     adminKeyDesc: 'La base de datos central está protegida. Ingresa la clave de administrador para ver y gestionar las cuentas en este dispositivo.',
     adminKeyPlaceholder: 'Clave de administrador…',
     adminKeyBtn: 'Desbloquear',
     adminKeyRejected: 'La clave guardada fue rechazada — ingrésala de nuevo.',
     adminKeyNotConfigured: 'El servidor aún no tiene una clave de administrador cargada — debe republicarse en Replit después de guardar la clave. Hasta entonces, ninguna clave será aceptada.',
-    adminGateTitle: '🔐 Acceso de administrador',
+    adminGateTitle: 'Acceso de administrador',
     adminGateDesc: 'Esta área es solo para administradores. Ingresa la contraseña de administrador para continuar.',
     adminGatePlaceholder: 'Contraseña de administrador…',
     adminGateBtn: 'Entrar',
@@ -990,14 +991,13 @@ function LangToggle() {
   return (
     <button
       onClick={toggleLang}
-      className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:border-slate-500 transition-all cursor-pointer select-none"
+      className="flex min-h-10 items-center gap-1.5 text-[13px] font-bold px-3.5 rounded-full border border-[#E2E4F3] bg-[#FFFFFE] text-[#0F172A] hover:border-[#5B4FE9] transition-colors cursor-pointer select-none"
       data-testid="button-lang-toggle"
       aria-label={lang === 'en' ? 'Switch to Spanish' : 'Cambiar a inglés'}
     >
-      <span>{lang === 'en' ? '🇺🇸' : '🇲🇽'}</span>
       <span>{lang === 'en' ? 'EN' : 'ES'}</span>
-      <span className="text-slate-600 font-normal">/</span>
-      <span className="text-slate-500 font-normal">{lang === 'en' ? 'ES' : 'EN'}</span>
+      <span aria-hidden="true" className="text-[#8C93A8] font-normal">/</span>
+      <span className="text-[#4B5568] font-normal">{lang === 'en' ? 'ES' : 'EN'}</span>
     </button>
   );
 }
@@ -1015,10 +1015,11 @@ function Navbar({ appView, username, onLogout }: { appView: AppView; username: s
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [menuOpen]);
-  const mLink = 'block rounded-lg px-4 py-3 text-base text-slate-200 hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-indigo-400';
+  const mLink = 'block rounded-2xl px-4 py-3 text-base font-semibold text-[#0F172A] hover:bg-[#EEF0FF]';
+  const dLink = (active: boolean) => `rounded-full px-4 py-2 transition-colors ${active ? 'bg-[#EEF0FF] text-[#3F35C2]' : 'text-[#273449] hover:text-[#3F35C2]'}`;
   return (
-    <nav className="relative z-50 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl sticky top-0">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    <nav className="z-50 bg-[#FAFAFF]/90 backdrop-blur-md sticky top-0 border-b border-[#E2E4F3]/70">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[72px] flex items-center justify-between gap-4">
         <Link
           href="/"
           className="flex items-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-indigo-400"
@@ -1032,11 +1033,11 @@ function Navbar({ appView, username, onLogout }: { appView: AppView; username: s
           />
         </Link>
 
-        <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-400">
-          <Link href="/about" className="hover:text-white transition-colors" data-testid="link-about">{t('about')}</Link>
-          <Link href="/how-it-works" className="hover:text-white transition-colors" data-testid="link-how-it-works">{t('howItWorks')}</Link>
-          <Link href="/guides" className="hover:text-white transition-colors" data-testid="link-guides" aria-current={location.startsWith('/guides') ? 'page' : undefined}>{g.nav}</Link>
-          <LangToggle />
+        <div className="hidden md:flex items-center gap-1 text-[15px] font-semibold">
+          <Link href="/about" className={dLink(location === '/about')} data-testid="link-about">{t('about')}</Link>
+          <Link href="/how-it-works" className={dLink(location === '/how-it-works')} data-testid="link-how-it-works">{t('howItWorks')}</Link>
+          <Link href="/guides" className={dLink(location.startsWith('/guides'))} data-testid="link-guides" aria-current={location.startsWith('/guides') ? 'page' : undefined}>{g.nav}</Link>
+          <span className="ml-2"><LangToggle /></span>
         </div>
 
         <div className="flex items-center gap-3">
@@ -1045,7 +1046,7 @@ function Navbar({ appView, username, onLogout }: { appView: AppView; username: s
           <button
             ref={menuBtn}
             type="button"
-            className="md:hidden inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-slate-700 bg-slate-900 px-3 text-sm font-semibold text-slate-200 focus-visible:outline-2 focus-visible:outline-indigo-400"
+            className="md:hidden inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-[#0F172A] px-4 text-sm font-semibold text-[#FCFCFF]"
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             onClick={() => setMenuOpen((o) => !o)}
@@ -1056,13 +1057,13 @@ function Navbar({ appView, username, onLogout }: { appView: AppView; username: s
 
           {appView === 'app' && (
             <div className="flex items-center space-x-3" data-testid="nav-user-badge">
-              <span className="hidden sm:inline text-xs text-indigo-300 font-mono bg-indigo-500/10 px-3 py-1.5 rounded-full border border-indigo-500/30" data-testid="text-nav-username">
-                👤 @{username}
+              <span className="hidden sm:inline text-[13px] font-semibold text-[#3F35C2] bg-[#EEF0FF] px-3.5 py-2 rounded-full" data-testid="text-nav-username">
+                @{username}
               </span>
               <button
                 onClick={onLogout}
                 data-testid="button-signout"
-                className="text-xs text-slate-400 hover:text-white transition-colors bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full cursor-pointer"
+                className="text-[13px] font-semibold text-[#0F172A] hover:border-[#5B4FE9] transition-colors bg-[#FFFFFE] border border-[#E2E4F3] px-3.5 py-2 rounded-full cursor-pointer"
               >
                 {t('signOut')}
               </button>
@@ -1071,7 +1072,7 @@ function Navbar({ appView, username, onLogout }: { appView: AppView; username: s
         </div>
       </div>
       {menuOpen && (
-        <div id="mobile-menu" className="md:hidden border-t border-slate-800 bg-slate-950 px-4 py-3">
+        <div id="mobile-menu" className="md:hidden border-t border-[#E2E4F3] bg-[#FAFAFF] px-4 py-3">
           <ul className="space-y-1">
             <li><Link href="/guides" className={mLink} data-testid="link-guides-mobile">{g.nav}</Link></li>
             <li><Link href="/about" className={mLink}>{t('about')}</Link></li>
@@ -1085,22 +1086,28 @@ function Navbar({ appView, username, onLogout }: { appView: AppView; username: s
 
 function Footer({ onPrivacy, onTerms }: { onPrivacy: () => void; onTerms: () => void }) {
   const { t, lang } = useLang();
+  const fl = 'text-[#273449] hover:text-[#3F35C2] transition-colors text-sm font-medium bg-transparent border-none cursor-pointer';
   return (
-    <footer className="border-t border-slate-800/80 bg-slate-950 py-12 px-6 relative z-10 mt-20">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-        <div>
-          <p className="text-xs text-slate-400 font-medium">{t('footerCopy')}</p>
-          <p className="text-[11px] text-slate-500 mt-1">{t('footerTag')}</p>
+    <footer className="relative z-10 mt-12 px-4 sm:px-6 pb-6">
+      <div className="max-w-7xl mx-auto rounded-[32px] bg-[#EEF0FF] px-6 sm:px-10 py-10">
+        <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+          <div className="max-w-sm">
+            <img src={`${import.meta.env.BASE_URL}logo.png`.replace(/\/+/g, '/')} alt="VerifED Global" className="h-9 w-auto object-contain" />
+            <p className="mt-4 text-sm leading-relaxed text-[#4B5568]">{t('footerTag')}</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <Link href="/guides" className={fl} data-testid="link-footer-guides">{GUIDE_UI[lang].nav}</Link>
+            <button onClick={onPrivacy} data-testid="button-privacy-policy" className={fl}>{t('privacy')}</button>
+            <button onClick={onTerms} data-testid="button-terms" className={fl}>{t('terms')}</button>
+            <Link href="/admin" className={fl} data-testid="link-admin">{t('admin')}</Link>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-400 font-medium">
-          <Link href="/guides" className="hover:text-white transition-colors text-slate-300 text-xs font-medium" data-testid="link-footer-guides">{GUIDE_UI[lang].nav}</Link>
-          <button onClick={onPrivacy} data-testid="button-privacy-policy" className="hover:text-white transition-colors cursor-pointer bg-transparent border-none text-slate-400 text-xs font-medium">{t('privacy')}</button>
-          <button onClick={onTerms} data-testid="button-terms" className="hover:text-white transition-colors cursor-pointer bg-transparent border-none text-slate-400 text-xs font-medium">{t('terms')}</button>
-          <Link href="/admin" className="hover:text-white transition-colors text-slate-600 text-xs font-medium" data-testid="link-admin">{t('admin')}</Link>
-        </div>
-        <div className="bg-slate-900/90 border border-slate-800 px-4 py-3 rounded-2xl flex items-center gap-2.5 shadow-inner">
-          <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">{t('poweredBy')}</span>
-          <a href="https://ladmedia.co" target="_blank" rel="noopener noreferrer" data-testid="link-lad-media" className="text-xs font-bold bg-gradient-to-r from-blue-400 to-fuchsia-500 bg-clip-text text-transparent hover:underline">LAD MEDIA</a>
+        <div className="mt-10 flex flex-col gap-3 border-t border-[#D9DCF5] pt-6 text-xs text-[#4B5568] sm:flex-row sm:items-center sm:justify-between">
+          <p>{t('footerCopy')}</p>
+          <p>
+            <span className="uppercase tracking-wider font-semibold">{t('poweredBy')}</span>{' '}
+            <a href="https://ladmedia.co" target="_blank" rel="noopener noreferrer" data-testid="link-lad-media" className="font-bold text-[#3F35C2] hover:underline">LAD MEDIA</a>
+          </p>
         </div>
       </div>
     </footer>
@@ -1117,12 +1124,11 @@ function Modal({ id, title, onClose, children }: { id: string; title: string; on
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-6" onClick={onClose} data-testid={`modal-${id}`}>
+    <div className="fixed inset-0 bg-[#0F172A]/50 backdrop-blur-sm z-50 flex items-center justify-center p-6" onClick={onClose} data-testid={`modal-${id}`}>
       <div className="glass-panel p-8 rounded-3xl w-full max-w-lg shadow-2xl relative overflow-hidden max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-violet-500 to-fuchsia-500" />
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-white font-bold text-lg">{title}</h2>
-          <button onClick={onClose} data-testid={`button-close-modal-${id}`} className="text-slate-400 hover:text-white transition-colors text-2xl leading-none cursor-pointer bg-transparent border-none">×</button>
+          <button onClick={onClose} data-testid={`button-close-modal-${id}`} aria-label="Close" className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#EEF0FF] text-[#0F172A] text-2xl leading-none cursor-pointer border-none">×</button>
         </div>
         <div className="text-slate-300 text-sm leading-relaxed space-y-4">{children}</div>
       </div>
@@ -1130,67 +1136,66 @@ function Modal({ id, title, onClose, children }: { id: string; title: string; on
   );
 }
 
-const VALUE_CARDS = [
-  { tKey: 'val1', icon: '🎯', color: 'from-indigo-600 to-blue-600', border: 'border-indigo-500/20' },
-  { tKey: 'val2', icon: '🔎', color: 'from-violet-600 to-indigo-600', border: 'border-violet-500/20' },
-  { tKey: 'val3', icon: '🧭', color: 'from-fuchsia-600 to-violet-600', border: 'border-fuchsia-500/20' },
-] as const;
+const VALUE_KEYS = ['val1', 'val2', 'val3'] as const;
+
+function PageHero({ eyebrow, title, accent, sub }: { eyebrow: string; title: string; accent?: string; sub: string }) {
+  return (
+    <header className="vf-rise rounded-[36px] bg-[#EEF0FF] px-6 py-14 sm:px-12 sm:py-20">
+      <p className="vf-eyebrow">{eyebrow}</p>
+      <h1 className="vf-display mt-5 max-w-4xl text-[40px] sm:text-[56px] font-bold leading-[1.04] text-[#0F172A]">
+        {title}{accent && <><br /><span className="text-[#3F35C2]">{accent}</span></>}
+      </h1>
+      <p className="mt-6 max-w-2xl text-lg leading-relaxed text-[#4B5568]">{sub}</p>
+    </header>
+  );
+}
+
+function CtaBand({ text, testId, onGo, label }: { text: string; testId: string; onGo: () => void; label: string }) {
+  return (
+    <section className="flex flex-col gap-6 rounded-[32px] bg-[#0F172A] px-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-12">
+      <p className="max-w-xl text-lg leading-relaxed text-[#E2E4F3]">{text}</p>
+      <button onClick={onGo} data-testid={testId} className="vf-btn shrink-0">
+        {label}
+        <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+      </button>
+    </section>
+  );
+}
+
 function AboutPage() {
   const { t } = useLang();
   const [, setLocation] = useLocation();
   return (
-    <main id="main-content" tabIndex={-1} className="outline-none relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full space-y-16">
-      {/* Hero */}
-      <div className="text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs text-indigo-300 font-semibold mb-8">
-          {t('aboutBadge')}
-        </div>
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4 leading-[1.1]">
-          {t('aboutH1')}<br />
-          <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
-            {t('aboutH2')}
-          </span>
-        </h1>
-        <p className="text-slate-400 text-lg leading-relaxed max-w-2xl mx-auto mt-6">{t('aboutIntro')}</p>
-      </div>
+    <main id="main-content" tabIndex={-1} className="outline-none relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-16 flex-grow w-full space-y-16">
+      <PageHero eyebrow={t('aboutBadge')} title={t('aboutH1')} accent={t('aboutH2')} sub={t('aboutIntro')} />
 
-      {/* Story */}
-      <div className="space-y-10">
+      <div className="mx-auto max-w-5xl divide-y divide-[#E2E4F3]">
         {(['01', '02', '03'] as const).map((n) => (
-          <div key={n} className="glass-panel p-8 rounded-3xl">
-            <h2 className="text-white font-bold text-xl mb-4">{t(`about${n}T` as TKey)}</h2>
-            <div className="space-y-4 text-slate-300 text-sm leading-relaxed">
-              <p>{t(`about${n}P1` as TKey)}</p>
-              <p>{t(`about${n}P2` as TKey)}</p>
-              {n === '03' && <p>{t('about03P3')}</p>}
+          <section key={n} className="grid gap-6 py-12 md:grid-cols-[180px_1fr]">
+            <p className="vf-display text-5xl font-bold text-[#C7CBFA]" aria-hidden="true">{n}</p>
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172A] mb-5">{t(`about${n}T` as TKey)}</h2>
+              <div className="space-y-4 text-base leading-relaxed text-[#273449]">
+                <p>{t(`about${n}P1` as TKey)}</p>
+                <p>{t(`about${n}P2` as TKey)}</p>
+                {n === '03' && <p className="font-semibold text-[#0F172A]">{t('about03P3')}</p>}
+              </div>
             </div>
-          </div>
+          </section>
         ))}
       </div>
 
-      {/* Values */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {VALUE_CARDS.map((card) => (
-          <div key={card.tKey} className={`glass-panel p-6 rounded-3xl border ${card.border}`}>
-            <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${card.color} flex items-center justify-center text-lg mb-4 shadow-lg`}>{card.icon}</div>
-            <h3 className="text-white font-bold text-sm mb-2">{t(`${card.tKey}T` as TKey)}</h3>
-            <p className="text-slate-400 text-xs leading-relaxed">{t(`${card.tKey}D` as TKey)}</p>
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        {VALUE_KEYS.map((k, i) => (
+          <div key={k} className={`rounded-[28px] p-8 ${i === 1 ? 'bg-[#5B4FE9] text-[#FCFCFF]' : 'vf-card'}`}>
+            <p className={`text-sm font-bold ${i === 1 ? 'text-[#E1E4FF]' : 'text-[#3F35C2]'}`}>0{i + 1}</p>
+            <h3 className={`mt-6 text-xl font-bold ${i === 1 ? '' : 'text-[#0F172A]'}`}>{t(`${k}T` as TKey)}</h3>
+            <p className={`mt-2 text-[15px] leading-relaxed ${i === 1 ? 'text-[#EEF0FF]' : 'text-[#4B5568]'}`}>{t(`${k}D` as TKey)}</p>
           </div>
         ))}
-      </div>
+      </section>
 
-      {/* CTA */}
-      <div className="glass-panel p-8 rounded-3xl text-center">
-        <p className="text-slate-300 text-sm leading-relaxed mb-6 max-w-xl mx-auto">{t('aboutCtaText')}</p>
-        <button
-          onClick={() => setLocation('/')}
-          data-testid="button-go-to-evaluator-about"
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 px-8 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer"
-        >
-          {t('goEval')}
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-        </button>
-      </div>
+      <CtaBand text={t('aboutCtaText')} testId="button-go-to-evaluator-about" onGo={() => setLocation('/')} label={t('goEval')} />
     </main>
   );
 }
@@ -1198,12 +1203,8 @@ function AboutPage() {
 // ─── How It Works Page ────────────────────────────────────────────────────────
 
 const HOW_STEPS = [
-  { num: '01', tKey: 'step01', icon: '🔐', color: 'from-indigo-500 to-blue-500', border: 'border-indigo-500/40' },
-  { num: '02', tKey: 'step02', icon: '📋', color: 'from-violet-500 to-indigo-500', border: 'border-violet-500/40' },
-  { num: '03', tKey: 'step03', icon: '🛰️', color: 'from-fuchsia-500 to-violet-500', border: 'border-fuchsia-500/40' },
-  { num: '04', tKey: 'step04', icon: '🗺️', color: 'from-cyan-500 to-blue-500', border: 'border-cyan-500/40' },
-  { num: '05', tKey: 'step05', icon: '🤝', color: 'from-emerald-500 to-cyan-500', border: 'border-emerald-500/40' },
-  { num: '06', tKey: 'step06', icon: '💼', color: 'from-amber-500 to-orange-500', border: 'border-amber-500/40' },
+  { num: '01', tKey: 'step01' }, { num: '02', tKey: 'step02' }, { num: '03', tKey: 'step03' },
+  { num: '04', tKey: 'step04' }, { num: '05', tKey: 'step05' }, { num: '06', tKey: 'step06' },
 ] as const;
 
 const NEED_ITEMS = [
@@ -1219,67 +1220,40 @@ function HowItWorksPage() {
   const { t } = useLang();
   const [, setLocation] = useLocation();
   return (
-    <main id="main-content" tabIndex={-1} className="outline-none relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 flex-grow w-full space-y-8">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs mb-8">
-          <span className="text-indigo-400 font-semibold">{t('howBadge')}</span>
-        </div>
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
-          <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
-            {t('howTitle')}
-          </span>
-        </h1>
-        <p className="text-slate-400 text-lg leading-relaxed max-w-2xl">{t('howSub')}</p>
-      </div>
+    <main id="main-content" tabIndex={-1} className="outline-none relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-16 flex-grow w-full space-y-16">
+      <PageHero eyebrow={t('howBadge')} title={t('howTitle')} sub={t('howSub')} />
 
-      {/* Steps */}
-      <div className="space-y-6">
-        {HOW_STEPS.map((step) => (
-          <div key={step.num} className={`glass-panel p-8 rounded-3xl border-l-4 ${step.border}`} data-testid={`step-${step.num}`}>
-            <div className="flex items-start gap-5">
-              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center text-xl flex-shrink-0 shadow-lg`}>
-                {step.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t('stepLabel')} {step.num}</span>
-                <h3 className="text-white font-bold text-lg mt-1 mb-2">{t(`${step.tKey}T` as TKey)}</h3>
-                <p className="text-slate-300 text-sm leading-relaxed mb-3">{t(`${step.tKey}D` as TKey)}</p>
-                <p className="text-slate-500 text-xs leading-relaxed italic border-l-2 border-slate-700 pl-3">{t(`${step.tKey}Det` as TKey)}</p>
-              </div>
+      <ol className="mx-auto max-w-5xl">
+        {HOW_STEPS.map((step, idx) => (
+          <li key={step.num} className="relative grid gap-4 pb-12 pl-16 sm:pl-24" data-testid={`step-${step.num}`}>
+            {idx < HOW_STEPS.length - 1 && <span aria-hidden="true" className="absolute left-[23px] sm:left-[31px] top-14 bottom-2 w-px bg-[#D9DCF5]" />}
+            <span aria-hidden="true" className="absolute left-0 top-0 flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-[#5B4FE9] vf-display text-lg sm:text-xl font-bold text-[#FCFCFF]">{step.num}</span>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#3F35C2]">{t('stepLabel')} {step.num}</p>
+              <h3 className="mt-2 text-2xl font-bold text-[#0F172A]">{t(`${step.tKey}T` as TKey)}</h3>
+              <p className="mt-3 max-w-2xl text-base leading-relaxed text-[#273449]">{t(`${step.tKey}D` as TKey)}</p>
+              <p className="mt-4 max-w-2xl rounded-2xl bg-[#EEF0FF] px-5 py-4 text-sm leading-relaxed text-[#273449]">{t(`${step.tKey}Det` as TKey)}</p>
             </div>
-          </div>
+          </li>
         ))}
-      </div>
+      </ol>
 
-      {/* What you need */}
-      <div className="glass-panel p-8 rounded-3xl mt-10">
-        <h2 className="text-white font-bold text-lg mb-6">{t('whatNeedTitle')}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <section className="vf-card p-6 sm:p-10">
+        <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172A] mb-8">{t('whatNeedTitle')}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {NEED_ITEMS.map((item) => (
-            <div key={item.lKey} className="flex items-start gap-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/60">
-              <span className="text-indigo-400 mt-0.5 flex-shrink-0 text-sm">✓</span>
+            <div key={item.lKey} className="flex items-start gap-3 rounded-2xl bg-[#FAFAFF] border border-[#E2E4F3] p-5">
+              <span aria-hidden="true" className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#5B4FE9] text-xs font-bold text-[#FCFCFF]">✓</span>
               <div>
-                <p className="text-white text-xs font-semibold mb-0.5">{t(item.lKey)}</p>
-                <p className="text-slate-500 text-xs">{t(item.nKey)}</p>
+                <p className="text-[15px] font-semibold text-[#0F172A]">{t(item.lKey)}</p>
+                <p className="mt-1 text-sm text-[#4B5568]">{t(item.nKey)}</p>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* CTA */}
-      <div className="glass-panel p-8 rounded-3xl mt-6 text-center">
-        <p className="text-slate-300 text-sm leading-relaxed mb-6 max-w-xl mx-auto">{t('howCtaText')}</p>
-        <button
-          onClick={() => setLocation('/')}
-          data-testid="button-go-to-evaluator-how"
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 px-8 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer"
-        >
-          {t('goEval')}
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-        </button>
-      </div>
+      <CtaBand text={t('howCtaText')} testId="button-go-to-evaluator-how" onGo={() => setLocation('/')} label={t('goEval')} />
     </main>
   );
 }
@@ -1407,137 +1381,154 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
     }
   }
 
-  const iCls = 'w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all';
+  const iCls = 'w-full bg-[#FAFAFF] border border-[#D9DCF5] rounded-2xl px-4 py-3.5 text-[15px] text-[#0F172A] placeholder-slate-500 focus:outline-none focus:border-[#5B4FE9] focus:ring-4 focus:ring-[#5B4FE9]/15 transition-colors';
+  const lCls = 'block text-sm font-semibold text-[#273449] mb-2';
+  const es = lang === 'es';
+  const H = es ? {
+    start: 'Crear mi perfil',
+    honestE: 'Lo que hacemos y lo que no', honestH: 'Orientación honesta antes de gastar en evaluaciones.',
+    yes: ['Conservamos cada título con su nombre original', 'Explicamos términos de EE. UU. con fuentes citadas', 'Le ayudamos a preguntar a quien decide'],
+    no: ['No emitimos equivalencias oficiales', 'No confirmamos acreditación ni autenticidad', 'No otorgamos licencias profesionales'],
+    yesT: 'VerifED sí', noT: 'VerifED no', formE: 'Empiece aquí', formH: 'Guarde su progreso y vuelva cuando quiera.',
+    formSide: ['Gratis para empezar', 'Inglés y español', 'Sus datos no se comparten con agencias gubernamentales'],
+  } : {
+    start: 'Start your profile',
+    honestE: 'What we do, and what we don’t', honestH: 'Honest guidance before you pay for evaluations.',
+    yes: ['Keep every award under its original name', 'Explain U.S. terms with cited sources', 'Help you ask the people who actually decide'],
+    no: ['Issue official equivalency decisions', 'Confirm accreditation or authenticity', 'Grant professional licensure'],
+    yesT: 'VerifED does', noT: 'VerifED does not', formE: 'Start here', formH: 'Save your progress and come back anytime.',
+    formSide: ['Free to start', 'English and Spanish', 'Never shared with government agencies'],
+  };
+  const goForm = () => {
+    const el = document.getElementById('account');
+    el?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    window.setTimeout(() => document.querySelector<HTMLInputElement>('[data-testid="input-username"]')?.focus({ preventScroll: true }), 400);
+  };
 
   return (
-    <div className="space-y-24">
+    <div className="space-y-20 sm:space-y-28">
 
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <div className="text-center max-w-4xl mx-auto pt-6">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs text-indigo-300 font-semibold mb-8">
-          <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse flex-shrink-0" />
-          🛰️ {t('heroBadge')}
+      {/* ── Photo hero ─────────────────────────────────────────────────── */}
+      <section className="relative">
+        <div className="vf-hero min-h-[560px] sm:min-h-[620px] flex items-end">
+          <img src={`${import.meta.env.BASE_URL}hero-applicant.jpg`.replace(/\/+/g, '/')} alt="" fetchPriority="high" />
+          <div className="vf-on-photo w-full max-w-3xl px-6 pb-10 pt-28 sm:px-12 sm:pb-14">
+            <p className="vf-rise inline-flex items-center gap-2 rounded-full bg-[#FCFCFF]/15 px-4 py-2 text-[13px] font-semibold backdrop-blur-md border border-[#FCFCFF]/25">
+              <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[#A5B4FC]" />{t('heroBadge')}
+            </p>
+            <h1 className="vf-display vf-rise vf-d1 mt-6 text-[40px] sm:text-[56px] lg:text-[64px] font-bold leading-[1.02]">
+              {t('heroLine1')}<br /><span className="text-[#C7D2FE]">{t('heroLine2')}</span>
+            </h1>
+            <p className="vf-rise vf-d2 mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-[#EEF0FF]">{t('heroSub')}</p>
+            <div className="vf-rise vf-d3 mt-8 flex flex-wrap gap-3">
+              <button type="button" onClick={goForm} className="vf-btn" data-testid="button-hero-start">
+                {H.start}
+                <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+              </button>
+              <Link href="/how-it-works" className="vf-btn-ghost" data-testid="link-hero-how">{t('howItWorks')}</Link>
+            </div>
+          </div>
         </div>
-
-        {/* Headline */}
-        <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-[1.05]">
-          {t('heroLine1')}<br />
-          <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
-            {t('heroLine2')}
-          </span>
-        </h1>
-
-        {/* Subtitle */}
-        <p className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-14">
-          {t('heroSub')}
-        </p>
-
-        <Link href="/guides" data-testid="link-home-guides" className="mx-auto mb-10 flex max-w-xl flex-col gap-1 rounded-2xl border border-indigo-500/40 bg-indigo-500/10 px-5 py-4 text-left hover:border-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400">
-          <span className="font-bold text-white">{GUIDE_UI[lang].homeEntry} <span aria-hidden="true">→</span></span>
-          <span className="text-sm text-slate-300">{GUIDE_UI[lang].homeEntryBody}</span>
+        <Link href="/guides" aria-label={GUIDE_UI[lang].nav} data-testid="link-hero-notch-guides" className="absolute right-0 top-0 hidden sm:flex h-[104px] w-[104px] items-center justify-center rounded-full bg-[#5B4FE9] text-[#FCFCFF] transition-transform hover:-rotate-12">
+          <svg aria-hidden="true" className="w-7 h-7 -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
         </Link>
+      </section>
 
-        {/* Stats strip */}
-        <div className="inline-flex flex-col sm:flex-row items-center divide-y sm:divide-y-0 sm:divide-x divide-slate-800 rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden backdrop-blur-sm">
-          {([
-            [t('stat1'), t('stat1L')],
-            [t('stat2'), t('stat2L')],
-            [t('stat3'), t('stat3L')],
-          ] as [string, string][]).map(([val, label]) => (
-            <div key={label} className="px-8 py-4 text-center">
-              <div className="text-2xl font-black bg-gradient-to-r from-blue-400 to-fuchsia-500 bg-clip-text text-transparent">{val}</div>
-              <div className="text-[11px] text-slate-500 uppercase tracking-wider font-medium mt-0.5">{label}</div>
+      <ServiceExplorer lang={lang} onStartProfile={goForm} />
+
+      {/* ── Guides entry ───────────────────────────────────────────────── */}
+      <Link href="/guides" data-testid="link-home-guides" className="group flex flex-col gap-4 rounded-[28px] bg-[#EEF0FF] p-7 sm:flex-row sm:items-center sm:justify-between sm:p-9 hover:bg-[#E1E4FF] transition-colors">
+        <span>
+          <span className="vf-eyebrow">{GUIDE_UI[lang].nav}</span>
+          <span className="mt-3 block vf-display text-2xl sm:text-3xl font-bold text-[#0F172A]">{GUIDE_UI[lang].homeEntry}</span>
+          <span className="mt-2 block max-w-2xl text-base leading-relaxed text-[#273449]">{GUIDE_UI[lang].homeEntryBody}</span>
+        </span>
+        <span aria-hidden="true" className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-[#5B4FE9] text-2xl text-[#FCFCFF] transition-transform group-hover:translate-x-1">→</span>
+      </Link>
+
+      {/* ── Honest limits ──────────────────────────────────────────────── */}
+      <section className="rounded-[36px] bg-[#0F172A] px-6 py-12 sm:px-12 sm:py-16">
+        <p className="text-sm font-bold text-[#A5B4FC]">{H.honestE}</p>
+        <h2 className="mt-3 max-w-2xl text-3xl sm:text-[44px] font-bold leading-tight text-[#FCFCFF]">{H.honestH}</h2>
+        <div className="mt-10 grid gap-4 md:grid-cols-2">
+          {([[H.yesT, H.yes, true], [H.noT, H.no, false]] as [string, readonly string[], boolean][]).map(([title, items, ok]) => (
+            <div key={title} className={`rounded-[24px] p-7 ${ok ? 'bg-[#5B4FE9]' : 'bg-[#1E293B]'}`}>
+              <h3 className="text-lg font-bold text-[#FCFCFF]">{title}</h3>
+              <ul className="mt-5 space-y-3">
+                {items.map((it) => (
+                  <li key={it} className="flex gap-3 text-[15px] leading-relaxed text-[#E2E4F3]">
+                    <span aria-hidden="true" className="mt-0.5 font-bold">{ok ? '✓' : '×'}</span>{it}
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
-      </div>
-
-      {/* ── Features ─────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
-        {([
-          ['🗺️', t('f1t'), t('f1d'), 'border-indigo-500/20 hover:border-indigo-500/40'],
-          ['🏛️', t('f2t'), t('f2d'), 'border-violet-500/20 hover:border-violet-500/40'],
-          ['📋', t('f3t'), t('f3d'), 'border-cyan-500/20 hover:border-cyan-500/40'],
-          ['💼', t('f4t'), t('f4d'), 'border-emerald-500/20 hover:border-emerald-500/40'],
-        ] as [string, string, string, string][]).map(([icon, title, desc, border]) => (
-          <div key={title} className={`group bg-slate-900/60 border ${border} rounded-2xl p-6 backdrop-blur-sm transition-all duration-200 hover:bg-slate-800/60`}>
-            <span className="text-2xl mb-3 block">{icon}</span>
-            <h3 className="text-white font-bold text-sm mb-1.5">{title}</h3>
-            <p className="text-slate-400 text-xs leading-relaxed">{desc}</p>
-          </div>
-        ))}
-      </div>
+      </section>
 
       {/* ── Service notice (shown when user store is unreadable) ─────── */}
       {storageError && (
-        <div className="max-w-md mx-auto">
-          <div
-            role="status"
-            data-testid="banner-service-unavailable"
-            className="rounded-2xl border border-amber-500/30 bg-amber-950/40 backdrop-blur-sm px-5 py-4 text-center"
-          >
+        <div className="max-w-xl mx-auto">
+          <div role="status" data-testid="banner-service-unavailable" className="rounded-2xl border border-amber-500/30 bg-amber-950/40 px-5 py-4 text-center">
             <p className="text-amber-300 font-semibold text-sm mb-1">{t('svcUnavailableTitle')}</p>
-            <p className="text-amber-400/80 text-xs leading-relaxed">
-              {t('svcUnavailableSub')}
-            </p>
+            <p className="text-amber-400/80 text-sm leading-relaxed">{t('svcUnavailableSub')}</p>
           </div>
         </div>
       )}
 
       {/* ── Auth Form ────────────────────────────────────────────────────── */}
-      <div className="max-w-md mx-auto">
-        {/* Section label */}
-        <div className="flex items-center gap-4 mb-8">
-          <div className="flex-1 h-px bg-slate-800" />
-          <span className="text-xs text-slate-500 font-semibold uppercase tracking-widest">
-            {isSignUp ? t('createAcc') : t('signInAcc')}
-          </span>
-          <div className="flex-1 h-px bg-slate-800" />
+      <section id="account" className="scroll-mt-24 grid gap-10 lg:grid-cols-[1fr_minmax(0,520px)] lg:items-start">
+        <div className="lg:pt-6">
+          <p className="vf-eyebrow">{H.formE}</p>
+          <h2 className="mt-3 text-3xl sm:text-[44px] font-bold leading-tight text-[#0F172A]">{H.formH}</h2>
+          <p className="mt-5 max-w-md text-base leading-relaxed text-[#4B5568]">{t('formNote')}</p>
+          <ul className="mt-8 space-y-3">
+            {H.formSide.map((x) => (
+              <li key={x} className="flex items-center gap-3 text-[15px] font-medium text-[#273449]">
+                <span aria-hidden="true" className="flex h-6 w-6 items-center justify-center rounded-full bg-[#EEF0FF] text-xs font-bold text-[#3F35C2]">✓</span>{x}
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div className="glass-panel p-8 rounded-3xl relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-violet-500 to-fuchsia-500" />
-
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-white font-bold text-base tracking-tight" data-testid="text-auth-heading">
+        <div className="vf-card p-6 sm:p-9">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+            <h2 className="text-2xl font-bold text-[#0F172A]" data-testid="text-auth-heading">
               {isSignUp ? t('createAcc') : t('signInAcc')}
             </h2>
-            <button type="button" onClick={() => { setIsSignUp(!isSignUp); setError(''); }} data-testid="button-toggle-auth" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium underline bg-transparent border-none cursor-pointer whitespace-nowrap ml-3">
+            <button type="button" onClick={() => { setIsSignUp(!isSignUp); setError(''); }} data-testid="button-toggle-auth" className="text-sm text-[#3F35C2] hover:text-[#0F172A] font-semibold underline underline-offset-4 bg-transparent border-none cursor-pointer">
               {isSignUp ? t('alreadyReg') : t('needAcc')}
             </button>
           </div>
 
-          <p className="text-xs text-slate-500 mb-5 leading-relaxed">{t('formNote')}</p>
-
-          <form onSubmit={handleSubmit} className="space-y-4" data-testid="form-auth">
+          <form onSubmit={handleSubmit} className="mt-6 space-y-5" data-testid="form-auth">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('lUser')}</label>
-              <input value={username} onChange={(e) => setUsername(e.target.value)} data-testid="input-username" className={iCls} placeholder={t('pUser')} required />
+              <label htmlFor="auth-user" className={lCls}>{t('lUser')}</label>
+              <input id="auth-user" autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} data-testid="input-username" className={iCls} placeholder={t('pUser')} required />
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('lPass')}</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} data-testid="input-password" className={iCls} placeholder="••••••••••••" required />
+              <label htmlFor="auth-pass" className={lCls}>{t('lPass')}</label>
+              <input id="auth-pass" type="password" autoComplete={isSignUp ? 'new-password' : 'current-password'} value={password} onChange={(e) => setPassword(e.target.value)} data-testid="input-password" className={iCls} placeholder="••••••••••••" required />
             </div>
             {isSignUp && (
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('lEmail')}</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="input-email" className={iCls} placeholder={t('pEmail')} required />
+                <label htmlFor="auth-email" className={lCls}>{t('lEmail')}</label>
+                <input id="auth-email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="input-email" className={iCls} placeholder={t('pEmail')} required />
               </div>
             )}
             {isSignUp && (
               <>
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
-                    {t('evalLCountry')} <span className="text-slate-600 normal-case">{t('evalLCreditsOpt')}</span>
+                  <label className={lCls}>
+                    {t('evalLCountry')} <span className="text-[#4B5568] font-normal">{t('evalLCreditsOpt')}</span>
                   </label>
                   <CountryPicker value={country} onChange={setCountry} data-testid="input-signup-country" className={iCls} placeholder={t('evalPCountry')} />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
-                    {t('evalLGoal')} <span className="text-slate-600 normal-case">{t('evalLCreditsOpt')}</span>
+                  <label htmlFor="auth-goal" className={lCls}>
+                    {t('evalLGoal')} <span className="text-[#4B5568] font-normal">{t('evalLCreditsOpt')}</span>
                   </label>
-                  <select value={purpose} onChange={(e) => setPurpose(e.target.value)} data-testid="select-signup-goal" className={iCls}>
+                  <select id="auth-goal" value={purpose} onChange={(e) => setPurpose(e.target.value)} data-testid="select-signup-goal" className={iCls}>
                     <option value="">{t('evalOptGoal')}</option>
                     <option value="University Admission">{t('evalGoal1')}</option>
                     <option value="Employment & HR">{t('evalGoal2')}</option>
@@ -1548,15 +1539,15 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
               </>
             )}
             {error && (
-              <p className="text-red-400 text-xs font-medium bg-red-900/20 border border-red-500/30 rounded-lg px-3 py-2">{error}</p>
+              <p role="alert" className="text-red-400 text-sm font-medium bg-red-900/20 border border-red-500/30 rounded-2xl px-4 py-3">{error}</p>
             )}
-            <button type="submit" data-testid="button-auth-submit" className="w-full mt-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-4 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
+            <button type="submit" data-testid="button-auth-submit" className="vf-btn w-full !min-h-[54px]">
               <span>{isSignUp ? t('btnCreate') : t('btnSignIn')}</span>
-              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+              <svg aria-hidden="true" className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </button>
           </form>
         </div>
-      </div>
+      </section>
 
     </div>
   );
@@ -1583,7 +1574,7 @@ function JobBoardsSection({ field }: { field?: string }) {
     <div className="mt-16">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <span className="text-indigo-400 text-2xl">💼</span>
+          <span className="text-indigo-400 text-2xl"></span>
           <h2 className="text-white font-extrabold text-2xl tracking-tight">
             {hasField ? <>{t('jobAlignedWith')} <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">{field}</span></> : t('jobTitle')}
           </h2>
@@ -1598,7 +1589,7 @@ function JobBoardsSection({ field }: { field?: string }) {
       {hasField && (
         <div className="glass-panel p-6 rounded-2xl mb-6" data-testid="aligned-roles">
           <h3 className="text-white font-bold text-xs uppercase tracking-wider mb-4 flex items-center gap-2">
-            <span className="text-indigo-400">🎯</span> {t('jobRolesTitle')}
+            <span className="text-indigo-400"></span> {t('jobRolesTitle')}
           </h3>
           <div className="flex flex-wrap gap-2">
             {roles.map((role) => (
@@ -1683,7 +1674,7 @@ function ContactSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <span className="text-indigo-400 text-2xl">🤝</span>
+              <span className="text-indigo-400 text-2xl"></span>
               <h2 className="text-white font-extrabold text-2xl tracking-tight">{t('contactTitle')}</h2>
             </div>
             <p className="text-slate-400 text-sm leading-relaxed mb-6">{t('contactDesc')}</p>
@@ -1699,7 +1690,7 @@ function ContactSection() {
           <div>
             {sent ? (
               <div className="flex flex-col items-center justify-center h-full text-center py-8">
-                <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl mb-4">✅</div>
+                <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl mb-4">✓</div>
                 <p className="text-white font-bold text-lg mb-1">{t('contactSent')}</p>
                 <p className="text-slate-400 text-sm">{t('contactSentSub')}</p>
               </div>
@@ -1760,9 +1751,10 @@ function EvaluatorView() {
   }
   if (loaded.error) return <p role="alert" className="rounded-xl border border-amber-500 p-6 text-amber-100">{lang === 'es' ? 'No se pudo leer su perfil educativo guardado. No se ha sobrescrito. Contacte con soporte antes de volver a introducir sus titulaciones.' : 'Your saved education profile could not be read. It has not been overwritten. Contact support before re-entering your qualifications.'}</p>;
   return <div className="space-y-8">
-    <div className="mx-auto max-w-3xl text-center">
-      <h1 className="text-3xl font-bold text-white">{lang === 'es' ? 'Su educación. Sus próximos pasos en EE. UU.' : 'Your education. Your next steps in the U.S.'}</h1>
-      <p className="mt-3 text-slate-400">{lang === 'es' ? 'Titulaciones separadas, orientación con fuentes y límites claros. No es una evaluación oficial.' : 'Separate qualifications, cited guidance and clear limits. Not an official evaluation.'}</p>
+    <div className="rounded-[36px] bg-[#EEF0FF] px-6 py-10 sm:px-12 sm:py-14">
+      <p className="vf-eyebrow">@{username}</p>
+      <h1 className="vf-display mt-4 max-w-3xl text-[34px] sm:text-[48px] font-bold leading-[1.05] text-[#0F172A]">{lang === 'es' ? 'Su educación. Sus próximos pasos en EE. UU.' : 'Your education. Your next steps in the U.S.'}</h1>
+      <p className="mt-4 max-w-2xl text-lg text-[#4B5568]">{lang === 'es' ? 'Titulaciones separadas, orientación con fuentes y límites claros. No es una evaluación oficial.' : 'Separate qualifications, cited guidance and clear limits. Not an official evaluation.'}</p>
     </div>
     <QualificationWorkflow lang={lang} username={username} initialProfile={profile} onProfileChange={save} onActiveQualification={setActive} />
     {syncNotice && <p role="status" className="text-sm text-slate-300">{syncNotice === 'local'
@@ -2020,7 +2012,7 @@ function AdminPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-rose-900/60 border border-rose-700/50 flex items-center justify-center text-lg">🔐</div>
+          <div className="w-10 h-10 rounded-2xl bg-rose-900/60 border border-rose-700/50 flex items-center justify-center text-lg"></div>
           <div>
             <h1 className="text-white font-extrabold text-2xl tracking-tight">{t('adminTitle')}</h1>
             <p className="text-slate-400 text-xs">
@@ -2132,13 +2124,13 @@ function AdminPage() {
                     <button
                       onClick={() => { setResetTarget(user); setNewPass(''); setNewPassConfirm(''); setResetMsg(''); }}
                       title={t('adminResetTitle')}
-                      className="w-7 h-7 flex items-center justify-center rounded-lg bg-indigo-900/40 hover:bg-indigo-800/60 border border-indigo-700/50 text-indigo-300 text-xs transition-all cursor-pointer"
-                    >🔑</button>
+                      className="h-7 px-2 flex items-center justify-center rounded-lg bg-indigo-900/40 hover:bg-indigo-800/60 border border-indigo-700/50 text-indigo-300 text-xs transition-all cursor-pointer"
+                    >{t("adminResetTitle")}</button>
                     <button
                       onClick={() => setDeleteTarget(user)}
                       title={t('adminDeleteTitle')}
-                      className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-900/30 hover:bg-red-900/50 border border-red-700/40 text-red-400 text-xs transition-all cursor-pointer"
-                    >🗑</button>
+                      className="h-7 px-2 flex items-center justify-center rounded-lg bg-red-900/30 hover:bg-red-900/50 border border-red-700/40 text-red-400 text-xs transition-all cursor-pointer"
+                    >{t("adminDeleteTitle")}</button>
                   </div>
                 </div>
 
@@ -2239,7 +2231,7 @@ function AdminPage() {
           <div className="glass-panel p-8 rounded-3xl w-full max-w-sm shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-rose-500" />
             <div className="text-center">
-              <div className="text-4xl mb-4">⚠️</div>
+              <div className="text-4xl mb-4">!</div>
               <h3 className="text-white font-bold text-lg mb-2">{t('adminDeleteTitle')}</h3>
               <p className="text-slate-400 text-sm mb-6">
                 {t('adminDeleteMsg1')} <span className="text-red-400 font-mono">@{deleteTarget.username}</span> {t('adminDeleteMsg2')}
@@ -2261,9 +2253,10 @@ const GUIDE_SLUGS = Object.keys(seoPages).filter((r) => r.startsWith('/guides/')
 function NotFoundView() {
   const { lang } = useLang();
   return (
-    <main id="main-content" tabIndex={-1} className="relative z-10 mx-auto px-6 py-24 outline-none">
-      <h1 className="text-3xl font-bold">{lang === 'es' ? 'Página no encontrada' : 'Page not found'}</h1>
-      <Link href="/" className="text-indigo-300 underline">{lang === 'es' ? 'Volver al inicio' : 'Return to homepage'}</Link>
+    <main id="main-content" tabIndex={-1} className="relative z-10 mx-auto max-w-3xl px-6 py-24 text-center outline-none">
+      <p className="vf-display text-[96px] font-bold leading-none text-[#C7CBFA]" aria-hidden="true">404</p>
+      <h1 className="mt-4 mb-6 text-4xl font-bold">{lang === 'es' ? 'Página no encontrada' : 'Page not found'}</h1>
+      <Link href="/" className="vf-btn">{lang === 'es' ? 'Volver al inicio' : 'Return to homepage'}</Link>
     </main>
   );
 }
@@ -2322,7 +2315,7 @@ export default function App() {
     <LangCtx.Provider value={{ lang, toggleLang, t }}>
     <WouterRouter base={base}>
       <PageMetadata lang={lang} />
-      <div className="bg-slate-950 text-slate-100 min-h-screen font-sans relative overflow-x-hidden flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+      <div className="vf bg-[#FAFAFF] text-[#0F172A] min-h-[100dvh] font-sans relative overflow-x-hidden flex flex-col justify-between selection:bg-[#E1E4FF]">
         <div className="glow-effect -top-40 -left-40 rounded-full" />
         <div className="glow-effect top-1/3 -right-40 rounded-full" />
 
@@ -2346,7 +2339,7 @@ export default function App() {
             <AdminGate />
           </Route>
           <Route path="/">
-            <main id="main-content" tabIndex={-1} className="relative z-10 max-w-6xl mx-auto px-6 pt-16 pb-24 flex-grow w-full outline-none">
+            <main id="main-content" tabIndex={-1} className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-24 flex-grow w-full outline-none">
               {appView === 'auth' ? <AuthView onLogin={handleLogin} storageError={userStoreError} /> : <EvaluatorView />}
             </main>
           </Route>
