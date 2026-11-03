@@ -1571,58 +1571,54 @@ function JobBoardsSection({ field }: { field?: string }) {
   const hasField = Boolean(field && field.trim());
   const roles = hasField ? getAlignedRoles(field!.trim()) : [];
   return (
-    <div className="mt-16">
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <span className="text-indigo-400 text-2xl"></span>
-          <h2 className="text-white font-extrabold text-2xl tracking-tight">
-            {hasField ? <>{t('jobAlignedWith')} <span className="bg-gradient-to-r from-blue-400 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">{field}</span></> : t('jobTitle')}
-          </h2>
-        </div>
-        <p className="text-slate-400 text-sm leading-relaxed max-w-2xl">
-          {hasField
-            ? `${t('jobAlignedDesc1')} ${field} ${t('jobAlignedDesc2')}`
-            : t('jobDesc')}
-        </p>
-      </div>
+    <section id="jobs" aria-labelledby="jobs-h" className="scroll-mt-24">
+      <SectionHead eyebrow="03" id="jobs-h" title={hasField ? <>{t('jobAlignedWith')} <span className="text-[#3F35C2]">{field}</span></> : t('jobTitle')}
+        sub={hasField ? `${t('jobAlignedDesc1')} ${field} ${t('jobAlignedDesc2')}` : t('jobDesc')} />
 
       {hasField && (
-        <div className="glass-panel p-6 rounded-2xl mb-6" data-testid="aligned-roles">
-          <h3 className="text-white font-bold text-xs uppercase tracking-wider mb-4 flex items-center gap-2">
-            <span className="text-indigo-400"></span> {t('jobRolesTitle')}
-          </h3>
-          <div className="flex flex-wrap gap-2">
+        <div className="mb-5 rounded-[28px] bg-[#0F172A] p-6 sm:p-8" data-testid="aligned-roles">
+          <h3 className="text-sm font-bold text-[#A5B4FC]">{t('jobRolesTitle')}</h3>
+          <div className="mt-4 flex flex-wrap gap-2">
             {roles.map((role) => (
               <a
                 key={role}
                 href={jobSearchUrl('Indeed', role)}
                 target="_blank" rel="noopener noreferrer"
                 data-testid={`link-role-${role.toLowerCase().replace(/[^a-z]+/g, '-')}`}
-                className="text-xs font-semibold px-3.5 py-2 rounded-xl bg-indigo-500/10 text-indigo-300 border border-indigo-500/25 hover:bg-indigo-500/20 hover:text-white transition-all"
+                className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-[#FCFCFF]/10 px-4 text-sm font-semibold text-[#FCFCFF] border border-[#FCFCFF]/20 hover:bg-[#FCFCFF]/20 transition-colors"
               >
-                {role} ↗
+                {role} <span aria-hidden="true">↗</span>
               </a>
             ))}
           </div>
-          <p className="text-[10px] text-slate-500 mt-3">{t('jobRolesTip')}</p>
+          <p className="mt-4 text-sm text-[#C7CBFA]">{t('jobRolesTip')}</p>
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {JOB_BOARDS.map((board) => (
-          <a key={board.name} href={hasField ? jobSearchUrl(board.name, field!.trim()) : board.url} target="_blank" rel="noopener noreferrer" data-testid={`link-job-board-${board.name.toLowerCase().replace(/\s+/g, '-')}`} className="glass-panel p-5 rounded-2xl flex items-start gap-4 hover:border-indigo-500/40 transition-all group">
-            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${board.color} flex items-center justify-center font-black text-white text-sm flex-shrink-0 shadow-lg`}>{board.initials}</div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-white font-bold text-sm group-hover:text-indigo-300 transition-colors">{board.name}</span>
-                <svg className="w-3 h-3 text-slate-500 group-hover:text-indigo-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-              </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                {hasField ? `${field} ${t('jobPrefiltered')}` : t(board.descKey)}
-              </p>
-            </div>
-          </a>
+          <li key={board.name}>
+            <a href={hasField ? jobSearchUrl(board.name, field!.trim()) : board.url} target="_blank" rel="noopener noreferrer" data-testid={`link-job-board-${board.name.toLowerCase().replace(/\s+/g, '-')}`} className="vf-card group flex h-full items-start gap-4 p-5 hover:border-[#5B4FE9] transition-colors">
+              <span aria-hidden="true" className="vf-display flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#EEF0FF] text-sm font-bold text-[#3F35C2]">{board.initials}</span>
+              <span className="min-w-0 flex-1">
+                <span className="flex items-center justify-between gap-2 text-base font-bold text-[#0F172A]">{board.name}<span aria-hidden="true" className="text-[#3F35C2] transition-transform group-hover:translate-x-0.5">↗</span></span>
+                <span className="mt-1 block text-sm leading-relaxed text-[#4B5568]">{hasField ? `${field} ${t('jobPrefiltered')}` : t(board.descKey)}</span>
+              </span>
+            </a>
+          </li>
         ))}
+      </ul>
+    </section>
+  );
+}
+
+function SectionHead({ eyebrow, id, title, sub }: { eyebrow: string; id: string; title: React.ReactNode; sub?: string }) {
+  return (
+    <div className="mb-8 flex gap-5">
+      <span aria-hidden="true" className="vf-display hidden sm:flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#5B4FE9] font-bold text-[#FCFCFF]">{eyebrow}</span>
+      <div>
+        <h2 id={id} className="text-[28px] sm:text-[36px] font-bold leading-tight text-[#0F172A]">{title}</h2>
+        {sub && <p className="mt-3 max-w-2xl text-base leading-relaxed text-[#4B5568]">{sub}</p>}
       </div>
     </div>
   );
@@ -1668,61 +1664,54 @@ function ContactSection() {
   }
 
   return (
-    <div className="mt-12">
-      <div className="glass-panel p-8 rounded-3xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500" />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-indigo-400 text-2xl"></span>
-              <h2 className="text-white font-extrabold text-2xl tracking-tight">{t('contactTitle')}</h2>
-            </div>
-            <p className="text-slate-400 text-sm leading-relaxed mb-6">{t('contactDesc')}</p>
-            <ul className="space-y-3">
-              {CONTACT_ITEMS.map((key) => (
-                <li key={key} className="flex items-start gap-2.5 text-xs text-slate-300">
-                  <span className="text-indigo-400 mt-0.5 flex-shrink-0">✓</span>
-                  {t(key)}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            {sent ? (
-              <div className="flex flex-col items-center justify-center h-full text-center py-8">
-                <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl mb-4">✓</div>
-                <p className="text-white font-bold text-lg mb-1">{t('contactSent')}</p>
-                <p className="text-slate-400 text-sm">{t('contactSentSub')}</p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4" data-testid="form-contact">
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('contactLName')}</label>
-                  <input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} data-testid="input-contact-name" required placeholder={t('contactPName')} className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('contactLEmail')}</label>
-                  <input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="input-contact-email" required placeholder="name@example.com" className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('contactLMsg')}</label>
-                  <textarea name="message" value={message} onChange={(e) => setMessage(e.target.value)} data-testid="input-contact-message" required rows={4} placeholder={t('contactPMsg')} className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none" />
-                </div>
-                {sendError && (
-                  <p role="alert" className="text-red-400 text-xs font-medium bg-red-900/20 border border-red-500/30 rounded-lg px-3 py-2">
-                    {t('contactError')}
-                  </p>
-                )}
-                <button type="submit" data-testid="button-contact-submit" disabled={sending} className="w-full bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
-                  <span>{sending ? t('contactSending') : t('contactBtn')}</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
+    <section id="help" aria-labelledby="help-h" className="scroll-mt-24 grid gap-8 rounded-[36px] bg-[#EEF0FF] p-6 sm:p-10 lg:grid-cols-[1fr_minmax(0,520px)]">
+      <div>
+        <p className="vf-eyebrow">04</p>
+        <h2 id="help-h" className="mt-3 text-[28px] sm:text-[36px] font-bold leading-tight text-[#0F172A]">{t('contactTitle')}</h2>
+        <p className="mt-4 text-base leading-relaxed text-[#273449]">{t('contactDesc')}</p>
+        <ul className="mt-6 space-y-3">
+          {CONTACT_ITEMS.map((key) => (
+            <li key={key} className="flex items-start gap-3 text-[15px] text-[#273449]">
+              <span aria-hidden="true" className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#5B4FE9] text-xs font-bold text-[#FCFCFF]">✓</span>
+              {t(key)}
+            </li>
+          ))}
+        </ul>
       </div>
-    </div>
+      <div className="vf-card p-6 sm:p-8">
+        {sent ? (
+          <div role="status" className="flex flex-col items-center justify-center h-full text-center py-8">
+            <div aria-hidden="true" className="w-14 h-14 rounded-full bg-[#5B4FE9] text-[#FCFCFF] flex items-center justify-center text-2xl mb-4">✓</div>
+            <p className="text-[#0F172A] font-bold text-xl mb-1">{t('contactSent')}</p>
+            <p className="text-[#4B5568] text-sm">{t('contactSentSub')}</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-5" data-testid="form-contact">
+            <div>
+              <label htmlFor="contact-name" className="block text-sm font-semibold text-[#273449] mb-2">{t('contactLName')}</label>
+              <input id="contact-name" type="text" name="name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} data-testid="input-contact-name" required placeholder={t('contactPName')} className="w-full bg-[#FAFAFF] border border-[#D9DCF5] rounded-2xl px-4 py-3.5 text-[15px] text-[#0F172A] placeholder-slate-500 focus:outline-none focus:border-[#5B4FE9] focus:ring-4 focus:ring-[#5B4FE9]/15 transition-colors" />
+            </div>
+            <div>
+              <label htmlFor="contact-email" className="block text-sm font-semibold text-[#273449] mb-2">{t('contactLEmail')}</label>
+              <input id="contact-email" type="email" name="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="input-contact-email" required placeholder="name@example.com" className="w-full bg-[#FAFAFF] border border-[#D9DCF5] rounded-2xl px-4 py-3.5 text-[15px] text-[#0F172A] placeholder-slate-500 focus:outline-none focus:border-[#5B4FE9] focus:ring-4 focus:ring-[#5B4FE9]/15 transition-colors" />
+            </div>
+            <div>
+              <label htmlFor="contact-msg" className="block text-sm font-semibold text-[#273449] mb-2">{t('contactLMsg')}</label>
+              <textarea id="contact-msg" name="message" value={message} onChange={(e) => setMessage(e.target.value)} data-testid="input-contact-message" required rows={5} placeholder={t('contactPMsg')} className="w-full bg-[#FAFAFF] border border-[#D9DCF5] rounded-2xl px-4 py-3.5 text-[15px] text-[#0F172A] placeholder-slate-500 focus:outline-none focus:border-[#5B4FE9] focus:ring-4 focus:ring-[#5B4FE9]/15 transition-colors resize-y" />
+            </div>
+            {sendError && (
+              <p role="alert" className="text-red-400 text-sm font-medium bg-red-900/20 border border-red-500/30 rounded-2xl px-4 py-3">
+                {t('contactError')}
+              </p>
+            )}
+            <button type="submit" data-testid="button-contact-submit" disabled={sending} className="vf-btn w-full disabled:opacity-60 disabled:cursor-not-allowed">
+              <span>{sending ? t('contactSending') : t('contactBtn')}</span>
+              <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            </button>
+          </form>
+        )}
+      </div>
+    </section>
   );
 }
 
@@ -1750,21 +1739,38 @@ function EvaluatorView() {
     } catch { setSyncNotice('local'); }
   }
   if (loaded.error) return <p role="alert" className="rounded-xl border border-amber-500 p-6 text-amber-100">{lang === 'es' ? 'No se pudo leer su perfil educativo guardado. No se ha sobrescrito. Contacte con soporte antes de volver a introducir sus titulaciones.' : 'Your saved education profile could not be read. It has not been overwritten. Contact support before re-entering your qualifications.'}</p>;
-  return <div className="space-y-8">
-    <div className="rounded-[36px] bg-[#EEF0FF] px-6 py-10 sm:px-12 sm:py-14">
+  const es = lang === 'es';
+  const showPrograms = !!active && profile.purpose === 'University Admission';
+  const steps: [string, string][] = [
+    ['#qualifications', es ? 'Titulaciones' : 'Qualifications'],
+    ...(showPrograms ? [['#programs', es ? 'Programas' : 'Programs'] as [string, string]] : []),
+    ['#jobs', es ? 'Empleo' : 'Jobs'],
+    ['#help', es ? 'Ayuda' : 'Help'],
+  ];
+  return <div className="space-y-16">
+    <div className="vf-rise rounded-[36px] bg-[#EEF0FF] px-6 py-10 sm:px-12 sm:py-14">
       <p className="vf-eyebrow">@{username}</p>
-      <h1 className="vf-display mt-4 max-w-3xl text-[34px] sm:text-[48px] font-bold leading-[1.05] text-[#0F172A]">{lang === 'es' ? 'Su educación. Sus próximos pasos en EE. UU.' : 'Your education. Your next steps in the U.S.'}</h1>
-      <p className="mt-4 max-w-2xl text-lg text-[#4B5568]">{lang === 'es' ? 'Titulaciones separadas, orientación con fuentes y límites claros. No es una evaluación oficial.' : 'Separate qualifications, cited guidance and clear limits. Not an official evaluation.'}</p>
+      <h1 className="vf-display mt-4 max-w-3xl text-[34px] sm:text-[48px] font-bold leading-[1.05] text-[#0F172A]">{es ? 'Su educación. Sus próximos pasos en EE. UU.' : 'Your education. Your next steps in the U.S.'}</h1>
+      <p className="mt-4 max-w-2xl text-lg text-[#4B5568]">{es ? 'Titulaciones separadas, orientación con fuentes y límites claros. No es una evaluación oficial.' : 'Separate qualifications, cited guidance and clear limits. Not an official evaluation.'}</p>
+      <nav aria-label={es ? 'Secciones del evaluador' : 'Evaluator sections'} className="mt-8">
+        <ol className="flex flex-wrap gap-2">
+          {steps.map(([href, label], i) => (
+            <li key={href}><a href={href} className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#FFFFFE] px-4 text-sm font-semibold text-[#0F172A] border border-[#E2E4F3] hover:border-[#5B4FE9]"><span className="text-[#3F35C2]">{i + 1}</span>{label}</a></li>
+          ))}
+        </ol>
+      </nav>
     </div>
-    <QualificationWorkflow lang={lang} username={username} initialProfile={profile} onProfileChange={save} onActiveQualification={setActive} />
-    {syncNotice && <p role="status" className="text-sm text-slate-300">{syncNotice === 'local'
-      ? (lang === 'es' ? 'Guardado en este dispositivo. No se pudo sincronizar; vuelva a guardar cuando haya conexión para tener los cambios en otros dispositivos.' : 'Saved on this device. Sync unavailable; save again when connected to make changes available on other devices.')
-      : (lang === 'es' ? 'Sincronizado con su cuenta.' : 'Synced to your account.')}</p>}
-    {active && profile.purpose === 'University Admission' && <Suspense fallback={<p>{lang === 'es' ? 'Cargando…' : 'Loading…'}</p>}>
-      <ComparablePrograms username={username} es={lang === 'es'} profile={{ country: active.country, institution: active.institution, degree: active.awardName, field: active.field, purpose: profile.purpose }} />
-    </Suspense>}
-    <ContactSection />
+    <div id="qualifications" className="scroll-mt-24">
+      <QualificationWorkflow lang={lang} username={username} initialProfile={profile} onProfileChange={save} onActiveQualification={setActive} />
+      {syncNotice && <p role="status" className={`mt-3 inline-flex rounded-full px-4 py-2 text-sm font-medium ${syncNotice === 'local' ? 'bg-amber-950/40 text-amber-200' : 'bg-[#EEF0FF] text-[#3F35C2]'}`}>{syncNotice === 'local'
+        ? (es ? 'Guardado en este dispositivo. No se pudo sincronizar; vuelva a guardar cuando haya conexión para tener los cambios en otros dispositivos.' : 'Saved on this device. Sync unavailable; save again when connected to make changes available on other devices.')
+        : (es ? 'Sincronizado con su cuenta.' : 'Synced to your account.')}</p>}
+    </div>
+    {showPrograms && active && <div id="programs" className="scroll-mt-24"><Suspense fallback={<div role="status" className="space-y-3"><div className="h-8 w-64 rounded-full bg-[#EEF0FF] animate-pulse" /><div className="h-40 rounded-[28px] bg-[#EEF0FF] animate-pulse" /><span className="sr-only">{es ? 'Cargando…' : 'Loading…'}</span></div>}>
+      <ComparablePrograms username={username} es={es} profile={{ country: active.country, institution: active.institution, degree: active.awardName, field: active.field, purpose: profile.purpose }} />
+    </Suspense></div>}
     <JobBoardsSection field={active?.field} />
+    <ContactSection />
   </div>;
 }
 
@@ -1832,23 +1838,25 @@ function AdminGate() {
   if (unlocked) return <AdminPage />;
 
   return (
-    <main id="main-content" tabIndex={-1} className="outline-none relative z-10 max-w-md mx-auto px-6 pt-24 pb-32 flex-grow w-full">
-      <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6">
-        <h2 className="text-white font-bold text-sm mb-1">{t('adminGateTitle')}</h2>
-        <p className="text-slate-400 text-xs mb-4">{t('adminGateDesc')}</p>
-        <form onSubmit={handleSubmit} className="flex gap-2">
+    <main id="main-content" tabIndex={-1} className="outline-none relative z-10 max-w-lg mx-auto px-4 sm:px-6 pt-16 pb-24 flex-grow w-full">
+      <div className="vf-card p-7 sm:p-10">
+        <span aria-hidden="true" className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EEF0FF]"><svg className="h-5 w-5 text-[#3F35C2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" strokeWidth={2} /><path d="M8 11V7a4 4 0 018 0v4" strokeWidth={2} strokeLinecap="round" /></svg></span>
+        <h1 className="mt-5 text-2xl font-bold text-[#0F172A]">{t('adminGateTitle')}</h1>
+        <p className="mt-1 mb-6 text-[15px] text-[#4B5568]">{t('adminGateDesc')}</p>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row">
           <input
             type="password"
             value={pass}
             onChange={(e) => { setPass(e.target.value); setMsg(''); }}
             placeholder={t('adminGatePlaceholder')}
             autoFocus
-            className="flex-grow bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+            aria-label={t('adminGatePlaceholder')}
+            className="flex-grow min-h-12 rounded-2xl border border-[#D9DCF5] bg-[#FAFAFF] px-4 text-[15px] text-[#0F172A] placeholder-slate-500 focus:outline-none focus:border-[#5B4FE9] focus:ring-4 focus:ring-[#5B4FE9]/15"
           />
           <button
             type="submit"
             disabled={busy || !pass}
-            className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors"
+            className="vf-btn disabled:opacity-50"
           >
             {t('adminGateBtn')}
           </button>
@@ -2001,36 +2009,34 @@ function AdminPage() {
       u.email.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const inputCls = 'w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all';
+  const inputCls = 'w-full min-h-12 rounded-2xl border border-[#D9DCF5] bg-[#FFFFFE] px-4 text-[15px] text-[#0F172A] placeholder-slate-500 focus:outline-none focus:border-[#5B4FE9] focus:ring-4 focus:ring-[#5B4FE9]/15';
   const dateLocale = lang === 'es' ? 'es-ES' : 'en-US';
 
   return (
-    <main id="main-content" tabIndex={-1} className="outline-none relative z-10 max-w-6xl mx-auto px-6 pt-12 pb-24 flex-grow w-full">
+    <main id="main-content" tabIndex={-1} className="outline-none relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-24 flex-grow w-full">
       {/* Storage corruption warning */}
       {storageErr && <StorageCorruptBanner message={storageErr} onDismiss={() => setStorageErr('')} />}
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-rose-900/60 border border-rose-700/50 flex items-center justify-center text-lg"></div>
-          <div>
-            <h1 className="text-white font-extrabold text-2xl tracking-tight">{t('adminTitle')}</h1>
-            <p className="text-slate-400 text-xs">
-              {serverMode !== true && users.length === 0
-                ? t('adminCountUnavailable')
-                : `${users.length} ${users.length !== 1 ? t('adminAccountPlural') : t('adminAccountSingular')}`}
-              {serverMode !== null && (
-                <span className={`ml-2 px-2 py-0.5 rounded-md border text-[10px] font-semibold ${serverMode ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-amber-500/15 border-amber-500/30 text-amber-400'}`}>
-                  {serverMode ? t('adminModeServer') : t('adminModeLocal')}
-                </span>
-              )}
-            </p>
-          </div>
+      <div className="mb-8 flex flex-col gap-4 rounded-[32px] bg-[#EEF0FF] px-6 py-8 sm:flex-row sm:items-end sm:justify-between sm:px-10">
+        <div>
+          <p className="vf-eyebrow">VerifED</p>
+          <h1 className="mt-2 text-[32px] sm:text-[40px] font-bold leading-tight text-[#0F172A]">{t('adminTitle')}</h1>
+          <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-[#4B5568]">
+            <span data-testid="text-admin-count">{serverMode !== true && users.length === 0
+              ? t('adminCountUnavailable')
+              : `${users.length} ${users.length !== 1 ? t('adminAccountPlural') : t('adminAccountSingular')}`}</span>
+            {serverMode !== null && (
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${serverMode ? 'bg-[#E8F6EE] text-[#1C6B45]' : 'bg-[#FFF4E2] text-[#8A4500]'}`}>
+                {serverMode ? t('adminModeServer') : t('adminModeLocal')}
+              </span>
+            )}
+          </p>
         </div>
         <button
           onClick={refresh}
           disabled={refreshing}
-          className="text-xs px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer font-medium self-start sm:self-auto disabled:opacity-60 disabled:cursor-wait"
+          className="inline-flex min-h-11 items-center self-start rounded-full border border-[#D9DCF5] bg-[#FFFFFE] px-5 text-sm font-semibold text-[#0F172A] hover:border-[#5B4FE9] sm:self-auto disabled:opacity-60 disabled:cursor-wait"
         >
           {refreshing ? t('adminConnecting') : t('adminRefresh')}
         </button>
@@ -2038,13 +2044,13 @@ function AdminPage() {
 
       {/* Admin key prompt — backend requires a key before showing accounts */}
       {needKey && (
-        <div className="glass-panel rounded-2xl p-6 mb-6 border border-indigo-500/30">
-          <h2 className="text-white font-bold text-sm mb-1">{t('adminKeyTitle')}</h2>
-          <p className={`text-xs mb-4 ${keyNotConfigured ? 'text-amber-400' : 'text-slate-400'}`}>
+        <div className="vf-card mb-6 p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-[#0F172A]">{t('adminKeyTitle')}</h2>
+          <p className={`mt-1 mb-4 text-sm ${keyNotConfigured ? 'text-amber-400' : 'text-[#4B5568]'}`}>
             {keyNotConfigured ? t('adminKeyNotConfigured') : t('adminKeyDesc')}
           </p>
           <form
-            className="flex gap-2"
+            className="flex flex-col gap-2 sm:flex-row"
             onSubmit={(e) => { e.preventDefault(); setAdminKey(keyInput.trim()); setKeyInput(''); refresh(); }}
           >
             <input
@@ -2052,12 +2058,13 @@ function AdminPage() {
               value={keyInput}
               onChange={(e) => setKeyInput(e.target.value)}
               className={inputCls}
+              aria-label={t('adminKeyPlaceholder')}
               placeholder={t('adminKeyPlaceholder')}
               autoFocus
             />
-            <button type="submit" className="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all cursor-pointer flex-shrink-0">{t('adminKeyBtn')}</button>
+            <button type="submit" className="vf-btn flex-shrink-0">{t('adminKeyBtn')}</button>
           </form>
-          {!keyNotConfigured && getAdminKey() && <p className="text-amber-400 text-xs mt-3">{t('adminKeyRejected')}</p>}
+          {!keyNotConfigured && getAdminKey() && <p className="text-amber-400 text-sm mt-3">{t('adminKeyRejected')}</p>}
         </div>
       )}
 
@@ -2072,19 +2079,20 @@ function AdminPage() {
       )}
 
       {/* Search bar */}
-      <div className="mb-6">
+      <div className="mb-4">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className={inputCls}
+          aria-label={t('adminSearchPlaceholder')}
           placeholder={t('adminSearchPlaceholder')}
         />
       </div>
 
-      {/* User Grid */}
+      {/* Accounts table */}
       {filtered.length === 0 ? (
-        <div className="glass-panel rounded-2xl p-16 text-center text-slate-500 text-sm">
+        <div className="rounded-[28px] border-2 border-dashed border-[#C7CBFA] bg-[#FFFFFE] p-16 text-center text-[15px] text-[#4B5568]">
           {refreshing && serverMode === null
             ? t('adminConnecting')
             : connectionErr && users.length === 0
@@ -2092,119 +2100,80 @@ function AdminPage() {
               : users.length === 0 ? t('adminNoUsers') : t('adminNoResults')}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((user) => {
-            const hasEmail   = Boolean(user.email);
-            const secLevel   = user.salt ? 'PBKDF2' : user.password.length === 64 ? 'SHA-256' : 'Legacy';
-            const missing    = [...(!hasEmail ? [t('adminFieldEmail')] : [])];
-            const incomplete = missing.length > 0;
-
-            return (
-              <div
-                key={user.username}
-                className={`glass-panel rounded-2xl p-5 relative flex flex-col gap-4 border transition-colors ${
-                  incomplete ? 'border-amber-500/40' : 'border-slate-700/30'
-                }`}
-              >
-                {/* Top accent bar */}
-                <div
-                  className={`absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl ${
-                    incomplete
-                      ? 'bg-gradient-to-r from-amber-400 to-orange-400'
-                      : 'bg-gradient-to-r from-blue-500 via-violet-500 to-fuchsia-500'
-                  }`}
-                />
-
-                {/* Username + action buttons */}
-                <div className="flex items-center justify-between gap-2 pt-1">
-                  <span className="font-mono text-indigo-300 text-sm bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg truncate max-w-[60%]">
-                    @{user.username}
-                  </span>
-                  <div className="flex gap-1.5 flex-shrink-0">
-                    <button
-                      onClick={() => { setResetTarget(user); setNewPass(''); setNewPassConfirm(''); setResetMsg(''); }}
-                      title={t('adminResetTitle')}
-                      className="h-7 px-2 flex items-center justify-center rounded-lg bg-indigo-900/40 hover:bg-indigo-800/60 border border-indigo-700/50 text-indigo-300 text-xs transition-all cursor-pointer"
-                    >{t("adminResetTitle")}</button>
-                    <button
-                      onClick={() => setDeleteTarget(user)}
-                      title={t('adminDeleteTitle')}
-                      className="h-7 px-2 flex items-center justify-center rounded-lg bg-red-900/30 hover:bg-red-900/50 border border-red-700/40 text-red-400 text-xs transition-all cursor-pointer"
-                    >{t("adminDeleteTitle")}</button>
-                  </div>
-                </div>
-
-                {/* Field rows */}
-                <div className="space-y-2.5">
-                  {/* Email */}
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">{t('adminFieldEmail')}</span>
-                    {hasEmail
-                      ? <span className="text-xs text-slate-300 font-mono truncate">{user.email}</span>
-                      : <span className="text-xs px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-400 font-medium flex-shrink-0">{t('adminEmailMissing')}</span>
-                    }
-                  </div>
-
-                  {/* Password */}
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">{t('adminFieldPassword')}</span>
-                    <span className="text-xs px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-medium flex-shrink-0">
-                      {t('adminPassSet')} {secLevel}
-                    </span>
-                  </div>
-
-                  {/* Evaluation profile: school / country / intention */}
-                  {([
-                    [t('adminFieldSchool'), user.institution],
-                    [t('adminFieldCountry'), user.country],
-                    [t('adminFieldIntention'), user.purpose],
-                  ] as const).map(([label, value]) => (
-                    <div key={label} className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">{label}</span>
-                      {value
-                        ? <span className="text-xs text-slate-300 truncate">{value}</span>
-                        : <span className="text-xs text-slate-600 italic flex-shrink-0">{t('adminFieldNotProvided')}</span>
-                      }
-                    </div>
-                  ))}
-
-                  {/* Joined */}
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex-shrink-0">{t('adminFieldJoined')}</span>
-                    <span className="text-xs text-slate-400">
-                      {new Date(user.createdAt).toLocaleDateString(dateLocale, { year: 'numeric', month: 'short', day: 'numeric' })}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Incomplete summary footer */}
-                {incomplete && (
-                  <div className="pt-2 border-t border-amber-500/20">
-                    <span className="text-xs text-amber-400">
-                      {missing.length} {missing.length !== 1 ? t('adminFieldsNeededPlural') : t('adminFieldsNeededSingular')} {missing.join(', ')}
-                    </span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+        <div className="vf-card overflow-hidden !rounded-[24px]">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[920px] text-left text-sm">
+              <thead className="bg-[#FAFAFF] text-xs uppercase tracking-[0.1em] text-[#4B5568]">
+                <tr>
+                  <th scope="col" className="px-5 py-3 font-semibold">{t('lUser')}</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">{t('adminFieldEmail')}</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">{t('adminFieldPassword')}</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">{t('adminFieldSchool')}</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">{t('adminFieldCountry')}</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">{t('adminFieldIntention')}</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">{t('adminFieldJoined')}</th>
+                  <th scope="col" className="px-5 py-3"><span className="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E2E4F3]">
+                {filtered.map((user) => {
+                  const hasEmail   = Boolean(user.email);
+                  const secLevel   = user.salt ? 'PBKDF2' : user.password.length === 64 ? 'SHA-256' : 'Legacy';
+                  const missing    = [...(!hasEmail ? [t('adminFieldEmail')] : [])];
+                  const incomplete = missing.length > 0;
+                  const opt = (v?: string) => v ? <span className="text-[#273449]">{v}</span> : <span className="italic text-[#8C93A8]">{t('adminFieldNotProvided')}</span>;
+                  return (
+                    <tr key={user.username} className={`align-top hover:bg-[#FAFAFF] ${incomplete ? 'bg-[#FFFBF2]' : ''}`} data-testid={`row-admin-user-${user.username}`}>
+                      <td className="px-5 py-4">
+                        <span className="font-mono font-semibold text-[#3F35C2]">@{user.username}</span>
+                        {incomplete && <span className="mt-1 block text-xs text-[#8A4500]">{missing.length} {missing.length !== 1 ? t('adminFieldsNeededPlural') : t('adminFieldsNeededSingular')} {missing.join(', ')}</span>}
+                      </td>
+                      <td className="px-5 py-4 max-w-[220px]">
+                        {hasEmail
+                          ? <span className="block truncate font-mono text-[#273449]" title={user.email}>{user.email}</span>
+                          : <span className="rounded-full bg-[#FFF4E2] px-2.5 py-1 text-xs font-semibold text-[#8A4500]">{t('adminEmailMissing')}</span>}
+                      </td>
+                      <td className="px-5 py-4"><span className="whitespace-nowrap rounded-full bg-[#E8F6EE] px-2.5 py-1 text-xs font-semibold text-[#1C6B45]">{t('adminPassSet')} {secLevel}</span></td>
+                      <td className="px-5 py-4 max-w-[200px]">{opt(user.institution)}</td>
+                      <td className="px-5 py-4">{opt(user.country)}</td>
+                      <td className="px-5 py-4">{opt(user.purpose)}</td>
+                      <td className="px-5 py-4 whitespace-nowrap text-[#4B5568]">{new Date(user.createdAt).toLocaleDateString(dateLocale, { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+                      <td className="px-5 py-4">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => { setResetTarget(user); setNewPass(''); setNewPassConfirm(''); setResetMsg(''); }}
+                            title={t('adminResetTitle')}
+                            className="inline-flex min-h-9 items-center whitespace-nowrap rounded-full border border-[#D9DCF5] px-3 text-xs font-semibold text-[#0F172A] hover:border-[#5B4FE9] cursor-pointer"
+                          >{t("adminResetTitle")}</button>
+                          <button
+                            onClick={() => setDeleteTarget(user)}
+                            title={t('adminDeleteTitle')}
+                            className="inline-flex min-h-9 items-center whitespace-nowrap rounded-full border border-[#F2B8B2] px-3 text-xs font-semibold text-[#A8231B] hover:bg-[#FDECEA] cursor-pointer"
+                          >{t("adminDeleteTitle")}</button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       <button
         onClick={refresh}
         disabled={refreshing}
-        className="mt-6 text-xs text-slate-500 hover:text-slate-300 transition-colors cursor-pointer bg-transparent border-none disabled:opacity-60 disabled:cursor-wait"
+        className="mt-6 text-sm font-semibold text-[#3F35C2] hover:underline cursor-pointer bg-transparent border-none disabled:opacity-60 disabled:cursor-wait"
       >
         {refreshing ? t('adminConnecting') : t('adminRefreshList')}
       </button>
 
       {/* Reset Password Modal */}
       {resetTarget && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+        <div role="dialog" aria-modal="true" className="fixed inset-0 bg-[#0F172A]/50 backdrop-blur-sm z-50 flex items-center justify-center p-6">
           <div className="glass-panel p-8 rounded-3xl w-full max-w-md shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-violet-500" />
-            <h3 className="text-white font-bold text-lg mb-1">{t('adminResetTitle')}</h3>
+                        <h3 className="text-white font-bold text-lg mb-1">{t('adminResetTitle')}</h3>
             <p className="text-slate-400 text-xs mb-6">{t('adminResetFor')} <span className="text-indigo-300 font-mono">@{resetTarget.username}</span></p>
             <div className="space-y-4">
               <div>
@@ -2227,11 +2196,10 @@ function AdminPage() {
 
       {/* Delete Confirm Modal */}
       {deleteTarget && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+        <div role="dialog" aria-modal="true" className="fixed inset-0 bg-[#0F172A]/50 backdrop-blur-sm z-50 flex items-center justify-center p-6">
           <div className="glass-panel p-8 rounded-3xl w-full max-w-sm shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-rose-500" />
-            <div className="text-center">
-              <div className="text-4xl mb-4">!</div>
+                        <div className="text-center">
+              <div aria-hidden="true" className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#FDECEA] text-2xl font-bold text-[#A8231B]">!</div>
               <h3 className="text-white font-bold text-lg mb-2">{t('adminDeleteTitle')}</h3>
               <p className="text-slate-400 text-sm mb-6">
                 {t('adminDeleteMsg1')} <span className="text-red-400 font-mono">@{deleteTarget.username}</span> {t('adminDeleteMsg2')}

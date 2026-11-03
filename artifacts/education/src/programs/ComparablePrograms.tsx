@@ -81,18 +81,18 @@ export function ComparablePrograms({ profile, es, username }: Props) {
 
   return (
     <section
-      className="mt-12 glass-panel rounded-2xl p-6 sm:p-8 space-y-7 border-t border-t-white/10"
+      className="vf-card !rounded-[32px] p-6 sm:p-10 space-y-8"
       data-testid="container-comparable-programs"
       aria-labelledby="cp-title"
     >
-      <header className="space-y-3">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-indigo-300">
+      <header className="space-y-3 -mx-6 -mt-6 sm:-mx-10 sm:-mt-10 rounded-t-[32px] bg-[#EEF0FF] px-6 py-8 sm:px-10 sm:py-10">
+        <p className="vf-eyebrow">
           {L('Sourced directory · limited', 'Directorio con fuentes · limitado')}
         </p>
-        <h3 id="cp-title" className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+        <h3 id="cp-title" className="text-[28px] sm:text-[36px] font-bold leading-tight text-[#0F172A]">
           {L('Comparable U.S. programs at your level', 'Programas de EE. UU. comparables a su nivel')}
         </h3>
-        <p className="text-slate-300 leading-relaxed max-w-3xl text-sm">
+        <p className="text-[#273449] leading-relaxed max-w-3xl text-base">
           {L(
             'Find U.S. programs at the same level you already earned, in the same field — not the next level up. This is a small, hand-checked list with official links, not every U.S. institution and not a ranking.',
             'Encuentre programas en EE. UU. del mismo nivel que ya obtuvo, en el mismo campo — no el nivel siguiente. Es una lista pequeña revisada a mano con enlaces oficiales, no todas las instituciones de EE. UU. ni una clasificación.',
