@@ -24,7 +24,10 @@ describe('admissions source review (mocked HTTP only)', () => {
   it('checks every real registry entry, deduplicates sources, and never edits dates or recipients', async () => {
     const before = JSON.stringify(ADMISSIONS_CONTACTS);
     const fetcher = vi.fn(async () => page(Object.values(ADMISSIONS_CONTACTS).map(c => c.recipient).join(' ')));
-    const report = await buildContactReviewReport(ADMISSIONS_CONTACTS, now, fetcher);
+    // Review the live registry no earlier than its latest individual editorial date.
+    // The fixed `now` below remains intentional for synthetic date-boundary cases.
+    const registryNow = new Date(`${Object.values(ADMISSIONS_CONTACTS).map(c => c.checkedAt).sort().at(-1)}T00:00:00Z`);
+    const report = await buildContactReviewReport(ADMISSIONS_CONTACTS, registryNow, fetcher);
     expect(report.records).toHaveLength(Object.keys(ADMISSIONS_CONTACTS).length);
     expect(fetcher).toHaveBeenCalledTimes(new Set(Object.values(ADMISSIONS_CONTACTS).map(c => c.sourceUrl)).size);
     expect(report.needsReview).toBe(0);

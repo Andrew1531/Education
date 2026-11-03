@@ -58,7 +58,7 @@ describe('Direct account-mail correspondence', () => {
     const [draft] = accountEmailDrafts([{ ...saved('iu-dentistry-msd'), recipient: 'wrong@example.com' } as Opportunity], profile, es);
     expect(draft.recipient).toBe('dsgrad@iu.edu');
     expect(draft.sourceUrl).toBe('https://dentistry.iu.edu/academics/degrees-programs/ms-dentistry/index.html');
-    expect(draft.checkedAt).toBe('2026-11-01');
+    expect(draft.checkedAt).toBe('2026-11-03');
     for (const provider of ['gmail', 'outlook'] as const) {
       expect(new URL(emailComposeUrl(provider, 'owner@example.com', draft)!).searchParams.get('to')).toBe('dsgrad@iu.edu');
     }

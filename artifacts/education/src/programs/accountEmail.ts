@@ -20,30 +20,36 @@ export interface AccountEmailDraft {
 // Manually reviewed public admissions addresses, not inferred from school names.
 // No personal staff addresses. A missing entry is not permission to guess one.
 export const ADMISSIONS_CONTACTS = {
+  // Official "Contact undergraduate admissions" page: Office of Admissions contact.
   wichitaUndergraduate: {
     recipient: 'admissions@wichita.edu',
     sourceUrl: 'https://www.wichita.edu/profiles/admissions/undergraduate_admissions/index.php',
-    checkedAt: '2026-11-01',
+    checkedAt: '2026-11-03',
   },
+  // Graduate School FAQ: general mailbox routes questions, including admissions.
   wichitaGraduate: {
     recipient: 'wsugradschool@wichita.edu',
     sourceUrl: 'https://www.wichita.edu/academics/graduate_school/faq.php',
-    checkedAt: '2026-11-01',
+    checkedAt: '2026-11-03',
   },
+  // Admissions counselors publish this shared mailbox; graduate inquiries are separate.
   alaskaUndergraduate: {
     recipient: 'uaf-admissions@alaska.edu',
     sourceUrl: 'https://www.uaf.edu/admissions/counselors/',
-    checkedAt: '2026-11-01',
+    checkedAt: '2026-11-03',
   },
+  // "Interested in Graduate Programs?" explicitly directs graduate admissions here,
+  // including international graduate applicants.
   alaskaGraduate: {
     recipient: 'uaf-grad-admissions@alaska.edu',
     sourceUrl: 'https://www.uaf.edu/admissions/counselors/',
-    checkedAt: '2026-11-01',
+    checkedAt: '2026-11-03',
   },
+  // Admissions page Contact section: assistance mailbox alongside applicant pathways.
   fortSmith: {
     recipient: 'admissions@uafs.edu',
     sourceUrl: 'https://uafs.edu/admissions/',
-    checkedAt: '2026-11-01',
+    checkedAt: '2026-11-03',
   },
   // Published as Admissions Services (not the separate current-student
   // undergraduate/graduate advising mailboxes). Serves both admission levels.
@@ -56,7 +62,7 @@ export const ADMISSIONS_CONTACTS = {
   indianaDentistryGraduate: {
     recipient: 'dsgrad@iu.edu',
     sourceUrl: 'https://dentistry.iu.edu/academics/degrees-programs/ms-dentistry/index.html',
-    checkedAt: '2026-11-01',
+    checkedAt: '2026-11-03',
   },
 } as const;
 
