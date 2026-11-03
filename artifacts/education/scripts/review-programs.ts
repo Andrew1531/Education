@@ -6,8 +6,9 @@ import { buildProgramReviewReport, renderProgramReviewSummary } from '../src/pro
 import { ADMISSIONS_CONTACTS } from '../src/programs/accountEmail.ts';
 import { buildContactReviewReport, renderContactReviewSummary } from '../src/programs/contactReview.ts';
 
-// A separate maintainer command, never executed in visitor browsers.
-// Tests can isolate real report writes without changing the scheduled output path.
+// A separate maintainer command: never executed in visitor browsers.
+// Command regression tests run in an isolated workspace with offline HTTP fixtures.
+// An optional output directory isolates report writes without changing the scheduled default.
 const outputFlag = process.argv.indexOf('--output-dir');
 if (outputFlag !== -1 && !process.argv[outputFlag + 1]) {
   throw new Error('--output-dir requires a directory');
