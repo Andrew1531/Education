@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, createContext, useContext, lazy, Suspense } from 'react';
 import { Link, Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { PageMetadata } from './PageMetadata';
-import seoPages from '../seo-pages.json';
+import { useBrowserLocation } from 'wouter/use-browser-location';
+import { ES_PREFIX, canonicalGuideSlug, splitLocale, switchLanguagePath } from './localeRoutes';
 import { hashPassword, verifyAndMigratePassword } from './auth';
 import {
   type StoredUser,
@@ -41,8 +42,8 @@ import { apiSaveEducationProfile } from './api';
 // article text is not shipped to every visitor of the evaluator.
 const GuidesRoute = lazy(() => import('./guides/GuidesPages'));
 const GUIDE_UI = {
-  en: { nav: 'Guides', skip: 'Skip to main content', menu: 'Menu', closeMenu: 'Close menu', homeEntry: 'New here? Read our free guides first', homeEntryBody: 'No account needed: when you may need a credential evaluation, and how to list a foreign degree on a U.S. resume.', loading: 'Loading guide…' },
-  es: { nav: 'Guías', skip: 'Saltar al contenido principal', menu: 'Menú', closeMenu: 'Cerrar menú', homeEntry: '¿Es nuevo? Lea primero nuestras guías gratuitas', homeEntryBody: 'Sin cuenta: cuándo puede necesitar una evaluación de credenciales y cómo incluir un título extranjero en un currículum de EE. UU.', loading: 'Cargando guía…' },
+  en: { nav: 'Guides', skip: 'Skip to main content', menu: 'Menu', closeMenu: 'Close menu', homeEntry: 'New here? Read our free guides first', homeEntryBody: 'No account needed: when you may need a credential evaluation, how to list a foreign degree on a U.S. resume, and country guides for Mexico, Colombia, Venezuela, Argentina and Ecuador.', loading: 'Loading guide…' },
+  es: { nav: 'Guías', skip: 'Saltar al contenido principal', menu: 'Menú', closeMenu: 'Cerrar menú', homeEntry: '¿Es nuevo? Lea primero nuestras guías gratuitas', homeEntryBody: 'Sin cuenta: cuándo puede necesitar una evaluación de credenciales, cómo incluir un título extranjero en un currículum de EE. UU. y guías por país para México, Colombia, Venezuela, Argentina y Ecuador.', loading: 'Cargando guía…' },
 } as const;
 
 /**
@@ -2216,7 +2217,6 @@ function AdminPage() {
   );
 }
 
-const GUIDE_SLUGS = Object.keys(seoPages).filter((r) => r.startsWith('/guides/')).map((r) => r.slice('/guides/'.length));
 
 function NotFoundView() {
   const { lang } = useLang();
@@ -2235,10 +2235,15 @@ export default function App() {
   const [appView, setAppView] = useState<AppView>('auth');
   const [username, setUsername] = useState('');
   const [modal, setModal] = useState<'privacy' | 'terms' | null>(null);
-  const [lang, setLang] = useState<Lang>('en');
   const [userStoreError, setUserStoreError] = useState<string>('');
 
-  const toggleLang = () => setLang((l) => (l === 'en' ? 'es' : 'en'));
+  // The language is part of the URL (English at the root, Spanish under /es) so each
+  // language is a separate, indexable page. Switching language keeps the current page.
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const [browserPath, navigateBrowser] = useBrowserLocation();
+  const appPath = base && browserPath.startsWith(base) ? browserPath.slice(base.length) || '/' : browserPath;
+  const lang: Lang = splitLocale(appPath).lang;
+  const toggleLang = () => navigateBrowser(`${base}${switchLanguagePath(appPath)}`);
   const t = (k: TKey) => TX[lang][k];
 
   useEffect(() => {
@@ -2277,11 +2282,9 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-
   return (
     <LangCtx.Provider value={{ lang, toggleLang, t }}>
-    <WouterRouter base={base}>
+    <WouterRouter base={lang === 'es' ? `${base}${ES_PREFIX}` : base}>
       <PageMetadata lang={lang} />
       <div className="vf bg-[#FAFAFF] text-[#0F172A] min-h-[100dvh] font-sans relative overflow-x-hidden flex flex-col justify-between selection:bg-[#E1E4FF]">
         <div className="glow-effect -top-40 -left-40 rounded-full" />
@@ -2301,7 +2304,7 @@ export default function App() {
             <Suspense fallback={<main id="main-content" className="relative z-10 mx-auto w-full max-w-3xl flex-grow px-6 pt-12"><p role="status" className="text-slate-400">{GUIDE_UI[lang].loading}</p></main>}><GuidesRoute lang={lang} /></Suspense>
           </Route>
           <Route path="/guides/:slug">
-            {(params) => GUIDE_SLUGS.includes(params.slug) ? <Suspense fallback={<main id="main-content" className="relative z-10 mx-auto w-full max-w-3xl flex-grow px-6 pt-12"><p role="status" className="text-slate-400">{GUIDE_UI[lang].loading}</p></main>}><GuidesRoute slug={params.slug} lang={lang} /></Suspense> : <NotFoundView />}
+            {(params) => canonicalGuideSlug(params.slug, lang) ? <Suspense fallback={<main id="main-content" className="relative z-10 mx-auto w-full max-w-3xl flex-grow px-6 pt-12"><p role="status" className="text-slate-400">{GUIDE_UI[lang].loading}</p></main>}><GuidesRoute slug={canonicalGuideSlug(params.slug, lang)} lang={lang} /></Suspense> : <NotFoundView />}
           </Route>
           <Route path="/admin">
             <AdminGate />

@@ -3,7 +3,7 @@ import content from './guides-content.json';
 import pages from '../../seo-pages.json';
 
 const all = (o: unknown): string => JSON.stringify(o);
-const p = pages as Record<string, { title: string; description: string; guide?: string; es?: { title: string; description: string } }>;
+const p = pages as Record<string, { title: string; description: string; heading: string; body: string; guide?: string; es?: { title: string; description: string; heading: string; body: string } }>;
 
 describe('guides content', () => {
   it('every guide has a public route with matching metadata in both languages', () => {
@@ -16,6 +16,24 @@ describe('guides content', () => {
       expect(g.en.description.length).toBeLessThanOrEqual(165);
     }
     expect(p['/guides']).toBeTruthy();
+  });
+  it('gives every public page complete Spanish metadata for its /es URL', () => {
+    for (const [route, page] of Object.entries(p)) {
+      for (const key of ['title', 'description', 'heading', 'body'] as const) expect(page.es?.[key], `${route} es.${key}`).toBeTruthy();
+      expect(page.es!.title).not.toBe(page.title);
+      expect(page.es!.description.length, route).toBeLessThanOrEqual(165);
+    }
+  });
+  it('keeps section ids, source references and related guides consistent', () => {
+    const slugs = content.guides.map((g) => g.slug);
+    for (const g of content.guides) {
+      expect(g.en.sections.map((s) => s.id)).toEqual(g.es.sections.map((s) => s.id));
+      for (const lang of ['en', 'es'] as const) {
+        for (const s of g[lang].sections as { sourceRefs?: string[] }[]) for (const ref of s.sourceRefs ?? []) expect(g.sources, `${g.slug} ${ref}`).toContain(ref);
+      }
+      for (const id of g.sources) expect(Object.keys(content.sources)).toContain(id);
+      for (const r of g.related) expect(slugs).toContain(r);
+    }
   });
   it('cites only defined https sources', () => {
     for (const g of content.guides) for (const id of g.sources) expect(content.sources[id as keyof typeof content.sources].url).toMatch(/^https:\/\//);

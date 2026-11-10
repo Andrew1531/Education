@@ -1,11 +1,11 @@
 import { Link } from 'wouter';
 import content from './guides-content.json';
+import { guideSlug, type Lang } from '../localeRoutes';
 
-type Lang = 'en' | 'es';
 type Section = { id: string; heading: string; paragraphs: string[]; checklistTitle?: string; checklist?: string[]; sourceRefs?: string[] };
 type Template = { label: string; lines: string[] };
 type GuideText = { title: string; description: string; summary: string; readTime: string; sections: Section[]; templatesTitle?: string; templatesNote?: string; templates?: Template[] };
-type Guide = { slug: string; sources: string[]; related: string[]; en: GuideText; es: GuideText };
+type Guide = { slug: string; country?: string; updated?: string; sources: string[]; related: string[]; en: GuideText; es: GuideText & { slug?: string } };
 type Source = { publisher: string; title: string; url: string; scope: Record<Lang, string> };
 
 const guides = content.guides as Guide[];
@@ -62,7 +62,7 @@ export function GuidesIndex({ lang }: { lang: Lang }) {
             <article className="vf-card group relative flex h-full flex-col p-7 sm:p-9 transition-colors hover:border-[#5B4FE9]">
               <p className="vf-display text-sm font-bold text-[#3F35C2]">{String(i + 1).padStart(2, '0')}</p>
               <h2 className="mt-6 text-2xl font-bold leading-snug text-[#0F172A]">
-                <Link href={`/guides/${g.slug}`} className="after:absolute after:inset-0 after:rounded-[28px] focus-visible:outline-none group-focus-within:underline" data-testid={`link-guide-${g.slug}`}>{g[lang].title}</Link>
+                <Link href={`/guides/${guideSlug(g, lang)}`} className="after:absolute after:inset-0 after:rounded-[28px] focus-visible:outline-none group-focus-within:underline" data-testid={`link-guide-${g.slug}`}>{g[lang].title}</Link>
               </h2>
               <p className="mt-3 flex-grow text-base leading-relaxed text-[#4B5568]">{g[lang].summary}</p>
               <div className="mt-8 flex items-center justify-between">
@@ -84,6 +84,7 @@ export function GuideArticle({ slug, lang }: { slug: string; lang: Lang }) {
   const u = ui[lang];
   if (!guide) return null;
   const g = guide[lang];
+  const updated = guide.updated ?? content.updated;
   const srcNum = (id: string) => guide.sources.indexOf(id) + 1;
   return (
     <main id="main-content" tabIndex={-1} className="relative z-10 mx-auto w-full max-w-7xl flex-grow px-4 sm:px-6 pt-6 pb-16 outline-none" lang={lang}>
@@ -92,7 +93,7 @@ export function GuideArticle({ slug, lang }: { slug: string; lang: Lang }) {
           <Breadcrumbs lang={lang} current={g.title} />
           <h1 className="vf-display mt-8 max-w-4xl text-[34px] sm:text-[50px] font-bold leading-[1.06] text-[#0F172A] break-words">{g.title}</h1>
           <p className="mt-5 max-w-3xl text-lg leading-relaxed text-[#273449]">{g.summary}</p>
-          <p className="mt-6 inline-flex flex-wrap gap-x-3 rounded-full bg-[#FFFFFE] px-4 py-2 text-sm font-medium text-[#4B5568]">{g.readTime} <span aria-hidden="true">·</span> <span>{u.updated}: <time dateTime={content.updated}>{content.updated}</time></span></p>
+          <p className="mt-6 inline-flex flex-wrap gap-x-3 rounded-full bg-[#FFFFFE] px-4 py-2 text-sm font-medium text-[#4B5568]">{g.readTime} <span aria-hidden="true">·</span> <span>{u.updated}: <time dateTime={updated}>{updated}</time></span></p>
         </header>
         <div className="mt-12 grid gap-10 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-16">
           <nav aria-labelledby="toc" className="lg:sticky lg:top-24 lg:self-start rounded-[24px] border border-[#E2E4F3] bg-[#FFFFFE] p-5">
@@ -157,7 +158,7 @@ export function GuideArticle({ slug, lang }: { slug: string; lang: Lang }) {
             <nav aria-labelledby="related" className="mt-14">
               <h2 id="related" className="text-[28px] font-bold text-[#0F172A]">{u.related}</h2>
               <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-                {guide.related.map((r) => { const rg = guides.find((x) => x.slug === r)!; return <li key={r}><Link href={`/guides/${r}`} className="flex h-full items-center justify-between gap-4 rounded-[20px] bg-[#EEF0FF] p-5 font-semibold text-[#0F172A] hover:bg-[#E1E4FF]">{rg[lang].title}<span aria-hidden="true" className="text-[#3F35C2]">→</span></Link></li>; })}
+                {guide.related.map((r) => { const rg = guides.find((x) => x.slug === r)!; return <li key={r}><Link href={`/guides/${guideSlug(rg, lang)}`} className="flex h-full items-center justify-between gap-4 rounded-[20px] bg-[#EEF0FF] p-5 font-semibold text-[#0F172A] hover:bg-[#E1E4FF]">{rg[lang].title}<span aria-hidden="true" className="text-[#3F35C2]">→</span></Link></li>; })}
                 <li><Link href="/guides" className="flex h-full items-center justify-between gap-4 rounded-[20px] border border-[#E2E4F3] p-5 font-semibold text-[#3F35C2] hover:border-[#5B4FE9]">{u.allGuides}<span aria-hidden="true">→</span></Link></li>
               </ul>
             </nav>
