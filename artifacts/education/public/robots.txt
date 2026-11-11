@@ -3,6 +3,7 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /es/admin
 Disallow: /api/
 Disallow: /api$
 

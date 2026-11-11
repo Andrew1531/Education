@@ -18,13 +18,117 @@
         "en": "General resume guidance: keep it concise and factual, tailor it to the role, use consistent formatting, and list education in reverse chronological order. It does not specifically address foreign credentials or endorse any phrasing shown in this guide.",
         "es": "Orientación general sobre currículums: conciso y factual, adaptado al puesto, con formato coherente y educación en orden cronológico inverso. No trata específicamente credenciales extranjeras ni respalda las frases de esta guía."
       }
+    },
+    "ed-recognition": {
+      "publisher": "U.S. Department of Education",
+      "title": "Recognition of Foreign Qualifications",
+      "url": "https://www.ed.gov/about/initiatives/international-affairs/recognition-of-foreign-qualifications",
+      "scope": {
+        "en": "States that schools, employers, state licensing boards and federal immigration authorities each decide how they recognize foreign qualifications, that the Department does not evaluate foreign degrees, and that credential evaluation services are private and not federally regulated. It does not recommend any service or cover any specific country.",
+        "es": "Indica que las instituciones educativas, los empleadores, las juntas estatales de licencias y las autoridades migratorias federales deciden cada una cómo reconocen los títulos extranjeros, que el Departamento no evalúa títulos extranjeros y que los servicios de evaluación de credenciales son privados y no están regulados a nivel federal. No recomienda ningún servicio ni trata países concretos."
+      }
+    },
+    "hcch-status": {
+      "publisher": "Hague Conference on Private International Law (HCCH)",
+      "title": "Apostille Convention: Status Table",
+      "url": "https://www.hcch.net/en/instruments/conventions/status-table/?cid=41",
+      "scope": {
+        "en": "Official list of the countries that are parties to the Apostille Convention and the date it entered into force for each. It does not say whether a particular U.S. employer, school, board or evaluator asks for an apostille.",
+        "es": "Lista oficial de los países que son parte del Convenio de la Apostilla y la fecha de entrada en vigor para cada uno. No indica si un empleador, institución, junta o evaluador concreto de EE. UU. pide una apostilla."
+      }
+    },
+    "wes-required-docs": {
+      "publisher": "World Education Services (WES)",
+      "title": "Understanding Required Documents for Credential Evaluation",
+      "url": "https://www.wes.org/resource-library/blog/credential-advice/understanding-required-documents-for-credential-evaluation/",
+      "scope": {
+        "en": "Describes WES's own rules: required documents vary by country of study, official academic documents are sent to WES by the issuing institution, and documents must be translated into English. WES is one commercial provider; other evaluators and recipients set their own rules.",
+        "es": "Describe las reglas propias de WES: los documentos requeridos varían según el país de estudio, la institución emisora envía los documentos académicos oficiales a WES y los documentos deben traducirse al inglés. WES es un proveedor comercial; otros evaluadores y destinatarios fijan sus propias reglas."
+      }
+    },
+    "wes-gateway": {
+      "publisher": "World Education Services (WES)",
+      "title": "WES Gateway Program",
+      "url": "https://www.wes.org/social-impact/programming/wes-gateway-program/",
+      "scope": {
+        "en": "Describes a WES program for displaced people living in the U.S. or Canada who cannot obtain official academic records from their institution; the page lists Venezuela among the eligible countries of education and explains that access is through partner organizations. Eligibility is decided by WES and its partners, not by this guide.",
+        "es": "Describe un programa de WES para personas desplazadas que viven en EE. UU. o Canadá y no pueden obtener documentos académicos oficiales de su institución; la página incluye a Venezuela entre los países de estudio admitidos y explica que el acceso es mediante organizaciones asociadas. La elegibilidad la deciden WES y sus socios, no esta guía."
+      }
+    },
+    "mx-sep-dgair": {
+      "publisher": "Secretaría de Educación Pública (SEP), México",
+      "title": "Legalización de firmas de documentos académicos (DGAIR)",
+      "url": "https://www.sep.gob.mx/wb/sep1/legalizacion",
+      "scope": {
+        "en": "Official SEP page stating that its DGAIR office authenticates academic documents issued by private institutions with federal recognition (RVOE) before an apostille or legalization, and that documents already carrying the required signatures can go directly to the Secretaría de Gobernación. It does not cover every type of institution; confirm your case with the issuing school.",
+        "es": "Página oficial de la SEP que indica que la DGAIR autentica documentos académicos emitidos por instituciones particulares con reconocimiento federal (RVOE) antes de la apostilla o legalización, y que los documentos que ya tienen las firmas requeridas pueden ir directamente a la Secretaría de Gobernación. No cubre todos los tipos de institución; confirme su caso con la institución emisora."
+      }
+    },
+    "co-men-legalizacion": {
+      "publisher": "Ministerio de Educación Nacional, Colombia",
+      "title": "Legalizar documentos de Educación Superior expedidos en Colombia: un trámite ágil y en línea",
+      "url": "https://www.mineducacion.gov.co/portal/salaprensa/Comunicados/393112:Legalizar-documentos-de-Educacion-Superior-expedidos-en-Colombia-un-tramite-agil-y-en-linea",
+      "scope": {
+        "en": "Ministry communiqué dated 11 February 2020 explaining that degrees, graduation records and grade certificates are verified online through the Ministry's legalization system at no cost, and that the apostille is a separate online step with the foreign ministry. Steps and platforms may have changed since; check the Ministry's current instructions.",
+        "es": "Comunicado del Ministerio del 11 de febrero de 2020 que explica que títulos, actas de grado y certificados de notas se verifican en línea y sin costo mediante el sistema de legalizaciones del Ministerio, y que la apostilla es un paso aparte en línea ante la Cancillería. Los pasos y plataformas pueden haber cambiado; consulte las instrucciones vigentes del Ministerio."
+      }
+    },
+    "ve-hcch-authority": {
+      "publisher": "Hague Conference on Private International Law (HCCH)",
+      "title": "Venezuela: Competent Authority (Apostille Convention)",
+      "url": "https://www.hcch.net/es/states/authorities/details3/?aid=354",
+      "scope": {
+        "en": "Names Venezuela's foreign ministry (MPPRE) as the authority that issues apostilles and links to its electronic apostille and legalization system. It does not describe the prior steps for university documents or current appointment availability.",
+        "es": "Identifica al Ministerio del Poder Popular para Relaciones Exteriores (MPPRE) como la autoridad que emite apostillas en Venezuela y enlaza a su sistema electrónico de apostilla y legalización. No describe los pasos previos para documentos universitarios ni la disponibilidad actual de citas."
+      }
+    },
+    "ar-dngu": {
+      "publisher": "Gobierno de Argentina, Dirección Nacional de Gestión Universitaria",
+      "title": "Certificaciones",
+      "url": "https://www.argentina.gob.ar/educacion/universidades/direccion-nacional-de-gestion-universitaria/certificaciones",
+      "scope": {
+        "en": "Official page stating that this office certifies university diplomas and final transcripts (certificados analíticos), that the request is made by the university through the SIDCer system, and that a public register of graduates covers records from 2012 onward. It does not describe the apostille.",
+        "es": "Página oficial que indica que esta dirección certifica diplomas y certificados analíticos finales universitarios, que el trámite lo solicita la universidad mediante el sistema SIDCer y que el registro público de graduados cubre información desde 2012. No describe la apostilla."
+      }
+    },
+    "ar-cancilleria-apostilla": {
+      "publisher": "Ministerio de Relaciones Exteriores de Argentina (Consulado General en Estambul)",
+      "title": "Sobre la Apostilla",
+      "url": "https://cgest.cancilleria.gob.ar/es/01-sobre-la-apostilla",
+      "scope": {
+        "en": "Argentine foreign ministry page explaining that the apostille is requested through the TAD platform or notary colleges, and that university documents need a prior legalization that depends on their issue date (before or after 1 January 2012). It is published by one consulate; confirm current steps on the ministry's own channels.",
+        "es": "Página de la Cancillería argentina que explica que la apostilla se solicita por la plataforma TAD o en los colegios de escribanos, y que los documentos universitarios requieren una legalización previa que depende de su fecha de emisión (antes o después del 1 de enero de 2012). La publica un consulado; confirme los pasos vigentes en los canales del ministerio."
+      }
+    },
+    "ec-mremh-apostilla": {
+      "publisher": "Gobierno del Ecuador, Ministerio de Relaciones Exteriores y Movilidad Humana",
+      "title": "Apostilla y legalización de documentos",
+      "url": "https://www.gob.ec/mremh/tramites/apostilla-legalizacion-documentos",
+      "scope": {
+        "en": "Official procedure page stating that the apostille certifies the signature of a public official, that it can be requested online for electronically signed documents or in person, and that degrees and grade certificates of graduates must carry SENESCYT certification. Fees and steps can change; check the page before you start.",
+        "es": "Página oficial del trámite que indica que la apostilla certifica la firma de un funcionario público, que puede solicitarse en línea para documentos con firma electrónica o de forma presencial, y que los títulos y certificados de notas de graduados deben tener la certificación de la SENESCYT. Los costos y pasos pueden cambiar; consulte la página antes de empezar."
+      }
+    },
+    "ec-senescyt-faq": {
+      "publisher": "SENESCYT, Ecuador",
+      "title": "Preguntas frecuentes: registro de títulos",
+      "url": "https://siau.senescyt.gob.ec/preguntas-frecuentes/preguntas-frecuentes-registro-de-titulos/",
+      "scope": {
+        "en": "Official FAQ stating that the higher education institution registers each national degree in the national information system, that registered degrees can be looked up in SENESCYT's public title search, and that other documents for use abroad are certified by SENESCYT before the apostille. It does not address U.S. requirements.",
+        "es": "Preguntas frecuentes oficiales que indican que la institución de educación superior registra cada título nacional en el sistema nacional de información, que los títulos registrados pueden consultarse en la consulta pública de títulos de la SENESCYT y que otros documentos para uso en el exterior se certifican en la SENESCYT antes de la apostilla. No trata requisitos de EE. UU."
+      }
     }
   },
   "guides": [
     {
       "slug": "credential-evaluation-for-us-jobs",
-      "sources": ["wes-why", "harvard-resume"],
-      "related": ["foreign-degree-on-resume"],
+      "sources": [
+        "wes-why",
+        "harvard-resume"
+      ],
+      "related": [
+        "foreign-degree-on-resume"
+      ],
       "en": {
         "title": "Credential Evaluation for U.S. Jobs: When You Need One and What to Ask First",
         "seoTitle": "Do You Need a Credential Evaluation for a U.S. Job? | VerifED Global",
@@ -39,7 +143,9 @@
               "There is no single U.S. rule that every job seeker with a foreign degree must have a credential evaluation. Many employers hire based on your resume, interviews and experience. Others ask for an evaluation so they can understand a degree earned outside the U.S., for example when a posting requires a specific degree level.",
               "World Education Services, a commercial evaluation provider, describes this employer motivation in its own guidance. Treat provider articles as useful context, not as proof that your specific employer requires an evaluation."
             ],
-            "sourceRefs": ["wes-why"]
+            "sourceRefs": [
+              "wes-why"
+            ]
           },
           {
             "id": "ask-first",
@@ -109,7 +215,7 @@
       },
       "es": {
         "title": "Evaluación de credenciales para empleos en EE. UU.: cuándo la necesita y qué preguntar primero",
-        "seoTitle": "¿Necesita una evaluación de credenciales para trabajar en EE. UU.? | VerifED Global",
+        "seoTitle": "¿Necesita una evaluación de credenciales en EE. UU.? | VerifED Global",
         "description": "Cuándo un empleador o una junta de licencias en EE. UU. puede pedir una evaluación de credenciales extranjeras, qué confirmar antes de pagar y qué no hace.",
         "summary": "No todos los empleos en EE. UU. exigen una evaluación de credenciales. Antes de pagar, pregunte al empleador o a la junta de licencias que la recibirá qué acepta exactamente.",
         "readTime": "6 min de lectura",
@@ -121,7 +227,9 @@
               "No existe una regla única en EE. UU. que obligue a toda persona con un título extranjero a tener una evaluación de credenciales. Muchos empleadores contratan con base en su currículum, entrevistas y experiencia. Otros piden una evaluación para entender un título obtenido fuera de EE. UU., por ejemplo cuando el puesto exige cierto nivel de título.",
               "World Education Services, un proveedor comercial de evaluaciones, describe esta motivación de los empleadores en su propia guía. Considere los artículos de proveedores como contexto útil, no como prueba de que su empleador concreto exija una evaluación."
             ],
-            "sourceRefs": ["wes-why"]
+            "sourceRefs": [
+              "wes-why"
+            ]
           },
           {
             "id": "ask-first",
@@ -187,13 +295,19 @@
               "Revisé tarifas y plazos actuales en el sitio web del propio proveedor."
             ]
           }
-        ]
+        ],
+        "slug": "evaluacion-de-credenciales-para-empleos-en-estados-unidos"
       }
     },
     {
       "slug": "foreign-degree-on-resume",
-      "sources": ["harvard-resume", "wes-why"],
-      "related": ["credential-evaluation-for-us-jobs"],
+      "sources": [
+        "harvard-resume",
+        "wes-why"
+      ],
+      "related": [
+        "credential-evaluation-for-us-jobs"
+      ],
       "en": {
         "title": "How to List a Foreign Degree on a U.S. Resume Truthfully",
         "seoTitle": "How to List a Foreign Degree on a U.S. Resume | VerifED Global",
@@ -207,7 +321,9 @@
             "paragraphs": [
               "General U.S. resume guidance, such as Harvard's Office of Career Services, recommends a concise and factual resume tailored to the role, with consistent formatting and education listed in reverse chronological order. That guidance is not specific to foreign credentials, but the same principles apply to how you describe them."
             ],
-            "sourceRefs": ["harvard-resume"]
+            "sourceRefs": [
+              "harvard-resume"
+            ]
           },
           {
             "id": "what-to-include",
@@ -229,7 +345,9 @@
             "paragraphs": [
               "Employers may verify education, and some ask for an evaluation to understand foreign degrees. Statements you cannot support create risk."
             ],
-            "sourceRefs": ["wes-why"],
+            "sourceRefs": [
+              "wes-why"
+            ],
             "checklistTitle": "Do not",
             "checklist": [
               "Write a U.S. equivalency yourself, such as \"equivalent to a U.S. bachelor's degree\", without an evaluation that says so.",
@@ -285,7 +403,7 @@
       },
       "es": {
         "title": "Cómo incluir un título extranjero en un currículum de EE. UU. con veracidad",
-        "seoTitle": "Cómo poner un título extranjero en un currículum de EE. UU. | VerifED Global",
+        "seoTitle": "Título extranjero en un currículum de EE. UU. | VerifED Global",
         "description": "Presente su título original, institución y país con claridad en un currículum de EE. UU., con una traducción comprensible y sin equivalencias autodeclaradas.",
         "summary": "Escriba su título tal como se otorgó, añada una traducción clara al inglés y mencione una equivalencia en EE. UU. solo si tiene una evaluación que la indique.",
         "readTime": "5 min de lectura",
@@ -296,7 +414,9 @@
             "paragraphs": [
               "La orientación general sobre currículums en EE. UU., como la de la Oficina de Servicios Profesionales de Harvard, recomienda un documento conciso y factual, adaptado al puesto, con formato coherente y la educación en orden cronológico inverso. Esa guía no trata credenciales extranjeras, pero los mismos principios sirven para describirlas."
             ],
-            "sourceRefs": ["harvard-resume"]
+            "sourceRefs": [
+              "harvard-resume"
+            ]
           },
           {
             "id": "what-to-include",
@@ -318,7 +438,9 @@
             "paragraphs": [
               "Los empleadores pueden verificar la educación y algunos piden una evaluación para entender títulos extranjeros. Las afirmaciones que no puede respaldar crean riesgos."
             ],
-            "sourceRefs": ["wes-why"],
+            "sourceRefs": [
+              "wes-why"
+            ],
             "checklistTitle": "No haga esto",
             "checklist": [
               "Escribir usted mismo una equivalencia, como \"equivalente a un bachelor's de EE. UU.\", sin una evaluación que lo diga.",
@@ -370,16 +492,912 @@
               "Expected completion: [Mes Año]"
             ]
           }
-        ]
+        ],
+        "slug": "titulo-extranjero-en-curriculum-de-estados-unidos"
       }
+    },
+    {
+      "slug": "mexico-degree-in-the-united-states",
+      "country": "MX",
+      "sources": [
+        "ed-recognition",
+        "wes-required-docs",
+        "hcch-status",
+        "mx-sep-dgair"
+      ],
+      "related": [
+        "credential-evaluation-for-us-jobs",
+        "foreign-degree-on-resume"
+      ],
+      "en": {
+        "title": "Using a Degree from Mexico in the United States: Evaluation, Documents and Apostille",
+        "seoTitle": "Using a Degree from Mexico in the U.S. | VerifED Global",
+        "description": "How a degree from Mexico is reviewed in the U.S.: who decides, which documents to gather, when an apostille matters, and what to ask before paying.",
+        "summary": "The U.S. has no national office that validates a degree from Mexico. The employer, school or licensing board receiving your documents decides what it accepts, so ask first and gather the right records.",
+        "readTime": "6 min read",
+        "sections": [
+          {
+            "id": "no-national-office",
+            "heading": "The U.S. has no national office that validates a degree from Mexico",
+            "paragraphs": [
+              "People often ask how to validate, homologate or revalidate a degree from Mexico in the United States. In Mexico, the education ministry (SEP) runs a process called revalidación for studies completed abroad. The U.S. works differently: no single government office converts a foreign degree into a U.S. one.",
+              "According to the U.S. Department of Education, recognition is decided by whoever receives your documents: a school for admission, an employer for a job, a state licensing board for a regulated profession, or federal immigration authorities for a visa matter. The Department itself does not evaluate foreign degrees.",
+              "Credential evaluation services are private organizations that charge a fee. They are not federally regulated, the Department does not recommend any of them, and two services can reach different conclusions about the same degree. That is why the first step is to ask the recipient which service and which report type it accepts."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documents from Mexico to locate first",
+            "paragraphs": [
+              "Graduates of Mexican institutions usually hold a título profesional (the degree certificate) and a certificado de estudios or historial académico that lists subjects and grades. Many also hold a cédula profesional, the professional registration issued by SEP's Dirección General de Profesiones. Keep the original Spanish names of these documents; do not rename them with U.S. terms.",
+              "Each evaluator publishes its own document list by country. WES, one commercial provider, states that requirements vary by country of study, that official academic documents must be sent to WES by the issuing institution, and that documents must be translated into English. Other evaluators and recipients set their own rules, so read the list for the service your recipient accepts."
+            ],
+            "sourceRefs": [
+              "wes-required-docs"
+            ],
+            "checklistTitle": "Records to locate",
+            "checklist": [
+              "Título profesional, plus the título or grado for any postgraduate study (especialidad, maestría, doctorado)",
+              "Certificado de estudios or historial académico with subjects, grades and credits",
+              "Cédula profesional, if you have one",
+              "Proof of a name change if your documents show different names",
+              "Contact details for the office at your institution that sends official records, often called Servicios Escolares"
+            ]
+          },
+          {
+            "id": "apostille",
+            "heading": "Apostille: what it is and when to ask about it",
+            "paragraphs": [
+              "Mexico and the United States are both parties to the Hague Apostille Convention; the HCCH status table shows it in force for Mexico since 14 August 1995. An apostille confirms the origin of a public document, such as the signature and capacity of the official who signed it. It does not confirm what you studied, and it says nothing about how your degree compares to a U.S. degree.",
+              "A U.S. recipient may or may not ask for apostilled documents. Many evaluators care more about receiving records directly from your institution. Ask before you pay for apostilles you may not need.",
+              "If you do need one, the path depends on who issued the document. SEP states that its DGAIR office authenticates academic documents issued by private institutions with federal recognition (RVOE) before the apostille or legalization, and that documents already carrying the required signatures can go directly to the Secretaría de Gobernación. Ask your institution which path applies to your document."
+            ],
+            "sourceRefs": [
+              "hcch-status",
+              "mx-sep-dgair"
+            ]
+          },
+          {
+            "id": "licensed-professions",
+            "heading": "Regulated professions: the state board decides",
+            "paragraphs": [
+              "For professions such as medicine, nursing, dentistry, law, engineering, teaching or accounting, a credential evaluation is only one part of the process. The U.S. Department of Education notes that licensing is generally handled at state level, and the board in the state where you plan to work is the authority to ask. A board may do its own review, name a specific evaluation service, or require exams and supervised practice.",
+              "A Mexican cédula profesional shows that you may practise in Mexico. It is not a U.S. license and does not transfer automatically, although a board may ask to see it."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Before you pay: a short plan",
+            "paragraphs": [
+              "Work in this order to avoid paying twice."
+            ],
+            "checklist": [
+              "Write down your goal: a job, a license in a specific state, admission to a school, or an immigration filing.",
+              "Ask that recipient in writing which evaluation services and which report type it accepts.",
+              "Read that service's document list for Mexico and note which records must come directly from your institution.",
+              "Ask your institution in Mexico how it sends official records abroad, how long it takes and what it costs.",
+              "Arrange English translations only in the form the service or recipient accepts.",
+              "Request an apostille only if the recipient or the service asks for one.",
+              "Keep copies of everything you send and every written answer you receive."
+            ]
+          }
+        ]
+      },
+      "es": {
+        "slug": "validar-titulo-de-mexico-en-estados-unidos",
+        "title": "Cómo validar un título de México en Estados Unidos: evaluación, documentos y apostilla",
+        "seoTitle": "Validar título de México en Estados Unidos | VerifED Global",
+        "description": "Cómo se revisa en EE. UU. un título de México: quién decide, qué documentos reunir, cuándo importa la apostilla y qué preguntar antes de pagar.",
+        "summary": "En EE. UU. no existe una oficina nacional que valide un título de México. El empleador, la institución o la junta de licencias que recibe sus documentos decide qué acepta: pregunte primero y reúna los documentos correctos.",
+        "readTime": "6 min de lectura",
+        "sections": [
+          {
+            "id": "no-national-office",
+            "heading": "En EE. UU. no existe una oficina nacional que valide un título de México",
+            "paragraphs": [
+              "Muchas personas preguntan cómo validar, homologar o revalidar un título de México en Estados Unidos. En México, la Secretaría de Educación Pública (SEP) tiene un trámite de revalidación para estudios hechos en el extranjero. En EE. UU. funciona de otra manera: ninguna oficina del gobierno convierte un título extranjero en uno estadounidense.",
+              "Según el Departamento de Educación de EE. UU., el reconocimiento lo decide quien recibe sus documentos: una institución educativa para la admisión, un empleador para un puesto, una junta estatal de licencias para una profesión regulada o las autoridades migratorias federales para un asunto de visa. El Departamento no evalúa títulos extranjeros.",
+              "Los servicios de evaluación de credenciales son organizaciones privadas que cobran por su trabajo. No están regulados a nivel federal, el Departamento no recomienda ninguno y dos servicios pueden llegar a conclusiones distintas sobre el mismo título. Por eso el primer paso es preguntar al destinatario qué servicio y qué tipo de informe acepta."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documentos de México que conviene localizar primero",
+            "paragraphs": [
+              "Quienes egresan de instituciones mexicanas suelen tener un título profesional y un certificado de estudios o historial académico con materias y calificaciones. Muchas personas tienen además una cédula profesional, expedida por la Dirección General de Profesiones de la SEP. Conserve los nombres originales de estos documentos; no los sustituya por términos estadounidenses.",
+              "Cada evaluador publica su propia lista de documentos por país. WES, un proveedor comercial, indica que los requisitos varían según el país de estudio, que la institución emisora debe enviar a WES los documentos académicos oficiales y que los documentos deben traducirse al inglés. Otros evaluadores y destinatarios fijan sus propias reglas, así que lea la lista del servicio que su destinatario acepta."
+            ],
+            "sourceRefs": [
+              "wes-required-docs"
+            ],
+            "checklistTitle": "Documentos que debe localizar",
+            "checklist": [
+              "Título profesional y, si cursó posgrado, el título o grado correspondiente (especialidad, maestría, doctorado)",
+              "Certificado de estudios o historial académico con materias, calificaciones y créditos",
+              "Cédula profesional, si la tiene",
+              "Constancia de cambio de nombre si sus documentos muestran nombres distintos",
+              "Datos de contacto de la oficina de su institución que envía documentos oficiales, a menudo Servicios Escolares"
+            ]
+          },
+          {
+            "id": "apostille",
+            "heading": "Apostilla: qué es y cuándo preguntar por ella",
+            "paragraphs": [
+              "México y Estados Unidos son parte del Convenio de la Apostilla de La Haya; la tabla de la HCCH indica que está en vigor para México desde el 14 de agosto de 1995. La apostilla confirma el origen de un documento público, por ejemplo la firma y el cargo del funcionario que lo firmó. No confirma lo que usted estudió ni dice a qué equivale su título en EE. UU.",
+              "Un destinatario en EE. UU. puede pedir documentos apostillados o no pedirlos. A muchos evaluadores les importa más recibir los documentos directamente de su institución. Pregunte antes de pagar apostillas que quizá no necesite.",
+              "Si la necesita, el camino depende de quién emitió el documento. La SEP indica que su oficina DGAIR autentica los documentos académicos emitidos por instituciones particulares con reconocimiento federal (RVOE) antes de la apostilla o legalización, y que los documentos que ya tienen las firmas requeridas pueden presentarse directamente ante la Secretaría de Gobernación. Pregunte a su institución qué camino corresponde a su documento."
+            ],
+            "sourceRefs": [
+              "hcch-status",
+              "mx-sep-dgair"
+            ]
+          },
+          {
+            "id": "licensed-professions",
+            "heading": "Profesiones reguladas: decide la junta estatal",
+            "paragraphs": [
+              "En profesiones como medicina, enfermería, odontología, derecho, ingeniería, docencia o contaduría, la evaluación de credenciales es solo una parte del proceso. El Departamento de Educación de EE. UU. señala que las licencias se gestionan por lo general a nivel estatal y que la junta del estado donde piensa trabajar es la autoridad a la que debe preguntar. Una junta puede hacer su propia revisión, exigir un servicio de evaluación concreto o pedir exámenes y práctica supervisada.",
+              "La cédula profesional mexicana acredita que usted puede ejercer en México. No es una licencia de EE. UU. ni se transfiere de forma automática, aunque una junta puede pedirla."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Antes de pagar: un plan breve",
+            "paragraphs": [
+              "Siga este orden para no pagar dos veces."
+            ],
+            "checklist": [
+              "Anote su objetivo: un empleo, una licencia en un estado concreto, la admisión a una institución o un trámite migratorio.",
+              "Pregunte por escrito a ese destinatario qué servicios de evaluación y qué tipo de informe acepta.",
+              "Lea la lista de documentos de ese servicio para México y anote cuáles deben llegar directamente de su institución.",
+              "Pregunte a su institución en México cómo envía documentos oficiales al exterior, cuánto tarda y cuánto cuesta.",
+              "Encargue traducciones al inglés solo en la forma que acepte el servicio o el destinatario.",
+              "Solicite la apostilla solo si el destinatario o el servicio la pide.",
+              "Guarde copias de todo lo que envíe y de cada respuesta escrita que reciba."
+            ]
+          }
+        ]
+      },
+      "updated": "2026-11-10"
+    },
+    {
+      "slug": "colombia-degree-in-the-united-states",
+      "country": "CO",
+      "sources": [
+        "ed-recognition",
+        "wes-required-docs",
+        "hcch-status",
+        "co-men-legalizacion"
+      ],
+      "related": [
+        "credential-evaluation-for-us-jobs",
+        "foreign-degree-on-resume"
+      ],
+      "en": {
+        "title": "Using a Degree from Colombia in the United States: Evaluation, Documents and Apostille",
+        "seoTitle": "Using a Degree from Colombia in the U.S. | VerifED Global",
+        "description": "How a degree from Colombia is reviewed in the U.S.: who decides, which documents to gather, when an apostille matters, and what to ask before paying.",
+        "summary": "The U.S. has no national office that validates a degree from Colombia. The employer, school or licensing board receiving your documents decides what it accepts, so ask first and gather the right records.",
+        "readTime": "6 min read",
+        "sections": [
+          {
+            "id": "no-national-office",
+            "heading": "The U.S. has no national office that validates a degree from Colombia",
+            "paragraphs": [
+              "People often ask how to validate, homologate or revalidate a degree from Colombia in the United States. In Colombia, the Ministry of Education runs a process called convalidación for degrees earned abroad. The U.S. works differently: no single government office converts a foreign degree into a U.S. one.",
+              "According to the U.S. Department of Education, recognition is decided by whoever receives your documents: a school for admission, an employer for a job, a state licensing board for a regulated profession, or federal immigration authorities for a visa matter. The Department itself does not evaluate foreign degrees.",
+              "Credential evaluation services are private organizations that charge a fee. They are not federally regulated, the Department does not recommend any of them, and two services can reach different conclusions about the same degree. That is why the first step is to ask the recipient which service and which report type it accepts."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documents from Colombia to locate first",
+            "paragraphs": [
+              "Graduates of Colombian institutions usually receive a diploma (the título), an acta de grado (the graduation record) and can request a certificado de notas that lists subjects and grades. Some professions also issue a tarjeta or matrícula profesional through a professional council. Keep the original Spanish names of these documents; do not rename them with U.S. terms.",
+              "Each evaluator publishes its own document list by country. WES, one commercial provider, states that requirements vary by country of study, that official academic documents must be sent to WES by the issuing institution, and that documents must be translated into English. Other evaluators and recipients set their own rules, so read the list for the service your recipient accepts."
+            ],
+            "sourceRefs": [
+              "wes-required-docs"
+            ],
+            "checklistTitle": "Records to locate",
+            "checklist": [
+              "Diploma for each degree (técnico, tecnólogo, profesional, especialización, maestría, doctorado)",
+              "Acta de grado",
+              "Certificado de notas with subjects, grades and credits",
+              "Tarjeta or matrícula profesional, if your profession issues one",
+              "Contact details for the office at your institution that sends official records, often called Registro y Control Académico"
+            ]
+          },
+          {
+            "id": "apostille",
+            "heading": "Apostille: what it is and when to ask about it",
+            "paragraphs": [
+              "Colombia and the United States are both parties to the Hague Apostille Convention; the HCCH status table shows it in force for Colombia since 30 January 2001. An apostille confirms the origin of a public document, such as the signature and capacity of the official who signed it. It does not confirm what you studied, and it says nothing about how your degree compares to a U.S. degree.",
+              "A U.S. recipient may or may not ask for apostilled documents. Many evaluators care more about receiving records directly from your institution. Ask before you pay for apostilles you may not need.",
+              "If you do need one, Colombia's Ministry of Education describes two online steps. First the Ministry verifies your degree, acta de grado or grade certificate through its legalization system at no cost. Then you request the apostille from the foreign ministry (Cancillería), also online. The Ministry's description dates from 2020, so confirm the current steps on its website."
+            ],
+            "sourceRefs": [
+              "hcch-status",
+              "co-men-legalizacion"
+            ]
+          },
+          {
+            "id": "licensed-professions",
+            "heading": "Regulated professions: the state board decides",
+            "paragraphs": [
+              "For professions such as medicine, nursing, dentistry, law, engineering, teaching or accounting, a credential evaluation is only one part of the process. The U.S. Department of Education notes that licensing is generally handled at state level, and the board in the state where you plan to work is the authority to ask. A board may do its own review, name a specific evaluation service, or require exams and supervised practice.",
+              "A Colombian tarjeta or matrícula profesional shows that you may practise in Colombia. It is not a U.S. license and does not transfer automatically, although a board may ask to see it."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Before you pay: a short plan",
+            "paragraphs": [
+              "Work in this order to avoid paying twice."
+            ],
+            "checklist": [
+              "Write down your goal: a job, a license in a specific state, admission to a school, or an immigration filing.",
+              "Ask that recipient in writing which evaluation services and which report type it accepts.",
+              "Read that service's document list for Colombia and note which records must come directly from your institution.",
+              "Ask your institution in Colombia how it sends official records abroad, how long it takes and what it costs.",
+              "Arrange English translations only in the form the service or recipient accepts.",
+              "Request an apostille only if the recipient or the service asks for one.",
+              "Keep copies of everything you send and every written answer you receive."
+            ]
+          }
+        ]
+      },
+      "es": {
+        "slug": "validar-titulo-de-colombia-en-estados-unidos",
+        "title": "Cómo validar un título de Colombia en Estados Unidos: evaluación, documentos y apostilla",
+        "seoTitle": "Validar título de Colombia en Estados Unidos | VerifED Global",
+        "description": "Cómo se revisa en EE. UU. un título de Colombia: quién decide, qué documentos reunir, cuándo importa la apostilla y qué preguntar antes de pagar.",
+        "summary": "En EE. UU. no existe una oficina nacional que valide un título de Colombia. El empleador, la institución o la junta de licencias que recibe sus documentos decide qué acepta: pregunte primero y reúna los documentos correctos.",
+        "readTime": "6 min de lectura",
+        "sections": [
+          {
+            "id": "no-national-office",
+            "heading": "En EE. UU. no existe una oficina nacional que valide un título de Colombia",
+            "paragraphs": [
+              "Muchas personas preguntan cómo validar, homologar o revalidar un título de Colombia en Estados Unidos. En Colombia, el Ministerio de Educación Nacional tiene un trámite de convalidación para títulos obtenidos en el exterior. En EE. UU. funciona de otra manera: ninguna oficina del gobierno convierte un título extranjero en uno estadounidense.",
+              "Según el Departamento de Educación de EE. UU., el reconocimiento lo decide quien recibe sus documentos: una institución educativa para la admisión, un empleador para un puesto, una junta estatal de licencias para una profesión regulada o las autoridades migratorias federales para un asunto de visa. El Departamento no evalúa títulos extranjeros.",
+              "Los servicios de evaluación de credenciales son organizaciones privadas que cobran por su trabajo. No están regulados a nivel federal, el Departamento no recomienda ninguno y dos servicios pueden llegar a conclusiones distintas sobre el mismo título. Por eso el primer paso es preguntar al destinatario qué servicio y qué tipo de informe acepta."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documentos de Colombia que conviene localizar primero",
+            "paragraphs": [
+              "Quienes egresan de instituciones colombianas suelen recibir un diploma (el título) y un acta de grado, y pueden solicitar un certificado de notas con materias y calificaciones. En algunas profesiones, un consejo profesional expide además una tarjeta o matrícula profesional. Conserve los nombres originales de estos documentos; no los sustituya por términos estadounidenses.",
+              "Cada evaluador publica su propia lista de documentos por país. WES, un proveedor comercial, indica que los requisitos varían según el país de estudio, que la institución emisora debe enviar a WES los documentos académicos oficiales y que los documentos deben traducirse al inglés. Otros evaluadores y destinatarios fijan sus propias reglas, así que lea la lista del servicio que su destinatario acepta."
+            ],
+            "sourceRefs": [
+              "wes-required-docs"
+            ],
+            "checklistTitle": "Documentos que debe localizar",
+            "checklist": [
+              "Diploma de cada título (técnico, tecnólogo, profesional, especialización, maestría, doctorado)",
+              "Acta de grado",
+              "Certificado de notas con materias, calificaciones y créditos",
+              "Tarjeta o matrícula profesional, si su profesión la expide",
+              "Datos de contacto de la oficina de su institución que envía documentos oficiales, a menudo Registro y Control Académico"
+            ]
+          },
+          {
+            "id": "apostille",
+            "heading": "Apostilla: qué es y cuándo preguntar por ella",
+            "paragraphs": [
+              "Colombia y Estados Unidos son parte del Convenio de la Apostilla de La Haya; la tabla de la HCCH indica que está en vigor para Colombia desde el 30 de enero de 2001. La apostilla confirma el origen de un documento público, por ejemplo la firma y el cargo del funcionario que lo firmó. No confirma lo que usted estudió ni dice a qué equivale su título en EE. UU.",
+              "Un destinatario en EE. UU. puede pedir documentos apostillados o no pedirlos. A muchos evaluadores les importa más recibir los documentos directamente de su institución. Pregunte antes de pagar apostillas que quizá no necesite.",
+              "Si la necesita, el Ministerio de Educación Nacional describe dos pasos en línea. Primero el Ministerio verifica su título, acta de grado o certificado de notas mediante su sistema de legalizaciones, sin costo. Después usted solicita la apostilla ante la Cancillería, también en línea. La descripción del Ministerio es de 2020, así que confirme los pasos vigentes en su sitio web."
+            ],
+            "sourceRefs": [
+              "hcch-status",
+              "co-men-legalizacion"
+            ]
+          },
+          {
+            "id": "licensed-professions",
+            "heading": "Profesiones reguladas: decide la junta estatal",
+            "paragraphs": [
+              "En profesiones como medicina, enfermería, odontología, derecho, ingeniería, docencia o contaduría, la evaluación de credenciales es solo una parte del proceso. El Departamento de Educación de EE. UU. señala que las licencias se gestionan por lo general a nivel estatal y que la junta del estado donde piensa trabajar es la autoridad a la que debe preguntar. Una junta puede hacer su propia revisión, exigir un servicio de evaluación concreto o pedir exámenes y práctica supervisada.",
+              "La tarjeta o matrícula profesional colombiana acredita que usted puede ejercer en Colombia. No es una licencia de EE. UU. ni se transfiere de forma automática, aunque una junta puede pedirla."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Antes de pagar: un plan breve",
+            "paragraphs": [
+              "Siga este orden para no pagar dos veces."
+            ],
+            "checklist": [
+              "Anote su objetivo: un empleo, una licencia en un estado concreto, la admisión a una institución o un trámite migratorio.",
+              "Pregunte por escrito a ese destinatario qué servicios de evaluación y qué tipo de informe acepta.",
+              "Lea la lista de documentos de ese servicio para Colombia y anote cuáles deben llegar directamente de su institución.",
+              "Pregunte a su institución en Colombia cómo envía documentos oficiales al exterior, cuánto tarda y cuánto cuesta.",
+              "Encargue traducciones al inglés solo en la forma que acepte el servicio o el destinatario.",
+              "Solicite la apostilla solo si el destinatario o el servicio la pide.",
+              "Guarde copias de todo lo que envíe y de cada respuesta escrita que reciba."
+            ]
+          }
+        ]
+      },
+      "updated": "2026-11-10"
+    },
+    {
+      "slug": "venezuela-degree-in-the-united-states",
+      "country": "VE",
+      "sources": [
+        "ed-recognition",
+        "wes-required-docs",
+        "wes-gateway",
+        "hcch-status",
+        "ve-hcch-authority"
+      ],
+      "related": [
+        "credential-evaluation-for-us-jobs",
+        "foreign-degree-on-resume"
+      ],
+      "en": {
+        "title": "Using a Degree from Venezuela in the United States: Evaluation, Documents and Apostille",
+        "seoTitle": "Using a Degree from Venezuela in the U.S. | VerifED Global",
+        "description": "How a degree from Venezuela is reviewed in the U.S.: who decides, which documents to gather, when an apostille matters, and what to ask before paying.",
+        "summary": "The U.S. has no national office that validates a degree from Venezuela. The employer, school or licensing board receiving your documents decides what it accepts, so ask first and gather the right records.",
+        "readTime": "6 min read",
+        "sections": [
+          {
+            "id": "no-national-office",
+            "heading": "The U.S. has no national office that validates a degree from Venezuela",
+            "paragraphs": [
+              "People often ask how to validate, homologate or revalidate a degree from Venezuela in the United States. In Venezuela, universities handle a process called reválida for degrees earned abroad. The U.S. works differently: no single government office converts a foreign degree into a U.S. one.",
+              "According to the U.S. Department of Education, recognition is decided by whoever receives your documents: a school for admission, an employer for a job, a state licensing board for a regulated profession, or federal immigration authorities for a visa matter. The Department itself does not evaluate foreign degrees.",
+              "Credential evaluation services are private organizations that charge a fee. They are not federally regulated, the Department does not recommend any of them, and two services can reach different conclusions about the same degree. That is why the first step is to ask the recipient which service and which report type it accepts."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documents from Venezuela to locate first",
+            "paragraphs": [
+              "Graduates of Venezuelan universities usually hold a título universitario and can request notas certificadas, the certified record of subjects and grades. Many people also keep a fondo negro, a photographic copy of the título. Keep the original Spanish names of these documents; do not rename them with U.S. terms.",
+              "If you live in the U.S. and cannot obtain official records from your Venezuelan institution, ask about alternatives before you give up. WES describes a Gateway Program for displaced people who cannot get official academic documents; its page lists Venezuela among the eligible countries of education and says access is through partner organizations. WES and its partners decide who is eligible.",
+              "Each evaluator publishes its own document list by country. WES, one commercial provider, states that requirements vary by country of study, that official academic documents must be sent to WES by the issuing institution, and that documents must be translated into English. Other evaluators and recipients set their own rules, so read the list for the service your recipient accepts."
+            ],
+            "sourceRefs": [
+              "wes-required-docs",
+              "wes-gateway"
+            ],
+            "checklistTitle": "Records to locate",
+            "checklist": [
+              "Título universitario for each degree",
+              "Notas certificadas with subjects and grades",
+              "Programas de estudio or pensum, if the recipient asks for a course-by-course report",
+              "Any copies you already hold, such as a fondo negro, in case new official records are hard to obtain",
+              "Contact details for the office at your university that sends official records, often called Control de Estudios or Secretaría"
+            ]
+          },
+          {
+            "id": "apostille",
+            "heading": "Apostille: what it is and when to ask about it",
+            "paragraphs": [
+              "Venezuela and the United States are both parties to the Hague Apostille Convention; the HCCH status table shows it in force for Venezuela since 16 March 1999. An apostille confirms the origin of a public document, such as the signature and capacity of the official who signed it. It does not confirm what you studied, and it says nothing about how your degree compares to a U.S. degree.",
+              "A U.S. recipient may or may not ask for apostilled documents. Many evaluators care more about receiving records directly from your institution. Ask before you pay for apostilles you may not need.",
+              "If you do need one, the HCCH lists the foreign ministry (MPPRE) as the authority that issues apostilles in Venezuela and links to its electronic legalization and apostille system. Ask your university which certifications must be completed before the ministry will accept a university document, and be careful with intermediaries who charge for appointments."
+            ],
+            "sourceRefs": [
+              "hcch-status",
+              "ve-hcch-authority"
+            ]
+          },
+          {
+            "id": "licensed-professions",
+            "heading": "Regulated professions: the state board decides",
+            "paragraphs": [
+              "For professions such as medicine, nursing, dentistry, law, engineering, teaching or accounting, a credential evaluation is only one part of the process. The U.S. Department of Education notes that licensing is generally handled at state level, and the board in the state where you plan to work is the authority to ask. A board may do its own review, name a specific evaluation service, or require exams and supervised practice.",
+              "Membership of a Venezuelan professional association (colegio profesional) shows that you may practise in Venezuela. It is not a U.S. license and does not transfer automatically, although a board may ask about it."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Before you pay: a short plan",
+            "paragraphs": [
+              "Work in this order to avoid paying twice."
+            ],
+            "checklist": [
+              "Write down your goal: a job, a license in a specific state, admission to a school, or an immigration filing.",
+              "Ask that recipient in writing which evaluation services and which report type it accepts.",
+              "Read that service's document list for Venezuela and note which records must come directly from your institution.",
+              "Ask your institution in Venezuela how it sends official records abroad, how long it takes and what it costs.",
+              "Arrange English translations only in the form the service or recipient accepts.",
+              "Request an apostille only if the recipient or the service asks for one.",
+              "Keep copies of everything you send and every written answer you receive."
+            ]
+          }
+        ]
+      },
+      "es": {
+        "slug": "validar-titulo-de-venezuela-en-estados-unidos",
+        "title": "Cómo validar un título de Venezuela en Estados Unidos: evaluación, documentos y apostilla",
+        "seoTitle": "Validar título de Venezuela en Estados Unidos | VerifED Global",
+        "description": "Cómo se revisa en EE. UU. un título de Venezuela: quién decide, qué documentos reunir, cuándo importa la apostilla y qué preguntar antes de pagar.",
+        "summary": "En EE. UU. no existe una oficina nacional que valide un título de Venezuela. El empleador, la institución o la junta de licencias que recibe sus documentos decide qué acepta: pregunte primero y reúna los documentos correctos.",
+        "readTime": "6 min de lectura",
+        "sections": [
+          {
+            "id": "no-national-office",
+            "heading": "En EE. UU. no existe una oficina nacional que valide un título de Venezuela",
+            "paragraphs": [
+              "Muchas personas preguntan cómo validar, homologar o revalidar un título de Venezuela en Estados Unidos. En Venezuela, las universidades tramitan la reválida de los títulos obtenidos en el exterior. En EE. UU. funciona de otra manera: ninguna oficina del gobierno convierte un título extranjero en uno estadounidense.",
+              "Según el Departamento de Educación de EE. UU., el reconocimiento lo decide quien recibe sus documentos: una institución educativa para la admisión, un empleador para un puesto, una junta estatal de licencias para una profesión regulada o las autoridades migratorias federales para un asunto de visa. El Departamento no evalúa títulos extranjeros.",
+              "Los servicios de evaluación de credenciales son organizaciones privadas que cobran por su trabajo. No están regulados a nivel federal, el Departamento no recomienda ninguno y dos servicios pueden llegar a conclusiones distintas sobre el mismo título. Por eso el primer paso es preguntar al destinatario qué servicio y qué tipo de informe acepta."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documentos de Venezuela que conviene localizar primero",
+            "paragraphs": [
+              "Quienes egresan de universidades venezolanas suelen tener un título universitario y pueden solicitar notas certificadas, el registro certificado de materias y calificaciones. Muchas personas conservan además un fondo negro, una copia fotográfica del título. Conserve los nombres originales de estos documentos; no los sustituya por términos estadounidenses.",
+              "Si vive en EE. UU. y no puede obtener documentos oficiales de su institución en Venezuela, pregunte por alternativas antes de darse por vencido. WES describe un programa llamado Gateway para personas desplazadas que no pueden conseguir documentos académicos oficiales; su página incluye a Venezuela entre los países de estudio admitidos e indica que el acceso es mediante organizaciones asociadas. WES y sus socios deciden quién es elegible.",
+              "Cada evaluador publica su propia lista de documentos por país. WES, un proveedor comercial, indica que los requisitos varían según el país de estudio, que la institución emisora debe enviar a WES los documentos académicos oficiales y que los documentos deben traducirse al inglés. Otros evaluadores y destinatarios fijan sus propias reglas, así que lea la lista del servicio que su destinatario acepta."
+            ],
+            "sourceRefs": [
+              "wes-required-docs",
+              "wes-gateway"
+            ],
+            "checklistTitle": "Documentos que debe localizar",
+            "checklist": [
+              "Título universitario de cada carrera",
+              "Notas certificadas con materias y calificaciones",
+              "Programas de estudio o pensum, si el destinatario pide un informe materia por materia",
+              "Las copias que ya tenga, como el fondo negro, por si resulta difícil conseguir documentos oficiales nuevos",
+              "Datos de contacto de la oficina de su universidad que envía documentos oficiales, a menudo Control de Estudios o Secretaría"
+            ]
+          },
+          {
+            "id": "apostille",
+            "heading": "Apostilla: qué es y cuándo preguntar por ella",
+            "paragraphs": [
+              "Venezuela y Estados Unidos son parte del Convenio de la Apostilla de La Haya; la tabla de la HCCH indica que está en vigor para Venezuela desde el 16 de marzo de 1999. La apostilla confirma el origen de un documento público, por ejemplo la firma y el cargo del funcionario que lo firmó. No confirma lo que usted estudió ni dice a qué equivale su título en EE. UU.",
+              "Un destinatario en EE. UU. puede pedir documentos apostillados o no pedirlos. A muchos evaluadores les importa más recibir los documentos directamente de su institución. Pregunte antes de pagar apostillas que quizá no necesite.",
+              "Si la necesita, la HCCH identifica al Ministerio del Poder Popular para Relaciones Exteriores (MPPRE) como la autoridad que emite apostillas en Venezuela y enlaza a su sistema electrónico de legalización y apostilla. Pregunte a su universidad qué certificaciones deben completarse antes de que el ministerio acepte un documento universitario, y tenga cuidado con intermediarios que cobran por conseguir citas."
+            ],
+            "sourceRefs": [
+              "hcch-status",
+              "ve-hcch-authority"
+            ]
+          },
+          {
+            "id": "licensed-professions",
+            "heading": "Profesiones reguladas: decide la junta estatal",
+            "paragraphs": [
+              "En profesiones como medicina, enfermería, odontología, derecho, ingeniería, docencia o contaduría, la evaluación de credenciales es solo una parte del proceso. El Departamento de Educación de EE. UU. señala que las licencias se gestionan por lo general a nivel estatal y que la junta del estado donde piensa trabajar es la autoridad a la que debe preguntar. Una junta puede hacer su propia revisión, exigir un servicio de evaluación concreto o pedir exámenes y práctica supervisada.",
+              "La inscripción en un colegio profesional venezolano acredita que usted puede ejercer en Venezuela. No es una licencia de EE. UU. ni se transfiere de forma automática, aunque una junta puede preguntar por ella."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Antes de pagar: un plan breve",
+            "paragraphs": [
+              "Siga este orden para no pagar dos veces."
+            ],
+            "checklist": [
+              "Anote su objetivo: un empleo, una licencia en un estado concreto, la admisión a una institución o un trámite migratorio.",
+              "Pregunte por escrito a ese destinatario qué servicios de evaluación y qué tipo de informe acepta.",
+              "Lea la lista de documentos de ese servicio para Venezuela y anote cuáles deben llegar directamente de su institución.",
+              "Pregunte a su institución en Venezuela cómo envía documentos oficiales al exterior, cuánto tarda y cuánto cuesta.",
+              "Encargue traducciones al inglés solo en la forma que acepte el servicio o el destinatario.",
+              "Solicite la apostilla solo si el destinatario o el servicio la pide.",
+              "Guarde copias de todo lo que envíe y de cada respuesta escrita que reciba."
+            ]
+          }
+        ]
+      },
+      "updated": "2026-11-10"
+    },
+    {
+      "slug": "argentina-degree-in-the-united-states",
+      "country": "AR",
+      "sources": [
+        "ed-recognition",
+        "wes-required-docs",
+        "ar-dngu",
+        "hcch-status",
+        "ar-cancilleria-apostilla"
+      ],
+      "related": [
+        "credential-evaluation-for-us-jobs",
+        "foreign-degree-on-resume"
+      ],
+      "en": {
+        "title": "Using a Degree from Argentina in the United States: Evaluation, Documents and Apostille",
+        "seoTitle": "Using a Degree from Argentina in the U.S. | VerifED Global",
+        "description": "How a degree from Argentina is reviewed in the U.S.: who decides, which documents to gather, when an apostille matters, and what to ask before paying.",
+        "summary": "The U.S. has no national office that validates a degree from Argentina. The employer, school or licensing board receiving your documents decides what it accepts, so ask first and gather the right records.",
+        "readTime": "6 min read",
+        "sections": [
+          {
+            "id": "no-national-office",
+            "heading": "The U.S. has no national office that validates a degree from Argentina",
+            "paragraphs": [
+              "People often ask how to validate, homologate or revalidate a degree from Argentina in the United States. In Argentina, foreign degrees go through convalidación with the national education authority or reválida at a national university. The U.S. works differently: no single government office converts a foreign degree into a U.S. one.",
+              "According to the U.S. Department of Education, recognition is decided by whoever receives your documents: a school for admission, an employer for a job, a state licensing board for a regulated profession, or federal immigration authorities for a visa matter. The Department itself does not evaluate foreign degrees.",
+              "Credential evaluation services are private organizations that charge a fee. They are not federally regulated, the Department does not recommend any of them, and two services can reach different conclusions about the same degree. That is why the first step is to ask the recipient which service and which report type it accepts."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documents from Argentina to locate first",
+            "paragraphs": [
+              "Graduates of Argentine universities usually hold a diploma (the título) and a certificado analítico, the final transcript of subjects and grades. Argentina's Dirección Nacional de Gestión Universitaria certifies university diplomas and final analíticos, and states that the university requests this certification through the SIDCer system; graduates do not file it themselves. Keep the original Spanish names of these documents; do not rename them with U.S. terms.",
+              "Each evaluator publishes its own document list by country. WES, one commercial provider, states that requirements vary by country of study, that official academic documents must be sent to WES by the issuing institution, and that documents must be translated into English. Other evaluators and recipients set their own rules, so read the list for the service your recipient accepts."
+            ],
+            "sourceRefs": [
+              "wes-required-docs",
+              "ar-dngu"
+            ],
+            "checklistTitle": "Records to locate",
+            "checklist": [
+              "Diploma for each degree (pregrado, grado, posgrado)",
+              "Certificado analítico final with subjects and grades",
+              "Programas de materias or plan de estudios, if the recipient asks for a course-by-course report",
+              "Matrícula profesional, if your profession issues one",
+              "Contact details for the office at your university that handles degrees and official records, often called Dirección de Títulos or Departamento de Alumnos"
+            ]
+          },
+          {
+            "id": "apostille",
+            "heading": "Apostille: what it is and when to ask about it",
+            "paragraphs": [
+              "Argentina and the United States are both parties to the Hague Apostille Convention; the HCCH status table shows it in force for Argentina since 18 February 1988. An apostille confirms the origin of a public document, such as the signature and capacity of the official who signed it. It does not confirm what you studied, and it says nothing about how your degree compares to a U.S. degree.",
+              "A U.S. recipient may or may not ask for apostilled documents. Many evaluators care more about receiving records directly from your institution. Ask before you pay for apostilles you may not need.",
+              "If you do need one, Argentina's foreign ministry explains that the apostille is requested through the TAD online platform or a notary college, and that university documents need a prior legalization that depends on their issue date: documents issued before 1 January 2012 go through the Ministry of the Interior, and later ones through the education ministry's university office. That later certification is the one your university requests for you."
+            ],
+            "sourceRefs": [
+              "hcch-status",
+              "ar-cancilleria-apostilla",
+              "ar-dngu"
+            ]
+          },
+          {
+            "id": "licensed-professions",
+            "heading": "Regulated professions: the state board decides",
+            "paragraphs": [
+              "For professions such as medicine, nursing, dentistry, law, engineering, teaching or accounting, a credential evaluation is only one part of the process. The U.S. Department of Education notes that licensing is generally handled at state level, and the board in the state where you plan to work is the authority to ask. A board may do its own review, name a specific evaluation service, or require exams and supervised practice.",
+              "An Argentine matrícula profesional shows that you may practise in Argentina. It is not a U.S. license and does not transfer automatically, although a board may ask to see it."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Before you pay: a short plan",
+            "paragraphs": [
+              "Work in this order to avoid paying twice."
+            ],
+            "checklist": [
+              "Write down your goal: a job, a license in a specific state, admission to a school, or an immigration filing.",
+              "Ask that recipient in writing which evaluation services and which report type it accepts.",
+              "Read that service's document list for Argentina and note which records must come directly from your institution.",
+              "Ask your institution in Argentina how it sends official records abroad, how long it takes and what it costs.",
+              "Arrange English translations only in the form the service or recipient accepts.",
+              "Request an apostille only if the recipient or the service asks for one.",
+              "Keep copies of everything you send and every written answer you receive."
+            ]
+          }
+        ]
+      },
+      "es": {
+        "slug": "validar-titulo-de-argentina-en-estados-unidos",
+        "title": "Cómo validar un título de Argentina en Estados Unidos: evaluación, documentos y apostilla",
+        "seoTitle": "Validar título de Argentina en Estados Unidos | VerifED Global",
+        "description": "Cómo se revisa en EE. UU. un título de Argentina: quién decide, qué documentos reunir, cuándo importa la apostilla y qué preguntar antes de pagar.",
+        "summary": "En EE. UU. no existe una oficina nacional que valide un título de Argentina. El empleador, la institución o la junta de licencias que recibe sus documentos decide qué acepta: pregunte primero y reúna los documentos correctos.",
+        "readTime": "6 min de lectura",
+        "sections": [
+          {
+            "id": "no-national-office",
+            "heading": "En EE. UU. no existe una oficina nacional que valide un título de Argentina",
+            "paragraphs": [
+              "Muchas personas preguntan cómo validar, homologar o revalidar un título de Argentina en Estados Unidos. En Argentina, los títulos extranjeros pasan por una convalidación ante la autoridad educativa nacional o una reválida en una universidad nacional. En EE. UU. funciona de otra manera: ninguna oficina del gobierno convierte un título extranjero en uno estadounidense.",
+              "Según el Departamento de Educación de EE. UU., el reconocimiento lo decide quien recibe sus documentos: una institución educativa para la admisión, un empleador para un puesto, una junta estatal de licencias para una profesión regulada o las autoridades migratorias federales para un asunto de visa. El Departamento no evalúa títulos extranjeros.",
+              "Los servicios de evaluación de credenciales son organizaciones privadas que cobran por su trabajo. No están regulados a nivel federal, el Departamento no recomienda ninguno y dos servicios pueden llegar a conclusiones distintas sobre el mismo título. Por eso el primer paso es preguntar al destinatario qué servicio y qué tipo de informe acepta."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documentos de Argentina que conviene localizar primero",
+            "paragraphs": [
+              "Quienes egresan de universidades argentinas suelen tener un diploma (el título) y un certificado analítico final con materias y calificaciones. La Dirección Nacional de Gestión Universitaria certifica los diplomas y analíticos finales universitarios, e indica que la universidad solicita esa certificación mediante el sistema SIDCer; el graduado no la tramita por su cuenta. Conserve los nombres originales de estos documentos; no los sustituya por términos estadounidenses.",
+              "Cada evaluador publica su propia lista de documentos por país. WES, un proveedor comercial, indica que los requisitos varían según el país de estudio, que la institución emisora debe enviar a WES los documentos académicos oficiales y que los documentos deben traducirse al inglés. Otros evaluadores y destinatarios fijan sus propias reglas, así que lea la lista del servicio que su destinatario acepta."
+            ],
+            "sourceRefs": [
+              "wes-required-docs",
+              "ar-dngu"
+            ],
+            "checklistTitle": "Documentos que debe localizar",
+            "checklist": [
+              "Diploma de cada título (pregrado, grado, posgrado)",
+              "Certificado analítico final con materias y calificaciones",
+              "Programas de materias o plan de estudios, si el destinatario pide un informe materia por materia",
+              "Matrícula profesional, si su profesión la expide",
+              "Datos de contacto de la oficina de su universidad que gestiona títulos y documentos oficiales, a menudo Dirección de Títulos o Departamento de Alumnos"
+            ]
+          },
+          {
+            "id": "apostille",
+            "heading": "Apostilla: qué es y cuándo preguntar por ella",
+            "paragraphs": [
+              "Argentina y Estados Unidos son parte del Convenio de la Apostilla de La Haya; la tabla de la HCCH indica que está en vigor para Argentina desde el 18 de febrero de 1988. La apostilla confirma el origen de un documento público, por ejemplo la firma y el cargo del funcionario que lo firmó. No confirma lo que usted estudió ni dice a qué equivale su título en EE. UU.",
+              "Un destinatario en EE. UU. puede pedir documentos apostillados o no pedirlos. A muchos evaluadores les importa más recibir los documentos directamente de su institución. Pregunte antes de pagar apostillas que quizá no necesite.",
+              "Si la necesita, la Cancillería argentina explica que la apostilla se solicita por la plataforma TAD o en un colegio de escribanos, y que los documentos universitarios requieren una legalización previa que depende de su fecha de emisión: los emitidos antes del 1 de enero de 2012 pasan por el Ministerio del Interior y los posteriores por el área universitaria del Ministerio de Educación. Esa certificación posterior es la que su universidad solicita por usted."
+            ],
+            "sourceRefs": [
+              "hcch-status",
+              "ar-cancilleria-apostilla",
+              "ar-dngu"
+            ]
+          },
+          {
+            "id": "licensed-professions",
+            "heading": "Profesiones reguladas: decide la junta estatal",
+            "paragraphs": [
+              "En profesiones como medicina, enfermería, odontología, derecho, ingeniería, docencia o contaduría, la evaluación de credenciales es solo una parte del proceso. El Departamento de Educación de EE. UU. señala que las licencias se gestionan por lo general a nivel estatal y que la junta del estado donde piensa trabajar es la autoridad a la que debe preguntar. Una junta puede hacer su propia revisión, exigir un servicio de evaluación concreto o pedir exámenes y práctica supervisada.",
+              "La matrícula profesional argentina acredita que usted puede ejercer en Argentina. No es una licencia de EE. UU. ni se transfiere de forma automática, aunque una junta puede pedirla."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Antes de pagar: un plan breve",
+            "paragraphs": [
+              "Siga este orden para no pagar dos veces."
+            ],
+            "checklist": [
+              "Anote su objetivo: un empleo, una licencia en un estado concreto, la admisión a una institución o un trámite migratorio.",
+              "Pregunte por escrito a ese destinatario qué servicios de evaluación y qué tipo de informe acepta.",
+              "Lea la lista de documentos de ese servicio para Argentina y anote cuáles deben llegar directamente de su institución.",
+              "Pregunte a su institución en Argentina cómo envía documentos oficiales al exterior, cuánto tarda y cuánto cuesta.",
+              "Encargue traducciones al inglés solo en la forma que acepte el servicio o el destinatario.",
+              "Solicite la apostilla solo si el destinatario o el servicio la pide.",
+              "Guarde copias de todo lo que envíe y de cada respuesta escrita que reciba."
+            ]
+          }
+        ]
+      },
+      "updated": "2026-11-10"
+    },
+    {
+      "slug": "ecuador-degree-in-the-united-states",
+      "country": "EC",
+      "sources": [
+        "ed-recognition",
+        "wes-required-docs",
+        "ec-senescyt-faq",
+        "hcch-status",
+        "ec-mremh-apostilla"
+      ],
+      "related": [
+        "credential-evaluation-for-us-jobs",
+        "foreign-degree-on-resume"
+      ],
+      "en": {
+        "title": "Using a Degree from Ecuador in the United States: Evaluation, Documents and Apostille",
+        "seoTitle": "Using a Degree from Ecuador in the U.S. | VerifED Global",
+        "description": "How a degree from Ecuador is reviewed in the U.S.: who decides, which documents to gather, when an apostille matters, and what to ask before paying.",
+        "summary": "The U.S. has no national office that validates a degree from Ecuador. The employer, school or licensing board receiving your documents decides what it accepts, so ask first and gather the right records.",
+        "readTime": "6 min read",
+        "sections": [
+          {
+            "id": "no-national-office",
+            "heading": "The U.S. has no national office that validates a degree from Ecuador",
+            "paragraphs": [
+              "People often ask how to validate, homologate or revalidate a degree from Ecuador in the United States. In Ecuador, SENESCYT registers degrees earned abroad. The U.S. works differently: no single government office converts a foreign degree into a U.S. one.",
+              "According to the U.S. Department of Education, recognition is decided by whoever receives your documents: a school for admission, an employer for a job, a state licensing board for a regulated profession, or federal immigration authorities for a visa matter. The Department itself does not evaluate foreign degrees.",
+              "Credential evaluation services are private organizations that charge a fee. They are not federally regulated, the Department does not recommend any of them, and two services can reach different conclusions about the same degree. That is why the first step is to ask the recipient which service and which report type it accepts."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documents from Ecuador to locate first",
+            "paragraphs": [
+              "Graduates of Ecuadorian institutions usually hold a título and can request a récord académico or certificado de notas that lists subjects and grades. SENESCYT states that the higher education institution registers each national degree in the national information system, and that registered degrees can be looked up in its public title search. Keep the original Spanish names of these documents; do not rename them with U.S. terms.",
+              "Each evaluator publishes its own document list by country. WES, one commercial provider, states that requirements vary by country of study, that official academic documents must be sent to WES by the issuing institution, and that documents must be translated into English. Other evaluators and recipients set their own rules, so read the list for the service your recipient accepts."
+            ],
+            "sourceRefs": [
+              "wes-required-docs",
+              "ec-senescyt-faq"
+            ],
+            "checklistTitle": "Records to locate",
+            "checklist": [
+              "Título for each degree (tercer nivel, cuarto nivel)",
+              "Récord académico or certificado de notas with subjects and grades",
+              "A copy of your record in SENESCYT's public title search, for your own reference",
+              "Mallas or sílabos, if the recipient asks for a course-by-course report",
+              "Contact details for the office at your institution that sends official records, often called Secretaría General"
+            ]
+          },
+          {
+            "id": "apostille",
+            "heading": "Apostille: what it is and when to ask about it",
+            "paragraphs": [
+              "Ecuador and the United States are both parties to the Hague Apostille Convention; the HCCH status table shows it in force for Ecuador since 2 April 2005. An apostille confirms the origin of a public document, such as the signature and capacity of the official who signed it. It does not confirm what you studied, and it says nothing about how your degree compares to a U.S. degree.",
+              "A U.S. recipient may or may not ask for apostilled documents. Many evaluators care more about receiving records directly from your institution. Ask before you pay for apostilles you may not need.",
+              "If you do need one, Ecuador's foreign ministry states that the apostille can be requested online for electronically signed documents, including SENESCYT's certificate of degree registration, or in person. It also states that the degrees and grade certificates of graduates must carry SENESCYT certification first. SENESCYT's FAQ adds that documents other than the degree itself are certified at its service points before the apostille."
+            ],
+            "sourceRefs": [
+              "hcch-status",
+              "ec-mremh-apostilla",
+              "ec-senescyt-faq"
+            ]
+          },
+          {
+            "id": "licensed-professions",
+            "heading": "Regulated professions: the state board decides",
+            "paragraphs": [
+              "For professions such as medicine, nursing, dentistry, law, engineering, teaching or accounting, a credential evaluation is only one part of the process. The U.S. Department of Education notes that licensing is generally handled at state level, and the board in the state where you plan to work is the authority to ask. A board may do its own review, name a specific evaluation service, or require exams and supervised practice.",
+              "Registration of your degree with SENESCYT supports professional practice in Ecuador. It is not a U.S. license and does not transfer automatically, although a board may ask about it."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Before you pay: a short plan",
+            "paragraphs": [
+              "Work in this order to avoid paying twice."
+            ],
+            "checklist": [
+              "Write down your goal: a job, a license in a specific state, admission to a school, or an immigration filing.",
+              "Ask that recipient in writing which evaluation services and which report type it accepts.",
+              "Read that service's document list for Ecuador and note which records must come directly from your institution.",
+              "Ask your institution in Ecuador how it sends official records abroad, how long it takes and what it costs.",
+              "Arrange English translations only in the form the service or recipient accepts.",
+              "Request an apostille only if the recipient or the service asks for one.",
+              "Keep copies of everything you send and every written answer you receive."
+            ]
+          }
+        ]
+      },
+      "es": {
+        "slug": "validar-titulo-de-ecuador-en-estados-unidos",
+        "title": "Cómo validar un título de Ecuador en Estados Unidos: evaluación, documentos y apostilla",
+        "seoTitle": "Validar título de Ecuador en Estados Unidos | VerifED Global",
+        "description": "Cómo se revisa en EE. UU. un título de Ecuador: quién decide, qué documentos reunir, cuándo importa la apostilla y qué preguntar antes de pagar.",
+        "summary": "En EE. UU. no existe una oficina nacional que valide un título de Ecuador. El empleador, la institución o la junta de licencias que recibe sus documentos decide qué acepta: pregunte primero y reúna los documentos correctos.",
+        "readTime": "6 min de lectura",
+        "sections": [
+          {
+            "id": "no-national-office",
+            "heading": "En EE. UU. no existe una oficina nacional que valide un título de Ecuador",
+            "paragraphs": [
+              "Muchas personas preguntan cómo validar, homologar o revalidar un título de Ecuador en Estados Unidos. En Ecuador, la SENESCYT registra los títulos obtenidos en el exterior. En EE. UU. funciona de otra manera: ninguna oficina del gobierno convierte un título extranjero en uno estadounidense.",
+              "Según el Departamento de Educación de EE. UU., el reconocimiento lo decide quien recibe sus documentos: una institución educativa para la admisión, un empleador para un puesto, una junta estatal de licencias para una profesión regulada o las autoridades migratorias federales para un asunto de visa. El Departamento no evalúa títulos extranjeros.",
+              "Los servicios de evaluación de credenciales son organizaciones privadas que cobran por su trabajo. No están regulados a nivel federal, el Departamento no recomienda ninguno y dos servicios pueden llegar a conclusiones distintas sobre el mismo título. Por eso el primer paso es preguntar al destinatario qué servicio y qué tipo de informe acepta."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documentos de Ecuador que conviene localizar primero",
+            "paragraphs": [
+              "Quienes egresan de instituciones ecuatorianas suelen tener un título y pueden solicitar un récord académico o certificado de notas con materias y calificaciones. La SENESCYT indica que la institución de educación superior registra cada título nacional en el sistema nacional de información y que los títulos registrados pueden consultarse en su consulta pública de títulos. Conserve los nombres originales de estos documentos; no los sustituya por términos estadounidenses.",
+              "Cada evaluador publica su propia lista de documentos por país. WES, un proveedor comercial, indica que los requisitos varían según el país de estudio, que la institución emisora debe enviar a WES los documentos académicos oficiales y que los documentos deben traducirse al inglés. Otros evaluadores y destinatarios fijan sus propias reglas, así que lea la lista del servicio que su destinatario acepta."
+            ],
+            "sourceRefs": [
+              "wes-required-docs",
+              "ec-senescyt-faq"
+            ],
+            "checklistTitle": "Documentos que debe localizar",
+            "checklist": [
+              "Título de cada nivel (tercer nivel, cuarto nivel)",
+              "Récord académico o certificado de notas con materias y calificaciones",
+              "Una copia de su registro en la consulta pública de títulos de la SENESCYT, para su propia referencia",
+              "Mallas o sílabos, si el destinatario pide un informe materia por materia",
+              "Datos de contacto de la oficina de su institución que envía documentos oficiales, a menudo Secretaría General"
+            ]
+          },
+          {
+            "id": "apostille",
+            "heading": "Apostilla: qué es y cuándo preguntar por ella",
+            "paragraphs": [
+              "Ecuador y Estados Unidos son parte del Convenio de la Apostilla de La Haya; la tabla de la HCCH indica que está en vigor para Ecuador desde el 2 de abril de 2005. La apostilla confirma el origen de un documento público, por ejemplo la firma y el cargo del funcionario que lo firmó. No confirma lo que usted estudió ni dice a qué equivale su título en EE. UU.",
+              "Un destinatario en EE. UU. puede pedir documentos apostillados o no pedirlos. A muchos evaluadores les importa más recibir los documentos directamente de su institución. Pregunte antes de pagar apostillas que quizá no necesite.",
+              "Si la necesita, el Ministerio de Relaciones Exteriores y Movilidad Humana indica que la apostilla puede solicitarse en línea para documentos con firma electrónica, incluido el certificado de registro de título de la SENESCYT, o de forma presencial. También indica que los títulos y certificados de notas de graduados deben tener antes la certificación de la SENESCYT. Las preguntas frecuentes de la SENESCYT añaden que los documentos distintos del título se certifican en sus puntos de atención antes de la apostilla."
+            ],
+            "sourceRefs": [
+              "hcch-status",
+              "ec-mremh-apostilla",
+              "ec-senescyt-faq"
+            ]
+          },
+          {
+            "id": "licensed-professions",
+            "heading": "Profesiones reguladas: decide la junta estatal",
+            "paragraphs": [
+              "En profesiones como medicina, enfermería, odontología, derecho, ingeniería, docencia o contaduría, la evaluación de credenciales es solo una parte del proceso. El Departamento de Educación de EE. UU. señala que las licencias se gestionan por lo general a nivel estatal y que la junta del estado donde piensa trabajar es la autoridad a la que debe preguntar. Una junta puede hacer su propia revisión, exigir un servicio de evaluación concreto o pedir exámenes y práctica supervisada.",
+              "El registro de su título en la SENESCYT respalda el ejercicio profesional en Ecuador. No es una licencia de EE. UU. ni se transfiere de forma automática, aunque una junta puede preguntar por él."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Antes de pagar: un plan breve",
+            "paragraphs": [
+              "Siga este orden para no pagar dos veces."
+            ],
+            "checklist": [
+              "Anote su objetivo: un empleo, una licencia en un estado concreto, la admisión a una institución o un trámite migratorio.",
+              "Pregunte por escrito a ese destinatario qué servicios de evaluación y qué tipo de informe acepta.",
+              "Lea la lista de documentos de ese servicio para Ecuador y anote cuáles deben llegar directamente de su institución.",
+              "Pregunte a su institución en Ecuador cómo envía documentos oficiales al exterior, cuánto tarda y cuánto cuesta.",
+              "Encargue traducciones al inglés solo en la forma que acepte el servicio o el destinatario.",
+              "Solicite la apostilla solo si el destinatario o el servicio la pide.",
+              "Guarde copias de todo lo que envíe y de cada respuesta escrita que reciba."
+            ]
+          }
+        ]
+      },
+      "updated": "2026-11-10"
     }
   ],
   "ui": {
     "en": {
       "nav": "Guides",
       "indexTitle": "Guides for Internationally Educated Job Seekers",
-      "indexSeoTitle": "Foreign Degree Career Guides for U.S. Jobs | VerifED Global",
-      "indexDescription": "Free, sourced guides on credential evaluation and listing a foreign degree on a U.S. resume. Preliminary guidance, not an official evaluation.",
+      "indexSeoTitle": "Foreign Degree Guides for U.S. Jobs, by Country | VerifED Global",
+      "indexDescription": "Free, sourced guides on credential evaluation, listing a foreign degree on a U.S. resume, and using degrees from Latin America in the U.S.",
       "indexIntro": "Plain-language guides to help you make informed decisions before you spend money. Each guide cites its sources and states what it cannot tell you.",
       "readGuide": "Read guide",
       "home": "Home",
@@ -394,7 +1412,7 @@
       "ctaButton": "Go to account and guidance",
       "allGuides": "All guides",
       "homeEntry": "New here? Read our free guides first",
-      "homeEntryBody": "No account needed: when you may need a credential evaluation, and how to list a foreign degree on a U.S. resume.",
+      "homeEntryBody": "No account needed: when you may need a credential evaluation, how to list a foreign degree on a U.S. resume, and country guides for Mexico, Colombia, Venezuela, Argentina and Ecuador.",
       "skip": "Skip to main content",
       "menu": "Menu",
       "closeMenu": "Close menu"
@@ -402,8 +1420,8 @@
     "es": {
       "nav": "Guías",
       "indexTitle": "Guías para quienes buscan empleo con estudios en el extranjero",
-      "indexSeoTitle": "Guías profesionales para títulos extranjeros en EE. UU. | VerifED Global",
-      "indexDescription": "Guías gratuitas y con fuentes sobre evaluación de credenciales y cómo incluir un título extranjero en un currículum de EE. UU.",
+      "indexSeoTitle": "Guías para validar títulos extranjeros en EE. UU. | VerifED Global",
+      "indexDescription": "Guías gratuitas y con fuentes: evaluación de credenciales, currículum y cómo usar en EE. UU. títulos de México, Colombia, Venezuela, Argentina y Ecuador.",
       "indexIntro": "Guías en lenguaje claro para decidir con información antes de gastar dinero. Cada guía cita sus fuentes e indica lo que no puede decirle.",
       "readGuide": "Leer guía",
       "home": "Inicio",
@@ -418,7 +1436,7 @@
       "ctaButton": "Ir a cuenta y orientación",
       "allGuides": "Todas las guías",
       "homeEntry": "¿Es nuevo? Lea primero nuestras guías gratuitas",
-      "homeEntryBody": "Sin cuenta: cuándo puede necesitar una evaluación de credenciales y cómo incluir un título extranjero en un currículum de EE. UU.",
+      "homeEntryBody": "Sin cuenta: cuándo puede necesitar una evaluación de credenciales, cómo incluir un título extranjero en un currículum de EE. UU. y guías por país para México, Colombia, Venezuela, Argentina y Ecuador.",
       "skip": "Saltar al contenido principal",
       "menu": "Menú",
       "closeMenu": "Cerrar menú"

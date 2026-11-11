@@ -22,6 +22,7 @@ export default defineConfig({
           name: 'integration',
           environment: 'jsdom',
           include: ['src/**/*.integration.test.tsx', 'src/**/*.i18n.test.tsx'],
+          setupFiles: ['./src/test-setup.ts'],
         },
       },
       {
@@ -29,6 +30,7 @@ export default defineConfig({
         test: {
           name: 'unit',
           environment: 'node',
+          setupFiles: ['./src/test-setup.ts'],
           include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
           exclude: ['src/**/*.integration.test.tsx', 'src/**/*.i18n.test.tsx'],
         },

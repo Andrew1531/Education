@@ -3,28 +3,48 @@
     "title": "U.S. Career Guidance for Foreign Degrees | VerifED Global",
     "description": "Understand how to present your foreign degree to U.S. employers, explore credential evaluation options, and identify licensing steps for your career.",
     "heading": "Your Education Abroad. Your Next Career Step in the U.S.",
-    "body": "VerifED Global offers preliminary U.S. career guidance for internationally educated job seekers. Organize your education details, explore official credential evaluation pathways, and understand field-specific licensing considerations before paying for evaluations."
+    "body": "VerifED Global offers preliminary U.S. career guidance for internationally educated job seekers. Organize your education details, explore official credential evaluation pathways, and understand field-specific licensing considerations before paying for evaluations.",
+    "es": {
+      "title": "Cómo usar tu título extranjero en Estados Unidos | VerifED Global",
+      "description": "Descubre cómo presentar tu título extranjero a empleadores en EE. UU., qué opciones de evaluación de credenciales existen y qué pasos de licencia aplican.",
+      "heading": "Tu educación en el extranjero. Tu próximo paso profesional en EE. UU.",
+      "body": "VerifED Global ofrece orientación profesional preliminar en EE. UU. para personas con estudios en el extranjero. Organiza los datos de tu educación, explora las vías oficiales de evaluación de credenciales y conoce las consideraciones de licencia de tu campo antes de pagar por evaluaciones."
+    }
   },
   "/about": {
     "title": "About VerifED Global | International Education Guidance",
     "description": "Learn about VerifED Global, an independent bilingual platform helping internationally educated job seekers understand U.S. credential evaluation pathways.",
     "heading": "About VerifED Global",
-    "body": "VerifED Global helps internationally educated people understand how their academic background relates to U.S. career requirements. Guidance is available in English and Spanish. VerifED Global is not an official credential evaluator, accreditor, government agency, or licensing board."
+    "body": "VerifED Global helps internationally educated people understand how their academic background relates to U.S. career requirements. Guidance is available in English and Spanish. VerifED Global is not an official credential evaluator, accreditor, government agency, or licensing board.",
+    "es": {
+      "title": "Sobre VerifED Global | Orientación para títulos extranjeros",
+      "description": "Conoce VerifED Global, una plataforma independiente y bilingüe que ayuda a personas con estudios en el extranjero a entender la evaluación de credenciales en EE. UU.",
+      "heading": "Sobre VerifED Global",
+      "body": "VerifED Global ayuda a personas con estudios en el extranjero a entender cómo se relaciona su formación académica con los requisitos profesionales de EE. UU. La orientación está disponible en inglés y español. VerifED Global no es un evaluador oficial de credenciales, una entidad acreditadora, una agencia gubernamental ni una junta de licencias."
+    }
   },
   "/how-it-works": {
     "title": "How Foreign Degree Career Guidance Works | VerifED Global",
     "description": "Learn how to organize your education details, explore credential evaluation options, and prepare next steps for employers and licensing boards in the U.S.",
     "heading": "How VerifED Global Works",
-    "body": "Create an account, enter your country of study, institution, degree and field, and explore preliminary career guidance. Review evaluation-agency information and licensing considerations, then confirm requirements with your employer, receiving organization or licensing board. A personalized roadmap is not a certified equivalency determination."
+    "body": "Create an account, enter your country of study, institution, degree and field, and explore preliminary career guidance. Review evaluation-agency information and licensing considerations, then confirm requirements with your employer, receiving organization or licensing board. A personalized roadmap is not a certified equivalency determination.",
+    "es": {
+      "title": "Cómo funciona VerifED Global | Títulos extranjeros en EE. UU.",
+      "description": "Organiza los datos de tu educación, explora opciones de evaluación de credenciales y prepara tus próximos pasos ante empleadores y juntas de licencias en EE. UU.",
+      "heading": "Cómo funciona VerifED Global",
+      "body": "Crea una cuenta, indica tu país de estudio, institución, título y campo, y explora una orientación profesional preliminar. Revisa la información sobre agencias de evaluación y las consideraciones de licencia; después confirma los requisitos con tu empleador, la organización receptora o la junta de licencias. Una hoja de ruta personalizada no es una determinación certificada de equivalencia."
+    }
   },
   "/guides": {
-    "title": "Foreign Degree Career Guides for U.S. Jobs | VerifED Global",
-    "description": "Free, sourced guides on credential evaluation and listing a foreign degree on a U.S. resume. Preliminary guidance, not an official evaluation.",
+    "title": "Foreign Degree Guides for U.S. Jobs, by Country | VerifED Global",
+    "description": "Free, sourced guides on credential evaluation, listing a foreign degree on a U.S. resume, and using degrees from Latin America in the U.S.",
     "heading": "Guides for Internationally Educated Job Seekers",
     "body": "Plain-language guides to help you make informed decisions before you spend money. Each guide cites its sources and states what it cannot tell you.",
     "es": {
-      "title": "Guías profesionales para títulos extranjeros en EE. UU. | VerifED Global",
-      "description": "Guías gratuitas y con fuentes sobre evaluación de credenciales y cómo incluir un título extranjero en un currículum de EE. UU."
+      "title": "Guías para validar títulos extranjeros en EE. UU. | VerifED Global",
+      "description": "Guías gratuitas y con fuentes: evaluación de credenciales, currículum y cómo usar en EE. UU. títulos de México, Colombia, Venezuela, Argentina y Ecuador.",
+      "heading": "Guías para quienes buscan empleo con estudios en el extranjero",
+      "body": "Guías en lenguaje claro para decidir con información antes de gastar dinero. Cada guía cita sus fuentes e indica lo que no puede decirle."
     },
     "guides": "index"
   },
@@ -34,8 +54,10 @@
     "heading": "Credential Evaluation for U.S. Jobs: When You Need One and What to Ask First",
     "body": "A credential evaluation is not required for every U.S. job. Before you pay for one, ask the employer or licensing board that will receive it exactly what they accept.",
     "es": {
-      "title": "¿Necesita una evaluación de credenciales para trabajar en EE. UU.? | VerifED Global",
-      "description": "Cuándo un empleador o una junta de licencias en EE. UU. puede pedir una evaluación de credenciales extranjeras, qué confirmar antes de pagar y qué no hace."
+      "title": "¿Necesita una evaluación de credenciales en EE. UU.? | VerifED Global",
+      "description": "Cuándo un empleador o una junta de licencias en EE. UU. puede pedir una evaluación de credenciales extranjeras, qué confirmar antes de pagar y qué no hace.",
+      "heading": "Evaluación de credenciales para empleos en EE. UU.: cuándo la necesita y qué preguntar primero",
+      "body": "No todos los empleos en EE. UU. exigen una evaluación de credenciales. Antes de pagar, pregunte al empleador o a la junta de licencias que la recibirá qué acepta exactamente."
     },
     "guide": "credential-evaluation-for-us-jobs"
   },
@@ -45,9 +67,76 @@
     "heading": "How to List a Foreign Degree on a U.S. Resume Truthfully",
     "body": "Write your degree exactly as it was awarded, add a plain English translation, and only mention a U.S. equivalency if you actually hold an evaluation that states it.",
     "es": {
-      "title": "Cómo poner un título extranjero en un currículum de EE. UU. | VerifED Global",
-      "description": "Presente su título original, institución y país con claridad en un currículum de EE. UU., con una traducción comprensible y sin equivalencias autodeclaradas."
+      "title": "Título extranjero en un currículum de EE. UU. | VerifED Global",
+      "description": "Presente su título original, institución y país con claridad en un currículum de EE. UU., con una traducción comprensible y sin equivalencias autodeclaradas.",
+      "heading": "Cómo incluir un título extranjero en un currículum de EE. UU. con veracidad",
+      "body": "Escriba su título tal como se otorgó, añada una traducción clara al inglés y mencione una equivalencia en EE. UU. solo si tiene una evaluación que la indique."
     },
     "guide": "foreign-degree-on-resume"
+  },
+  "/guides/mexico-degree-in-the-united-states": {
+    "title": "Using a Degree from Mexico in the U.S. | VerifED Global",
+    "description": "How a degree from Mexico is reviewed in the U.S.: who decides, which documents to gather, when an apostille matters, and what to ask before paying.",
+    "heading": "Using a Degree from Mexico in the United States: Evaluation, Documents and Apostille",
+    "body": "The U.S. has no national office that validates a degree from Mexico. The employer, school or licensing board receiving your documents decides what it accepts, so ask first and gather the right records.",
+    "es": {
+      "title": "Validar título de México en Estados Unidos | VerifED Global",
+      "description": "Cómo se revisa en EE. UU. un título de México: quién decide, qué documentos reunir, cuándo importa la apostilla y qué preguntar antes de pagar.",
+      "heading": "Cómo validar un título de México en Estados Unidos: evaluación, documentos y apostilla",
+      "body": "En EE. UU. no existe una oficina nacional que valide un título de México. El empleador, la institución o la junta de licencias que recibe sus documentos decide qué acepta: pregunte primero y reúna los documentos correctos."
+    },
+    "guide": "mexico-degree-in-the-united-states"
+  },
+  "/guides/colombia-degree-in-the-united-states": {
+    "title": "Using a Degree from Colombia in the U.S. | VerifED Global",
+    "description": "How a degree from Colombia is reviewed in the U.S.: who decides, which documents to gather, when an apostille matters, and what to ask before paying.",
+    "heading": "Using a Degree from Colombia in the United States: Evaluation, Documents and Apostille",
+    "body": "The U.S. has no national office that validates a degree from Colombia. The employer, school or licensing board receiving your documents decides what it accepts, so ask first and gather the right records.",
+    "es": {
+      "title": "Validar título de Colombia en Estados Unidos | VerifED Global",
+      "description": "Cómo se revisa en EE. UU. un título de Colombia: quién decide, qué documentos reunir, cuándo importa la apostilla y qué preguntar antes de pagar.",
+      "heading": "Cómo validar un título de Colombia en Estados Unidos: evaluación, documentos y apostilla",
+      "body": "En EE. UU. no existe una oficina nacional que valide un título de Colombia. El empleador, la institución o la junta de licencias que recibe sus documentos decide qué acepta: pregunte primero y reúna los documentos correctos."
+    },
+    "guide": "colombia-degree-in-the-united-states"
+  },
+  "/guides/venezuela-degree-in-the-united-states": {
+    "title": "Using a Degree from Venezuela in the U.S. | VerifED Global",
+    "description": "How a degree from Venezuela is reviewed in the U.S.: who decides, which documents to gather, when an apostille matters, and what to ask before paying.",
+    "heading": "Using a Degree from Venezuela in the United States: Evaluation, Documents and Apostille",
+    "body": "The U.S. has no national office that validates a degree from Venezuela. The employer, school or licensing board receiving your documents decides what it accepts, so ask first and gather the right records.",
+    "es": {
+      "title": "Validar título de Venezuela en Estados Unidos | VerifED Global",
+      "description": "Cómo se revisa en EE. UU. un título de Venezuela: quién decide, qué documentos reunir, cuándo importa la apostilla y qué preguntar antes de pagar.",
+      "heading": "Cómo validar un título de Venezuela en Estados Unidos: evaluación, documentos y apostilla",
+      "body": "En EE. UU. no existe una oficina nacional que valide un título de Venezuela. El empleador, la institución o la junta de licencias que recibe sus documentos decide qué acepta: pregunte primero y reúna los documentos correctos."
+    },
+    "guide": "venezuela-degree-in-the-united-states"
+  },
+  "/guides/argentina-degree-in-the-united-states": {
+    "title": "Using a Degree from Argentina in the U.S. | VerifED Global",
+    "description": "How a degree from Argentina is reviewed in the U.S.: who decides, which documents to gather, when an apostille matters, and what to ask before paying.",
+    "heading": "Using a Degree from Argentina in the United States: Evaluation, Documents and Apostille",
+    "body": "The U.S. has no national office that validates a degree from Argentina. The employer, school or licensing board receiving your documents decides what it accepts, so ask first and gather the right records.",
+    "es": {
+      "title": "Validar título de Argentina en Estados Unidos | VerifED Global",
+      "description": "Cómo se revisa en EE. UU. un título de Argentina: quién decide, qué documentos reunir, cuándo importa la apostilla y qué preguntar antes de pagar.",
+      "heading": "Cómo validar un título de Argentina en Estados Unidos: evaluación, documentos y apostilla",
+      "body": "En EE. UU. no existe una oficina nacional que valide un título de Argentina. El empleador, la institución o la junta de licencias que recibe sus documentos decide qué acepta: pregunte primero y reúna los documentos correctos."
+    },
+    "guide": "argentina-degree-in-the-united-states"
+  },
+  "/guides/ecuador-degree-in-the-united-states": {
+    "title": "Using a Degree from Ecuador in the U.S. | VerifED Global",
+    "description": "How a degree from Ecuador is reviewed in the U.S.: who decides, which documents to gather, when an apostille matters, and what to ask before paying.",
+    "heading": "Using a Degree from Ecuador in the United States: Evaluation, Documents and Apostille",
+    "body": "The U.S. has no national office that validates a degree from Ecuador. The employer, school or licensing board receiving your documents decides what it accepts, so ask first and gather the right records.",
+    "es": {
+      "title": "Validar título de Ecuador en Estados Unidos | VerifED Global",
+      "description": "Cómo se revisa en EE. UU. un título de Ecuador: quién decide, qué documentos reunir, cuándo importa la apostilla y qué preguntar antes de pagar.",
+      "heading": "Cómo validar un título de Ecuador en Estados Unidos: evaluación, documentos y apostilla",
+      "body": "En EE. UU. no existe una oficina nacional que valide un título de Ecuador. El empleador, la institución o la junta de licencias que recibe sus documentos decide qué acepta: pregunte primero y reúna los documentos correctos."
+    },
+    "guide": "ecuador-degree-in-the-united-states"
   }
 }
