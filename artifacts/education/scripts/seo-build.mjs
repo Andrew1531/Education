@@ -1,4 +1,5 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
 const out = path.join(root, 'dist/public');
@@ -53,8 +54,33 @@ function renderArticle(guide, lang) {
     + '</section>').join('');
   const templates = g.templates ? `<section id="templates"><h2>${escape(g.templatesTitle)}</h2><p>${escape(g.templatesNote)}</p>${g.templates.map(t => `<figure><figcaption>${escape(t.label)}</figcaption><pre>${escape(t.lines.join('\n'))}</pre></figure>`).join('')}</section>` : '';
   const sources = `<section aria-labelledby="sources"><h2 id="sources">${ui.sources}</h2><p>${escape(ui.sourcesNote)}</p><ol>${guide.sources.map(id => { const s = content.sources[id]; return `<li id="source-${id}">${escape(s.publisher)}. <a href="${escape(s.url)}" rel="noopener noreferrer">${escape(s.title)}</a>. ${escape(s.scope[lang])}</li>`; }).join('')}</ol></section>`;
-  const related = `<nav aria-labelledby="related"><h2 id="related">${ui.related}</h2><ul>${guide.related.map(r => `<li><a href="${localPath(`/guides/${r}`, lang)}">${escape(guideBySlug(r)[lang].title)}</a></li>`).join('')}<li><a href="${localPath('/guides', lang)}">${ui.allGuides}</a></li></ul></nav>`;
-  return `<article><header><h1>${escape(g.title)}</h1><p>${escape(g.summary)}</p><p>${escape(g.readTime)} · ${ui.updated}: <time datetime="${updated}">${updated}</time></p></header>${sections}${templates}<p>${escape(ui.disclaimer)}</p>${sources}${related}</article>`;
+  const faq = g.faq ? `<section id="faq" aria-labelledby="faq-heading"><h2 id="faq-heading">${escape(ui.faq)}</h2>${g.faq.map(f => `<h3>${escape(f.q)}</h3><p>${escape(f.a)}</p>${f.sourceRefs ? `<p>${ui.sources}: ${f.sourceRefs.map(r => `<a href="#source-${r}">[${num(r)}] ${escape(content.sources[r].publisher)}</a>`).join(', ')}</p>` : ''}`).join('')}</section>` : '';
+  const cross = crossLinks(guide, lang);
+  const crossNav = cross ? `<nav aria-labelledby="cross-links"><h2 id="cross-links">${escape(cross.title)}</h2><p>${escape(cross.note)}</p><ul>${cross.items.map(({ guide: cg, label }) => `<li><a href="${localPath(`/guides/${cg.slug}`, lang)}">${escape(label)}</a></li>`).join('')}</ul></nav>` : '';
+  const related = `${crossNav}<nav aria-labelledby="related"><h2 id="related">${ui.related}</h2><ul>${guide.related.map(r => `<li><a href="${localPath(`/guides/${r}`, lang)}">${escape(guideBySlug(r)[lang].title)}</a></li>`).join('')}<li><a href="${localPath('/guides', lang)}">${ui.allGuides}</a></li></ul></nav>`;
+  return `<article><header><h1>${escape(g.title)}</h1><p>${escape(g.summary)}</p><p>${escape(g.readTime)} · ${ui.updated}: <time datetime="${updated}">${updated}</time></p></header>${sections}${templates}${faq}<p>${escape(ui.disclaimer)}</p>${sources}${related}</article>`;
+}
+
+// Mirrors crossLinks() in src/guides/GuidesPages.tsx: country guides link to every
+// profession guide, and profession guides link back to every country guide.
+function crossLinks(guide, lang) {
+  const ui = content.ui[lang];
+  if (guide.country) {
+    const name = content.countries[guide.country][lang];
+    return { title: ui.byProfession, note: ui.byProfessionNote, items: content.guides.filter(g => g.profession).map(g => ({ guide: g, label: g[lang].countryLink.replace('{country}', name) })) };
+  }
+  if (guide.profession) {
+    return { title: ui.byCountry, note: ui.byCountryNote, items: content.guides.filter(g => g.country).map(g => ({ guide: g, label: ui.byCountryLink.replace('{country}', content.countries[g.country][lang]) })) };
+  }
+  return null;
+}
+
+// Share images (1200×630) live in public/og and are copied into dist by Vite.
+// Regenerate them with `node scripts/og-images.mjs` after changing a guide title.
+const ogImage = (guide, lang) => `/og/${guide ? guide.slug : 'site'}-${lang}.png`;
+for (const lang of LANGS) for (const guide of [null, ...content.guides]) {
+  const file = path.join(out, ogImage(guide, lang));
+  if (!existsSync(file)) throw new Error(`seo-build: missing share image ${ogImage(guide, lang)}; run node scripts/og-images.mjs`);
 }
 
 const sitemapEntries = [];
@@ -73,10 +99,12 @@ for (const lang of LANGS) {
     sitemapEntries.push({ url, alternates, lastmod });
     const graph = [org, { '@type': 'WebSite', '@id': origin + '/#website', name: 'VerifED Global', url: origin + '/', inLanguage: ['en', 'es'] },
       { '@type': 'WebPage', '@id': url + '#webpage', url, name: text.title, description: text.description, isPartOf: { '@id': origin + '/#website' }, inLanguage: lang }];
+    const image = origin + ogImage(guide, lang);
     let body;
     if (guide) {
       const crumbs = breadcrumbs([[ui.home, localPath('/', lang)], [ui.nav, localPath('/guides', lang)], [guide[lang].title, here]], lang);
-      graph.push(crumbs.ld, { '@type': 'Article', headline: guide[lang].title, description: text.description, url, mainEntityOfPage: { '@id': url + '#webpage' }, inLanguage: lang, dateModified: lastmod, author: { '@id': org['@id'] }, publisher: { '@id': org['@id'] }, citation: guide.sources.map(id => content.sources[id].url) });
+      graph.push(crumbs.ld, { '@type': 'Article', headline: guide[lang].title, description: text.description, url, mainEntityOfPage: { '@id': url + '#webpage' }, inLanguage: lang, image, datePublished: guide.published, dateModified: lastmod, author: { '@id': org['@id'] }, publisher: { '@id': org['@id'] }, citation: guide.sources.map(id => content.sources[id].url) });
+      if (guide[lang].faq) graph.push({ '@type': 'FAQPage', '@id': url + '#faq', inLanguage: lang, mainEntity: guide[lang].faq.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) });
       body = `${crumbs.html}${renderArticle(guide, lang)}${cta}`;
     } else if (page.guides === 'index') {
       const crumbs = breadcrumbs([[ui.home, localPath('/', lang)], [ui.nav, here]], lang);
@@ -98,12 +126,14 @@ ${LANGS.map(l => `<link rel="alternate" hreflang="${l}" href="${alternates[l]}">
 <meta property="og:site_name" content="VerifED Global">
 <meta property="og:locale" content="${OG_LOCALE[lang]}">
 <meta property="og:locale:alternate" content="${OG_LOCALE[other]}">
-<meta property="og:image" content="${origin}/favicon-512.png">
-<meta property="og:image:alt" content="VerifED Global logo">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="${image}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="${escape(guide ? guide[lang].title : 'VerifED Global')}">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${escape(text.title)}">
 <meta name="twitter:description" content="${escape(text.description)}">
-<meta name="twitter:image" content="${origin}/favicon-512.png">
+<meta name="twitter:image" content="${image}">
 <script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replaceAll('<', '\\u003c')}</script>`;
     const html = shell.replace(/<html lang="[^"]*"/, `<html lang="${lang}"`)
       .replace(/<title>[\s\S]*?<\/title>/g, '')

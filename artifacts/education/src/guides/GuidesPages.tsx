@@ -4,13 +4,28 @@ import { guideSlug, type Lang } from '../localeRoutes';
 
 type Section = { id: string; heading: string; paragraphs: string[]; checklistTitle?: string; checklist?: string[]; sourceRefs?: string[] };
 type Template = { label: string; lines: string[] };
-type GuideText = { title: string; description: string; summary: string; readTime: string; sections: Section[]; templatesTitle?: string; templatesNote?: string; templates?: Template[] };
-type Guide = { slug: string; country?: string; updated?: string; sources: string[]; related: string[]; en: GuideText; es: GuideText & { slug?: string } };
+type Faq = { q: string; a: string; sourceRefs?: string[] };
+type GuideText = { title: string; description: string; summary: string; readTime: string; sections: Section[]; templatesTitle?: string; templatesNote?: string; templates?: Template[]; faq?: Faq[]; countryLink?: string };
+type Guide = { slug: string; country?: string; profession?: string; updated?: string; published?: string; sources: string[]; related: string[]; en: GuideText; es: GuideText & { slug?: string } };
 type Source = { publisher: string; title: string; url: string; scope: Record<Lang, string> };
 
 const guides = content.guides as Guide[];
 const sources = content.sources as Record<string, Source>;
+const countries = content.countries as Record<string, Record<Lang, string>>;
 const ui = content.ui;
+
+/** Country guides link to every profession guide, and profession guides back to every country guide. */
+function crossLinks(guide: Guide, lang: Lang) {
+  const u = ui[lang];
+  if (guide.country) {
+    const name = countries[guide.country][lang];
+    return { title: u.byProfession, note: u.byProfessionNote, items: guides.filter((g) => g.profession).map((g) => ({ guide: g, label: g[lang].countryLink!.replace('{country}', name) })) };
+  }
+  if (guide.profession) {
+    return { title: u.byCountry, note: u.byCountryNote, items: guides.filter((g) => g.country).map((g) => ({ guide: g, label: u.byCountryLink.replace('{country}', countries[g.country!][lang]) })) };
+  }
+  return null;
+}
 
 const linkCls = 'text-[#3F35C2] underline decoration-[#C7CBFA] underline-offset-4 hover:decoration-[#5B4FE9] rounded-sm';
 
@@ -86,6 +101,13 @@ export function GuideArticle({ slug, lang }: { slug: string; lang: Lang }) {
   const g = guide[lang];
   const updated = guide.updated ?? content.updated;
   const srcNum = (id: string) => guide.sources.indexOf(id) + 1;
+  const cross = crossLinks(guide, lang);
+  const sourceLine = (refs: string[]) => (
+    <p className="mt-4 text-sm text-[#4B5568]">
+      {u.sources}: {refs.map((r, i) => <span key={r}>{i > 0 && ', '}<a href={`#source-${r}`} className={linkCls}>[{srcNum(r)}] {sources[r].publisher}</a></span>)}
+    </p>
+  );
+  const tocExtra = [g.templates && { id: 'templates', label: g.templatesTitle }, g.faq && { id: 'faq', label: u.faq }].filter(Boolean) as { id: string; label: string }[];
   return (
     <main id="main-content" tabIndex={-1} className="relative z-10 mx-auto w-full max-w-7xl flex-grow px-4 sm:px-6 pt-6 pb-16 outline-none" lang={lang}>
       <article data-testid={`article-${slug}`}>
@@ -100,7 +122,7 @@ export function GuideArticle({ slug, lang }: { slug: string; lang: Lang }) {
             <h2 id="toc" className="text-xs font-bold uppercase tracking-[0.14em] text-[#4B5568]">{u.onThisPage}</h2>
             <ol className="mt-4 space-y-1 text-[15px]">
               {g.sections.map((s, i) => <li key={s.id}><a href={`#${s.id}`} className="flex gap-3 rounded-xl px-2 py-2 text-[#273449] hover:bg-[#EEF0FF] hover:text-[#3F35C2]"><span className="font-bold text-[#3F35C2]">{i + 1}</span><span>{s.heading}</span></a></li>)}
-              {g.templates && <li><a href="#templates" className="flex gap-3 rounded-xl px-2 py-2 text-[#273449] hover:bg-[#EEF0FF] hover:text-[#3F35C2]"><span className="font-bold text-[#3F35C2]">{g.sections.length + 1}</span><span>{g.templatesTitle}</span></a></li>}
+              {tocExtra.map((t, i) => <li key={t.id}><a href={`#${t.id}`} className="flex gap-3 rounded-xl px-2 py-2 text-[#273449] hover:bg-[#EEF0FF] hover:text-[#3F35C2]"><span className="font-bold text-[#3F35C2]">{g.sections.length + i + 1}</span><span>{t.label}</span></a></li>)}
             </ol>
             <Link href="/guides" className="mt-4 block border-t border-[#E2E4F3] px-2 pt-4 text-sm font-semibold text-[#3F35C2]">← {u.allGuides}</Link>
           </nav>
@@ -109,11 +131,7 @@ export function GuideArticle({ slug, lang }: { slug: string; lang: Lang }) {
               <section key={s.id} id={s.id} className={`scroll-mt-28 ${si > 0 ? 'mt-14 border-t border-[#E2E4F3] pt-14' : ''}`}>
                 <h2 className="text-[28px] font-bold leading-tight text-[#0F172A]">{s.heading}</h2>
                 {s.paragraphs.map((p, i) => <p key={i} className="mt-5 text-[17px] leading-[1.75] text-[#273449]">{p}</p>)}
-                {s.sourceRefs && (
-                  <p className="mt-4 text-sm text-[#4B5568]">
-                    {u.sources}: {s.sourceRefs.map((r, i) => <span key={r}>{i > 0 && ', '}<a href={`#source-${r}`} className={linkCls}>[{srcNum(r)}] {sources[r].publisher}</a></span>)}
-                  </p>
-                )}
+                {s.sourceRefs && sourceLine(s.sourceRefs)}
                 {s.checklist && (
                   <div className="mt-6 rounded-[24px] bg-[#EEF0FF] p-6">
                     {s.checklistTitle && <h3 className="text-lg font-bold text-[#0F172A]">{s.checklistTitle}</h3>}
@@ -141,6 +159,18 @@ export function GuideArticle({ slug, lang }: { slug: string; lang: Lang }) {
                 ))}
               </section>
             )}
+            {g.faq && (
+              <section id="faq" aria-labelledby="faq-heading" className="mt-14 border-t border-[#E2E4F3] pt-14 scroll-mt-28">
+                <h2 id="faq-heading" className="text-[28px] font-bold text-[#0F172A]">{u.faq}</h2>
+                {g.faq.map((f, i) => (
+                  <div key={i} className="mt-8">
+                    <h3 className="text-xl font-bold leading-snug text-[#0F172A]">{f.q}</h3>
+                    <p className="mt-3 text-[17px] leading-[1.75] text-[#273449]">{f.a}</p>
+                    {f.sourceRefs && sourceLine(f.sourceRefs)}
+                  </div>
+                ))}
+              </section>
+            )}
             <div className="mt-14"><Notice>{u.disclaimer}</Notice></div>
             <section aria-labelledby="sources" className="mt-14">
               <h2 id="sources" className="text-[28px] font-bold text-[#0F172A]">{u.sources}</h2>
@@ -155,6 +185,15 @@ export function GuideArticle({ slug, lang }: { slug: string; lang: Lang }) {
                 ))}
               </ol>
             </section>
+            {cross && (
+              <nav aria-labelledby="cross-links" className="mt-14">
+                <h2 id="cross-links" className="text-[28px] font-bold text-[#0F172A]">{cross.title}</h2>
+                <p className="mt-2 text-sm text-[#4B5568]">{cross.note}</p>
+                <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {cross.items.map(({ guide: cg, label }) => <li key={cg.slug}><Link href={`/guides/${guideSlug(cg, lang)}`} className="flex h-full items-center justify-between gap-4 rounded-[20px] bg-[#EEF0FF] p-5 font-semibold text-[#0F172A] hover:bg-[#E1E4FF]">{label}<span aria-hidden="true" className="text-[#3F35C2]">→</span></Link></li>)}
+                </ul>
+              </nav>
+            )}
             <nav aria-labelledby="related" className="mt-14">
               <h2 id="related" className="text-[28px] font-bold text-[#0F172A]">{u.related}</h2>
               <ul className="mt-5 grid gap-3 sm:grid-cols-2">

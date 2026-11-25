@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import content from './guides-content.json';
 import pages from '../../seo-pages.json';
 
@@ -33,6 +35,41 @@ describe('guides content', () => {
       }
       for (const id of g.sources) expect(Object.keys(content.sources)).toContain(id);
       for (const r of g.related) expect(slugs).toContain(r);
+    }
+  });
+  it('keeps every page title short enough not to be truncated in search results', () => {
+    for (const [route, page] of Object.entries(p)) {
+      expect(page.title.length, route).toBeLessThanOrEqual(60);
+      expect(page.es!.title.length, `${route} es`).toBeLessThanOrEqual(60);
+    }
+  });
+  it('gives every country guide a matching FAQ in both languages, citing its own sources', () => {
+    for (const g of content.guides as { slug: string; country?: string; sources: string[]; en: { faq?: { q: string; a: string; sourceRefs?: string[] }[] }; es: { faq?: { q: string; a: string; sourceRefs?: string[] }[] } }[]) {
+      if (!g.country) continue;
+      expect(g.en.faq?.length, g.slug).toBeGreaterThanOrEqual(4);
+      expect(g.es.faq?.length, g.slug).toBe(g.en.faq!.length);
+      for (const lang of ['en', 'es'] as const) for (const f of g[lang].faq!) {
+        expect(f.q.endsWith('?'), `${g.slug} ${f.q}`).toBe(true);
+        expect(f.sourceRefs?.length, `${g.slug} ${f.q}`).toBeGreaterThan(0);
+        for (const r of f.sourceRefs!) expect(g.sources, `${g.slug} ${r}`).toContain(r);
+      }
+    }
+  });
+  it('links country and profession guides to each other with complete labels', () => {
+    const countries = content.countries as Record<string, { en: string; es: string }>;
+    const guides = content.guides as { slug: string; country?: string; profession?: string; published?: string; updated?: string; en: { countryLink?: string }; es: { countryLink?: string } }[];
+    expect(guides.filter((g) => g.profession).length).toBeGreaterThan(0);
+    for (const g of guides) {
+      if (g.country) expect(countries[g.country], g.slug).toBeTruthy();
+      if (g.profession) for (const lang of ['en', 'es'] as const) expect(g[lang].countryLink, `${g.slug} ${lang}`).toContain('{country}');
+      expect(g.published, g.slug).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(g.published! <= (g.updated ?? content.updated), g.slug).toBe(true);
+    }
+    for (const lang of ['en', 'es'] as const) expect(content.ui[lang].byCountryLink).toContain('{country}');
+  });
+  it('has a share image for every guide and the rest of the site in both languages', () => {
+    for (const lang of ['en', 'es']) for (const name of ['site', ...content.guides.map((g) => g.slug)]) {
+      expect(existsSync(fileURLToPath(new URL(`../../public/og/${name}-${lang}.png`, import.meta.url))), `${name}-${lang}`).toBe(true);
     }
   });
   it('cites only defined https sources', () => {

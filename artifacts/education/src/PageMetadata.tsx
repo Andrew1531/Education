@@ -4,7 +4,7 @@ import pages from '../seo-pages.json';
 import { canonicalRoute, publicUrl, type Lang } from './localeRoutes';
 
 type Text = { title: string; description: string };
-type Page = Text & { heading: string; es?: Text };
+type Page = Text & { heading: string; guide?: string; es?: Text };
 const ORIGIN = 'https://verifed.co';
 const LANGS: Lang[] = ['en', 'es'];
 const OG_LOCALE: Record<Lang, string> = { en: 'en_US', es: 'es_LA' };
@@ -30,12 +30,14 @@ export function PageMetadata({ lang = 'en' }: { lang?: Lang }) {
     };
     set('description', local?.description ?? '');
     set('robots', page ? 'index, follow' : 'noindex, nofollow');
+    // Same 1200×630 share images that seo-build.mjs references (public/og).
+    const image = `${ORIGIN}/og/${page?.guide ?? 'site'}-${lang}.png`;
     for (const prefix of ['og', 'twitter']) {
       set(`${prefix}:title`, title, prefix === 'og');
       set(`${prefix}:description`, local?.description ?? '', prefix === 'og');
-      set(`${prefix}:image`, `${ORIGIN}/favicon-512.png`, prefix === 'og');
+      set(`${prefix}:image`, image, prefix === 'og');
     }
-    set('twitter:card', 'summary');
+    set('twitter:card', 'summary_large_image');
     set('og:url', url, true);
     set('og:locale', OG_LOCALE[lang], true);
     set('og:type', route.startsWith('/guides/') ? 'article' : 'website', true);
