@@ -475,3 +475,53 @@ describe('syncOwnAccount — pushes saved ge_profile to the backend on page load
     expect(syncCall).toBeUndefined();
   });
 });
+
+// ─── GA4 events ───────────────────────────────────────────────────────────────
+
+describe('App sign-up — GA4 sign_up event', () => {
+  afterEach(() => { delete window.gtag; });
+
+  it('sends sign_up with country and goal but no username or email', async () => {
+    const gtag = vi.fn();
+    window.gtag = gtag;
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(jsonResponse(201, { user: {}, token: 'tok-test' }));
+
+    await submitSignUp({ username: 'alice', password: 'hunter2', email: 'alice@example.com', country: 'Mexico', goal: 'Employment & HR' });
+    await waitFor(() => expect(screen.queryByTestId('nav-user-badge')).not.toBeNull());
+
+    const calls = gtag.mock.calls.filter(([, name]) => name === 'sign_up');
+    expect(calls).toHaveLength(1);
+    expect(calls[0][2]).toEqual({ method: 'password', language: 'en', signup_country: 'Mexico', signup_goal: 'Employment & HR' });
+    expect(JSON.stringify(gtag.mock.calls)).not.toMatch(/alice/);
+  });
+
+  it('sends sign_up for an offline signup too', async () => {
+    const gtag = vi.fn();
+    window.gtag = gtag;
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(new TypeError('Failed to fetch'));
+
+    await submitSignUp({ username: 'bob', password: 'hunter2', email: 'bob@example.com' });
+    await waitFor(() => expect(screen.queryByTestId('nav-user-badge')).not.toBeNull());
+
+    expect(gtag.mock.calls.filter(([, name]) => name === 'sign_up')).toEqual([['event', 'sign_up', { method: 'password', language: 'en' }]]);
+  });
+
+  it('does not send sign_up when the signup fails', async () => {
+    const gtag = vi.fn();
+    window.gtag = gtag;
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(jsonResponse(409, { error: 'username_taken' }));
+
+    await submitSignUp({ username: 'carol', password: 'hunter2', email: 'carol@example.com' });
+    await waitFor(() => expect(screen.getByTestId('button-toggle-auth').textContent).toMatch(/Need an account/));
+
+    expect(gtag.mock.calls.some(([, name]) => name === 'sign_up')).toBe(false);
+  });
+
+  it('keeps signup working when gtag throws', async () => {
+    window.gtag = () => { throw new Error('blocked'); };
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(jsonResponse(201, { user: {}, token: 'tok-test' }));
+
+    await submitSignUp({ username: 'dana', password: 'hunter2', email: 'dana@example.com' });
+    await waitFor(() => expect(screen.queryByTestId('nav-user-badge')).not.toBeNull());
+  });
+});

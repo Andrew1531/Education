@@ -1,4 +1,5 @@
 import { Link } from 'wouter';
+import { trackGuideCta } from '../analytics';
 import content from './guides-content.json';
 import { guideSlug, type Lang } from '../localeRoutes';
 
@@ -34,7 +35,7 @@ function Notice({ children }: { children: string }) {
   );
 }
 
-function Cta({ lang }: { lang: Lang }) {
+function Cta({ lang, guide }: { lang: Lang; guide: string }) {
   const u = ui[lang];
   return (
     <aside className="mt-16 flex flex-col gap-6 rounded-[32px] bg-[#0F172A] px-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-12" aria-labelledby="guide-cta">
@@ -42,7 +43,7 @@ function Cta({ lang }: { lang: Lang }) {
         <h2 id="guide-cta" className="text-2xl sm:text-3xl font-bold text-[#FCFCFF]">{u.ctaTitle}</h2>
         <p className="mt-3 text-base leading-relaxed text-[#E2E4F3]">{u.ctaBody}</p>
       </div>
-      <Link href="/" data-testid="link-guide-cta" className="vf-btn shrink-0">{u.ctaButton}</Link>
+      <Link href="/" onClick={() => trackGuideCta(guide, lang)} data-testid="link-guide-cta" className="vf-btn shrink-0">{u.ctaButton}</Link>
     </aside>
   );
 }
@@ -74,7 +75,7 @@ export function GuidesIndex({ lang }: { lang: Lang }) {
         ))}
       </ul>
       <div className="mt-10"><Notice>{u.disclaimer}</Notice></div>
-      <Cta lang={lang} />
+      <Cta lang={lang} guide="index" />
     </main>
   );
 }
@@ -165,7 +166,7 @@ export function GuideArticle({ slug, lang }: { slug: string; lang: Lang }) {
           </div>
         </div>
       </article>
-      <Cta lang={lang} />
+      <Cta lang={lang} guide={guide.slug} />
     </main>
   );
 }
