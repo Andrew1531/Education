@@ -121,8 +121,11 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://w
 await writeFile(path.join(out, 'sitemap.xml'), sitemap);
 // Keep the committed public sitemap in sync with the generated one.
 await writeFile(path.join(root, 'public/sitemap.xml'), sitemap);
-// Real HTTP 404 on GitHub Pages, without misleading homepage metadata.
-await writeFile(path.join(out, '404.html'), '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Page not found | VerifED Global</title></head><body><main><h1>Page not found</h1><p><a href="/">Return to VerifED Global</a> · <a href="/guides/">Read the guides</a></p><h1 lang="es">Página no encontrada</h1><p lang="es"><a href="/es/">Volver a VerifED Global</a> · <a href="/es/guides/">Leer las guías</a></p></main></body></html>');
+// Real HTTP 404 on GitHub Pages, without misleading homepage metadata. It still
+// carries the shell's GA4 tag (copied, not hardcoded) so broken links show up in analytics.
+const gtag = shell.match(/<!-- Google tag \(gtag\.js\) -->\s*<script async src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=[^"]+"><\/script>\s*<script>[\s\S]*?<\/script>/)?.[0];
+if (!gtag) throw new Error('seo-build: GA4 gtag block not found in dist/public/index.html');
+await writeFile(path.join(out, '404.html'), `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Page not found | VerifED Global</title>${gtag}</head><body><main><h1>Page not found</h1><p><a href="/">Return to VerifED Global</a> · <a href="/guides/">Read the guides</a></p><h1 lang="es">Página no encontrada</h1><p lang="es"><a href="/es/">Volver a VerifED Global</a> · <a href="/es/guides/">Leer las guías</a></p></main></body></html>`);
 const adminHtml = shell.replace(/<meta name="robots"[^>]*>/, '<meta name="robots" content="noindex, nofollow">').replace(/<link rel="canonical"[^>]*>/, '').replace(/<title>.*?<\/title>/, '<title>Admin | VerifED Global</title>');
 // The admin view is reachable from both language roots; neither copy is indexable.
 for (const dir of ['admin', 'es/admin']) {
