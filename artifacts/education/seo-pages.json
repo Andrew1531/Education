@@ -36,15 +36,15 @@
     }
   },
   "/guides": {
-    "title": "Foreign Degree Guides for U.S. Jobs, by Country | VerifED Global",
-    "description": "Free, sourced guides on credential evaluation, listing a foreign degree on a U.S. resume, and using degrees from Latin America in the U.S.",
+    "title": "Foreign Degree Guides for U.S. Jobs and Licensing | VerifED Global",
+    "description": "Free, sourced guides on credential evaluation, U.S. licensing for nurses, doctors, engineers and teachers, and using a Latin American degree in the U.S.",
     "heading": "Guides for Internationally Educated Job Seekers",
-    "body": "Plain-language guides to help you make informed decisions before you spend money. Each guide cites its sources and states what it cannot tell you.",
+    "body": "Plain-language guides to help you make informed decisions before you spend money. Each guide cites its sources and states what it cannot tell you. Guides are grouped by country of study and by profession.",
     "es": {
       "title": "Guías para validar títulos extranjeros en EE. UU. | VerifED Global",
-      "description": "Guías gratuitas y con fuentes: evaluación de credenciales, currículum y cómo usar en EE. UU. títulos de México, Colombia, Venezuela, Argentina y Ecuador.",
+      "description": "Guías gratuitas y con fuentes: evaluación de credenciales, licencias de enfermería, medicina, ingeniería y docencia, y títulos de América Latina en EE. UU.",
       "heading": "Guías para quienes buscan empleo con estudios en el extranjero",
-      "body": "Guías en lenguaje claro para decidir con información antes de gastar dinero. Cada guía cita sus fuentes e indica lo que no puede decirle."
+      "body": "Guías en lenguaje claro para decidir con información antes de gastar dinero. Cada guía cita sus fuentes e indica lo que no puede decirle. Hay guías por país de estudio y por profesión."
     },
     "guides": "index"
   },
@@ -138,5 +138,70 @@
       "body": "En EE. UU. no existe una oficina nacional que valide un título de Ecuador. El empleador, la institución o la junta de licencias que recibe sus documentos decide qué acepta: pregunte primero y reúna los documentos correctos."
     },
     "guide": "ecuador-degree-in-the-united-states"
+  },
+  "/guides/nursing-license-united-states-foreign-degree": {
+    "title": "Nursing Licence in the U.S. with a Foreign Degree | VerifED Global",
+    "description": "How an internationally educated nurse becomes licensed in the U.S.: which board decides, the credential evaluation, the NCLEX and English requirements.",
+    "heading": "Nursing Licence in the United States with a Foreign Degree: How the Process Works",
+    "body": "Each U.S. state licenses its own nurses, so there is no single national process. A credential evaluation, the NCLEX and an English exam are the usual components, but the state board sets the rules.",
+    "es": {
+      "title": "Licencia de enfermería en EE. UU. con título extranjero | VerifED Global",
+      "description": "Cómo obtiene la licencia una enfermera formada en el extranjero: qué junta decide, la evaluación de credenciales, el NCLEX y el requisito de inglés.",
+      "heading": "Licencia de enfermería en Estados Unidos con un título extranjero: cómo funciona",
+      "body": "Cada estado de EE. UU. otorga las licencias de sus enfermeras, así que no existe un proceso nacional único. La evaluación de credenciales, el NCLEX y un examen de inglés son los componentes habituales, pero la junta estatal fija las reglas."
+    },
+    "guide": "nursing-license-united-states-foreign-degree"
+  },
+  "/guides/doctor-united-states-foreign-medical-degree": {
+    "title": "Foreign Medical Degree in the U.S.: ECFMG and Licensing | VerifED Global",
+    "description": "What an international medical graduate faces in the U.S.: ECFMG Certification, the World Directory listing, USMLE steps and who actually issues a medical licence.",
+    "heading": "Practising Medicine in the United States with a Foreign Medical Degree",
+    "body": "For an international medical graduate the gateway is ECFMG Certification, which has strict eligibility rules tied to your medical school’s listing and your graduation year. Check that listing before anything else.",
+    "es": {
+      "title": "Título de medicina extranjero en EE. UU.: ECFMG y licencia | VerifED Global",
+      "description": "Qué enfrenta un médico formado en el extranjero en EE. UU.: la certificación ECFMG, el World Directory, los exámenes USMLE y quién otorga la licencia.",
+      "heading": "Ejercer la medicina en Estados Unidos con un título extranjero",
+      "body": "Para un médico formado fuera de EE. UU. la puerta de entrada es la certificación de ECFMG, con reglas estrictas ligadas al registro de su facultad y a su año de graduación. Revise ese registro antes que nada."
+    },
+    "guide": "doctor-united-states-foreign-medical-degree"
+  },
+  "/guides/engineering-license-united-states-foreign-degree": {
+    "title": "Engineering Licence in the U.S. with a Foreign Degree | VerifED Global",
+    "description": "How a foreign engineering degree is assessed in the U.S.: the NCEES education standard, which documents are required, and who grants the licence.",
+    "heading": "Engineering Licence in the United States with a Foreign Degree",
+    "body": "Most foreign-educated engineers are referred to NCEES by a state board, which compares their coursework to a published credit-hour standard. Ask your board first: you may not need an evaluation at all.",
+    "es": {
+      "title": "Licencia de ingeniería en EE. UU. con título extranjero | VerifED Global",
+      "description": "Cómo se evalúa en EE. UU. un título de ingeniería extranjero: el estándar educativo de NCEES, qué documentos se exigen y quién otorga la licencia.",
+      "heading": "Licencia de ingeniería en Estados Unidos con un título extranjero",
+      "body": "A la mayoría de ingenieros formados fuera de EE. UU. los remite a NCEES una junta estatal, que compara sus materias con un estándar publicado de créditos. Pregunte primero a su junta: quizá no necesite evaluación."
+    },
+    "guide": "engineering-license-united-states-foreign-degree"
+  },
+  "/guides/cpa-united-states-foreign-accounting-degree": {
+    "title": "CPA in the U.S. with a Foreign Accounting Degree | VerifED Global",
+    "description": "How foreign accounting education is evaluated for the U.S. CPA Exam: which board decides, who may evaluate your degree, and the documents and translations required.",
+    "heading": "Becoming a CPA in the United States with a Foreign Accounting Degree",
+    "body": "CPA Exam eligibility is decided by an individual state board of accountancy, and each board approves which evaluation companies it accepts. Pick the board before you pick an evaluator.",
+    "es": {
+      "title": "CPA en EE. UU. con un título de contabilidad extranjero | VerifED Global",
+      "description": "Cómo se evalúa la formación contable extranjera para el examen CPA: qué junta decide, quién puede evaluar su título y qué documentos y traducciones se exigen.",
+      "heading": "Ser contador CPA en Estados Unidos con un título extranjero",
+      "body": "La elegibilidad para el examen CPA la decide una junta estatal de contabilidad, y cada junta aprueba qué empresas evaluadoras acepta. Elija la junta antes de elegir al evaluador."
+    },
+    "guide": "cpa-united-states-foreign-accounting-degree"
+  },
+  "/guides/teaching-certification-united-states-foreign-degree": {
+    "title": "Teaching in the U.S. with a Foreign Degree | VerifED Global",
+    "description": "How teachers educated abroad get certified in the U.S.: why it differs in every state, what one state asks for, and which documents to gather first.",
+    "heading": "Teaching in the United States with a Foreign Education Degree",
+    "body": "There is no national teaching certificate in the United States. Each state certifies its own teachers, and some evaluate foreign credentials in-house rather than through an outside agency.",
+    "es": {
+      "title": "Enseñar en EE. UU. con un título extranjero | VerifED Global",
+      "description": "Cómo se certifican en EE. UU. los docentes formados en el extranjero: por qué cambia en cada estado, qué pide un estado concreto y qué documentos reunir.",
+      "heading": "Enseñar en Estados Unidos con un título de docencia extranjero",
+      "body": "En Estados Unidos no existe una certificación docente nacional. Cada estado certifica a sus propios docentes, y algunos evalúan las credenciales extranjeras por su cuenta en vez de usar una agencia externa."
+    },
+    "guide": "teaching-certification-united-states-foreign-degree"
   }
 }

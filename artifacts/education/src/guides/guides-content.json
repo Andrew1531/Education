@@ -117,6 +117,60 @@
         "en": "Official FAQ stating that the higher education institution registers each national degree in the national information system, that registered degrees can be looked up in SENESCYT's public title search, and that other documents for use abroad are certified by SENESCYT before the apostille. It does not address U.S. requirements.",
         "es": "Preguntas frecuentes oficiales que indican que la institución de educación superior registra cada título nacional en el sistema nacional de información, que los títulos registrados pueden consultarse en la consulta pública de títulos de la SENESCYT y que otros documentos para uso en el exterior se certifican en la SENESCYT antes de la apostilla. No trata requisitos de EE. UU."
       }
+    },
+    "ncsbn-ien": {
+      "publisher": "National Council of State Boards of Nursing (NCSBN)",
+      "title": "U.S. Nursing Licensure for Internationally Educated Nurses",
+      "url": "https://ncsbn.org/nursing-regulation/licensure/internationally-educated-nurses.page",
+      "scope": {
+        "en": "States that each U.S. state licenses the nurses who practise in it, that variations exist among the states, and that all U.S. boards of nursing use the NCLEX examination. NCSBN is an organisation of the boards, not a licensing body, and this page does not set any individual state’s requirements.",
+        "es": "Indica que cada estado de EE. UU. otorga las licencias de las personas que ejercen la enfermería en él, que existen variaciones entre los estados y que todas las juntas de enfermería usan el examen NCLEX. NCSBN es una organización de las juntas, no un organismo que otorgue licencias, y esta página no fija los requisitos de ningún estado concreto."
+      }
+    },
+    "ncsbn-ien-manual": {
+      "publisher": "National Council of State Boards of Nursing (NCSBN)",
+      "title": "Internationally Educated Nurses: a resource manual",
+      "url": "https://ncsbn.org/public-files/23_IEN_manual.pdf",
+      "scope": {
+        "en": "Resource manual stating that an evaluation of the nurse’s credentials is required, that most boards use a credentials evaluation agency to judge comparability, that such reports are advisory, and that the decision to license is at the board’s discretion. It also describes English-proficiency requirements and exemptions. The manual carries older dates than its copyright, so confirm every point with the state board you are applying to.",
+        "es": "Manual de referencia que indica que se requiere una evaluación de las credenciales de la persona, que la mayoría de las juntas usan una agencia evaluadora para juzgar la comparabilidad, que esos informes son de carácter consultivo y que la decisión de otorgar la licencia queda a criterio de la junta. También describe requisitos y exenciones de dominio del inglés. El manual tiene fechas más antiguas que su copyright, así que confirme cada punto con la junta estatal a la que se postule."
+      }
+    },
+    "ecfmg-cert-reqs": {
+      "publisher": "ECFMG (Intealth)",
+      "title": "Requirements for ECFMG Certification, 2026 Information Booklet",
+      "url": "https://ecfmg.org/2026ib/certification-requirements.html",
+      "scope": {
+        "en": "Official statement of what an international medical graduate must meet to be eligible for ECFMG Certification: a medical school listing with an ECFMG Sponsor Note covering the graduation year, USMLE Step 1 and Step 2 CK, a clinical and communication skills requirement, and verification of the medical diploma with the school. The page sets eligibility only; it does not address who issues a medical licence and does not promise a residency position.",
+        "es": "Declaración oficial de lo que debe cumplir una persona graduada en medicina fuera de EE. UU. para ser elegible a la certificación de ECFMG: que su facultad figure con una nota de patrocinio de ECFMG que cubra su año de graduación, los exámenes USMLE Step 1 y Step 2 CK, un requisito de habilidades clínicas y de comunicación, y la verificación del título con la facultad. La página solo fija la elegibilidad; no trata quién otorga la licencia médica ni promete una plaza de residencia."
+      }
+    },
+    "ncees-credentials": {
+      "publisher": "NCEES",
+      "title": "Credentials Evaluations",
+      "url": "https://ncees.org/credentials-evaluations",
+      "scope": {
+        "en": "Describes a service for state licensing boards and applicants that compares an engineering education to the NCEES Engineering Education Standard, lists the required documents and translations, and states that an evaluation is not needed for a degree accredited by ABET’s Engineering Accreditation Commission at the time of graduation. NCEES states it does not determine substantial equivalence to an accredited programme, and a satisfactory result only means the applicant may be considered by a board.",
+        "es": "Describe un servicio para las juntas estatales y las personas solicitantes que compara una formación en ingeniería con el estándar educativo de NCEES, enumera los documentos y traducciones requeridos e indica que no hace falta evaluación si el título estaba acreditado por la comisión de ingeniería de ABET al momento de graduarse. NCEES indica que no determina la equivalencia sustancial con un programa acreditado, y un resultado satisfactorio solo significa que una junta puede considerar a la persona."
+      }
+    },
+    "nasba-nies": {
+      "publisher": "NASBA",
+      "title": "NASBA International Evaluation Services",
+      "url": "https://nasba.org/exams/international-evaluations/",
+      "scope": {
+        "en": "Describes an academic evaluation service for CPA Examination and licensure applicants educated outside the United States, states that each Board of Accountancy must approve the evaluation companies it accepts, and lists the jurisdictions the service covers. Its own pages note that examination and licensure education requirements differ and that it does not evaluate for New York licensure. Which board accepts which evaluator is decided by the board, not by this page.",
+        "es": "Describe un servicio de evaluación académica para quienes se postulan al examen CPA o a la licencia con estudios fuera de Estados Unidos, indica que cada junta de contabilidad debe aprobar las empresas evaluadoras que acepta y enumera las jurisdicciones que cubre. Sus propias páginas señalan que los requisitos educativos del examen y de la licencia difieren y que no evalúa para la licencia de Nueva York. Qué evaluador acepta cada junta lo decide la junta, no esta página."
+      }
+    },
+    "nysed-foreign-cred": {
+      "publisher": "New York State Education Department, Office of Teaching Initiatives",
+      "title": "Individual Evaluation of Non-U.S. Credentials",
+      "url": "https://www.highered.nysed.gov/tcert/certificate/evalforeigncred.html",
+      "scope": {
+        "en": "One state’s instructions for teachers educated outside the United States: the department evaluates foreign credentials itself for New York certification, and lists the original documents, notarised English translations and year-by-year transcripts it requires. It is included as a single worked example of a process that differs in every state, and its own page carries a last-updated date years in the past, so confirm current rules with the state you want to teach in.",
+        "es": "Instrucciones de un solo estado para docentes con estudios fuera de Estados Unidos: el departamento evalúa por sí mismo las credenciales extranjeras para la certificación de Nueva York y enumera los documentos originales, las traducciones al inglés notarizadas y los certificados de cada año de estudio que exige. Se incluye como un ejemplo concreto de un proceso que cambia en cada estado, y la propia página indica una fecha de actualización de hace años, así que confirme las reglas vigentes con el estado donde quiera enseñar."
+      }
     }
   },
   "guides": [
@@ -1390,15 +1444,876 @@
         ]
       },
       "updated": "2026-11-10"
+    },
+    {
+      "slug": "nursing-license-united-states-foreign-degree",
+      "profession": "nursing",
+      "updated": "2026-11-25",
+      "sources": [
+        "ed-recognition",
+        "ncsbn-ien",
+        "ncsbn-ien-manual",
+        "wes-required-docs"
+      ],
+      "related": [
+        "doctor-united-states-foreign-medical-degree",
+        "credential-evaluation-for-us-jobs",
+        "foreign-degree-on-resume"
+      ],
+      "en": {
+        "title": "Nursing Licence in the United States with a Foreign Degree: How the Process Works",
+        "seoTitle": "Nursing Licence in the U.S. with a Foreign Degree | VerifED Global",
+        "description": "How an internationally educated nurse becomes licensed in the U.S.: which board decides, the credential evaluation, the NCLEX and English requirements.",
+        "summary": "Each U.S. state licenses its own nurses, so there is no single national process. A credential evaluation, the NCLEX and an English exam are the usual components, but the state board sets the rules.",
+        "readTime": "7 min read",
+        "sections": [
+          {
+            "id": "who-decides",
+            "heading": "No single U.S. office licenses nurses",
+            "paragraphs": [
+              "The United States has no national licence for nurses. According to the U.S. Department of Education, professional licensing is generally handled at state level, and the board in the state where you plan to work is the authority that decides. That department does not evaluate foreign degrees, and it does not recommend any evaluation service.",
+              "The NCSBN, the organisation of those boards, states the same thing: each state is responsible for the licensure of nurses within that state, and variations exist among the states. Its own guidance points nurses to the individual board’s website for state-specific requirements.",
+              "So the first question is not which evaluation to buy. It is which board of nursing you will apply to, and what that board says it accepts in writing."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "evaluation",
+            "heading": "The credential evaluation, and what it is worth",
+            "paragraphs": [
+              "NCSBN’s resource manual for internationally educated nurses states that an evaluation of the nurse’s credentials is required, and that the majority of boards use a credentials evaluation agency to decide whether your nursing programme is comparable to one they approve. The manual describes the common requirement as verification by a credentials review agency that you graduated from a comparable prelicensure programme.",
+              "Two things in that manual matter more than the evaluation itself. It says these reports are advisory in nature, and it says the decision to license, or not to license, is at the discretion of the board. An agency’s favourable report is evidence you hand to the board. It is not the decision.",
+              "Which agency your board accepts is a question only that board can answer. Ask before you order, because agencies differ in price, in processing time and in which boards accept them."
+            ],
+            "sourceRefs": [
+              "ncsbn-ien-manual"
+            ]
+          },
+          {
+            "id": "nclex-english",
+            "heading": "The NCLEX and the English requirement",
+            "paragraphs": [
+              "NCSBN states that all boards of nursing require a candidate for licensure to pass an examination, and that all U.S. boards use the NCLEX-RN or NCLEX-PN. Its manual lists successful completion of the NCLEX among the common requirements. Passing it is a step towards a licence, not a licence in itself: you still apply to a board, which issues or declines the licence.",
+              "The same manual lists successful passage of an English proficiency exam covering reading, speaking, writing and listening. It describes exemptions for nurses who studied in certain English-speaking countries, and for programmes taught and examined in English in countries where English is the native language. Whether your programme qualifies for an exemption is decided by the board, so ask rather than assume.",
+              "The manual also notes that some jurisdictions have legislation requiring a Social Security number before a licence can be issued, and that some accept only a U.S. number on the application. If you do not yet have one, raise it with the board early, because it can affect the order in which you do everything else."
+            ],
+            "sourceRefs": [
+              "ncsbn-ien",
+              "ncsbn-ien-manual"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documents to gather",
+            "paragraphs": [
+              "Keep the original names of your qualifications. A nursing degree awarded in your country is that degree; it is not a U.S. degree, and renaming it on a form helps nobody. WES, one commercial evaluator, states that required documents vary by country of study, that official academic documents must be sent to it by the issuing institution, and that documents must be translated into English. Other evaluators and boards set their own rules.",
+              "Your nursing school and the body that registered you at home are the two offices you will deal with most. Find out now how each of them sends documents abroad, what it costs and how long it takes, because that is usually the slowest part."
+            ],
+            "sourceRefs": [
+              "wes-required-docs"
+            ],
+            "checklistTitle": "Records to locate",
+            "checklist": [
+              "Your nursing degree or diploma, under its original name",
+              "A full academic transcript showing subjects, hours and grades",
+              "Your nursing registration or licence in your own country, and proof it is current",
+              "Proof of clinical or practical hours, if your programme recorded them separately",
+              "Proof of a name change, if your documents show different names",
+              "Contact details for the office at your school that sends official records abroad"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Before you pay: a short plan",
+            "paragraphs": [
+              "Work in this order. Each step tells you whether the next one is worth paying for."
+            ],
+            "checklist": [
+              "Choose the state you want to work in, and open that board of nursing’s website.",
+              "Ask the board in writing which credentials evaluation agencies it accepts and which report it needs.",
+              "Ask whether your programme qualifies for an English-exam exemption, rather than assuming it does.",
+              "Ask your nursing school and your home registration body how they send records abroad, and what it costs.",
+              "Order the evaluation only from an agency the board named.",
+              "Register for the NCLEX only once the board has told you that you are eligible.",
+              "Keep every written answer you receive, with dates."
+            ]
+          }
+        ]
+      },
+      "es": {
+        "slug": "licencia-de-enfermeria-en-estados-unidos-titulo-extranjero",
+        "title": "Licencia de enfermería en Estados Unidos con un título extranjero: cómo funciona",
+        "seoTitle": "Licencia de enfermería en EE. UU. con título extranjero | VerifED Global",
+        "description": "Cómo obtiene la licencia una enfermera formada en el extranjero: qué junta decide, la evaluación de credenciales, el NCLEX y el requisito de inglés.",
+        "summary": "Cada estado de EE. UU. otorga las licencias de sus enfermeras, así que no existe un proceso nacional único. La evaluación de credenciales, el NCLEX y un examen de inglés son los componentes habituales, pero la junta estatal fija las reglas.",
+        "readTime": "7 min de lectura",
+        "sections": [
+          {
+            "id": "who-decides",
+            "heading": "Ninguna oficina nacional de EE. UU. otorga licencias a enfermeras y enfermeros",
+            "paragraphs": [
+              "Estados Unidos no tiene una licencia nacional para enfermeras y enfermeros. Según el Departamento de Educación de EE. UU., las licencias profesionales se gestionan por lo general a nivel estatal, y la junta del estado donde usted piensa trabajar es la autoridad que decide. Ese departamento no evalúa títulos extranjeros ni recomienda ningún servicio de evaluación.",
+              "La NCSBN, la organización que agrupa a esas juntas, dice lo mismo: cada estado es responsable de las licencias de enfermería dentro de su territorio y existen variaciones entre los estados. Su propia orientación remite al sitio web de cada junta para los requisitos específicos.",
+              "Por eso la primera pregunta no es qué evaluación comprar, sino a qué junta de enfermería se va a postular y qué dice esa junta por escrito que acepta."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "evaluation",
+            "heading": "La evaluación de credenciales y cuánto vale",
+            "paragraphs": [
+              "El manual de referencia de la NCSBN para personal de enfermería formado en el extranjero indica que se requiere una evaluación de las credenciales y que la mayoría de las juntas usan una agencia evaluadora para decidir si su programa de enfermería es comparable a uno que ellas aprueben. El manual describe el requisito habitual como la verificación, por parte de una agencia revisora de credenciales, de que usted se graduó de un programa comparable previo a la licencia.",
+              "Dos cosas de ese manual importan más que la evaluación misma. Dice que esos informes son de carácter consultivo y dice que la decisión de otorgar o no la licencia queda a criterio de la junta. Un informe favorable es una prueba que usted entrega a la junta. No es la decisión.",
+              "Qué agencia acepta su junta es una pregunta que solo esa junta puede responder. Pregúntelo antes de pedir el informe, porque las agencias varían en precio, en tiempo de trámite y en qué juntas las aceptan."
+            ],
+            "sourceRefs": [
+              "ncsbn-ien-manual"
+            ]
+          },
+          {
+            "id": "nclex-english",
+            "heading": "El NCLEX y el requisito de inglés",
+            "paragraphs": [
+              "La NCSBN indica que todas las juntas de enfermería exigen que la persona candidata apruebe un examen y que todas las juntas de EE. UU. usan el NCLEX-RN o el NCLEX-PN. Su manual incluye la aprobación del NCLEX entre los requisitos comunes. Aprobarlo es un paso hacia la licencia, no la licencia en sí: usted sigue teniendo que postularse a una junta, que la otorga o la niega.",
+              "Ese mismo manual incluye la aprobación de un examen de dominio del inglés que cubre lectura, expresión oral, escritura y comprensión auditiva. Describe exenciones para quienes estudiaron en ciertos países de habla inglesa y para programas impartidos y evaluados en inglés en países donde el inglés es la lengua materna. Si su programa califica para una exención lo decide la junta, así que pregúntelo en lugar de darlo por hecho.",
+              "El manual también señala que algunas jurisdicciones tienen leyes que exigen un número de Seguro Social antes de emitir la licencia, y que algunas solo aceptan un número de EE. UU. en la solicitud. Si aún no lo tiene, plántelo pronto ante la junta, porque puede cambiar el orden de todo lo demás."
+            ],
+            "sourceRefs": [
+              "ncsbn-ien",
+              "ncsbn-ien-manual"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documentos que debe reunir",
+            "paragraphs": [
+              "Conserve los nombres originales de sus titulaciones. Un título de enfermería otorgado en su país es ese título; no es un título estadounidense, y renombrarlo en un formulario no ayuda a nadie. WES, un evaluador comercial, indica que los documentos requeridos varían según el país de estudio, que la institución emisora debe enviarle los documentos académicos oficiales y que los documentos deben traducirse al inglés. Otros evaluadores y juntas fijan sus propias reglas.",
+              "Su escuela de enfermería y el organismo que la registró en su país son las dos oficinas con las que más tratará. Averigüe desde ya cómo envía cada una documentos al exterior, cuánto cuesta y cuánto tarda, porque suele ser la parte más lenta."
+            ],
+            "sourceRefs": [
+              "wes-required-docs"
+            ],
+            "checklistTitle": "Documentos que debe localizar",
+            "checklist": [
+              "Su título o diploma de enfermería, con su nombre original",
+              "Un certificado académico completo con materias, horas y calificaciones",
+              "Su registro o licencia de enfermería en su país y una constancia de que está vigente",
+              "Constancia de horas clínicas o prácticas, si su programa las registró por separado",
+              "Constancia de cambio de nombre, si sus documentos muestran nombres distintos",
+              "Datos de contacto de la oficina de su escuela que envía documentos oficiales al exterior"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Antes de pagar: un plan breve",
+            "paragraphs": [
+              "Siga este orden. Cada paso le dice si vale la pena pagar el siguiente."
+            ],
+            "checklist": [
+              "Elija el estado donde quiere trabajar y abra el sitio web de esa junta de enfermería.",
+              "Pregúntele por escrito a la junta qué agencias evaluadoras acepta y qué informe necesita.",
+              "Pregunte si su programa califica para una exención del examen de inglés, en vez de suponerlo.",
+              "Pregunte a su escuela y al organismo de registro de su país cómo envían documentos al exterior y cuánto cuesta.",
+              "Pida la evaluación solo a una agencia que la junta haya nombrado.",
+              "Inscríbase al NCLEX solo cuando la junta le haya dicho que es elegible.",
+              "Guarde cada respuesta escrita que reciba, con su fecha."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "doctor-united-states-foreign-medical-degree",
+      "profession": "medicine",
+      "updated": "2026-11-25",
+      "sources": [
+        "ed-recognition",
+        "ecfmg-cert-reqs",
+        "wes-required-docs"
+      ],
+      "related": [
+        "engineering-license-united-states-foreign-degree",
+        "credential-evaluation-for-us-jobs",
+        "foreign-degree-on-resume"
+      ],
+      "en": {
+        "title": "Practising Medicine in the United States with a Foreign Medical Degree",
+        "seoTitle": "Foreign Medical Degree in the U.S.: ECFMG and Licensing | VerifED Global",
+        "description": "What an international medical graduate faces in the U.S.: ECFMG Certification, the World Directory listing, USMLE steps and who actually issues a medical licence.",
+        "summary": "For an international medical graduate the gateway is ECFMG Certification, which has strict eligibility rules tied to your medical school’s listing and your graduation year. Check that listing before anything else.",
+        "readTime": "7 min read",
+        "sections": [
+          {
+            "id": "who-decides",
+            "heading": "No single U.S. office licenses doctors",
+            "paragraphs": [
+              "The United States has no national licence for doctors. According to the U.S. Department of Education, professional licensing is generally handled at state level, and the board in the state where you plan to work is the authority that decides. That department does not evaluate foreign degrees, and it does not recommend any evaluation service.",
+              "For an international medical graduate there is an additional gate before that board: ECFMG Certification, which U.S. graduate medical education is built around. ECFMG sets its own eligibility rules, and they are stricter than most people expect.",
+              "So the first question is not which evaluation to buy. It is which state medical board you will apply to, and what that board says it accepts in writing."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "school-listing",
+            "heading": "Check your medical school’s listing first",
+            "paragraphs": [
+              "Before you spend anything, look up your medical school in the World Directory of Medical Schools and open the Sponsor Notes tab. ECFMG states that if there is no ECFMG Sponsor Note on that tab, you are not eligible for ECFMG Certification. The note also lists which graduation years the school qualifies for, and your year has to be among them.",
+              "This single check decides whether the rest of the path is open to you, and it costs nothing. Do it before you buy an evaluation, book an exam or pay anyone for advice.",
+              "ECFMG also requires that you were awarded credit for at least four credit years by a listed school carrying that note, and it applies restrictions to transferred credits under a separate policy."
+            ],
+            "sourceRefs": [
+              "ecfmg-cert-reqs"
+            ]
+          },
+          {
+            "id": "exams-verification",
+            "heading": "Examinations and verification of your diploma",
+            "paragraphs": [
+              "ECFMG requires applicants to pass USMLE Step 1 and Step 2 Clinical Knowledge. International medical graduates apply for the USMLE through the Federation of State Medical Boards.",
+              "There is also a clinical and communication skills requirement, met either by satisfying an ECFMG Pathway, which includes a qualifying Occupational English Test Medicine score, or by holding a passing result on the former Step 2 Clinical Skills examination that is still valid for certification. ECFMG applies time limits and further rules to these requirements, published separately.",
+              "Separately from the exams, ECFMG verifies every applicant’s medical school diploma with officials of the medical school, and requests the final transcript. You document completion of all requirements for your final medical diploma, and verification may also be required for transcripts covering transferred credits. ECFMG warns that submitting falsified or altered documents may result in a finding of irregular behaviour."
+            ],
+            "sourceRefs": [
+              "ecfmg-cert-reqs"
+            ]
+          },
+          {
+            "id": "what-it-is-not",
+            "heading": "What certification is, and what it is not",
+            "paragraphs": [
+              "ECFMG Certification is an eligibility status. The requirements page sets out what you must meet to be eligible for it; it does not promise a training position, and it is not a licence to practise. As the U.S. Department of Education describes, licensing is generally a state matter, and a state medical board decides whether to license you.",
+              "If anyone offers you a certain path, a shortcut around the Sponsor Note, or a residency place in exchange for a fee, stop and check directly with ECFMG."
+            ],
+            "sourceRefs": [
+              "ed-recognition",
+              "ecfmg-cert-reqs"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Before you pay: a short plan",
+            "paragraphs": [
+              "Work in this order. Each step tells you whether the next one is worth paying for."
+            ],
+            "checklist": [
+              "Look up your medical school in the World Directory and open the Sponsor Notes tab.",
+              "Confirm that a Sponsor Note exists and that it covers your graduation year.",
+              "Read ECFMG’s current requirements page in full before paying for anything.",
+              "Check with your medical school that it can respond to a verification request, and who handles it.",
+              "Plan the USMLE steps and the clinical and communication skills requirement in the order ECFMG sets.",
+              "Identify the state you intend to practise in and read that medical board’s own requirements.",
+              "Keep every written answer you receive, with dates."
+            ]
+          }
+        ]
+      },
+      "es": {
+        "slug": "ejercer-la-medicina-en-estados-unidos-titulo-extranjero",
+        "title": "Ejercer la medicina en Estados Unidos con un título extranjero",
+        "seoTitle": "Título de medicina extranjero en EE. UU.: ECFMG y licencia | VerifED Global",
+        "description": "Qué enfrenta un médico formado en el extranjero en EE. UU.: la certificación ECFMG, el World Directory, los exámenes USMLE y quién otorga la licencia.",
+        "summary": "Para un médico formado fuera de EE. UU. la puerta de entrada es la certificación de ECFMG, con reglas estrictas ligadas al registro de su facultad y a su año de graduación. Revise ese registro antes que nada.",
+        "readTime": "7 min de lectura",
+        "sections": [
+          {
+            "id": "who-decides",
+            "heading": "Ninguna oficina nacional de EE. UU. otorga licencias a médicos y médicas",
+            "paragraphs": [
+              "Estados Unidos no tiene una licencia nacional para médicos y médicas. Según el Departamento de Educación de EE. UU., las licencias profesionales se gestionan por lo general a nivel estatal, y la junta del estado donde usted piensa trabajar es la autoridad que decide. Ese departamento no evalúa títulos extranjeros ni recomienda ningún servicio de evaluación.",
+              "Para un médico formado fuera de EE. UU. hay una puerta adicional antes de esa junta: la certificación de ECFMG, sobre la que se organiza la educación médica de posgrado en EE. UU. ECFMG fija sus propias reglas de elegibilidad, y son más estrictas de lo que la mayoría espera.",
+              "Por eso la primera pregunta no es qué evaluación comprar, sino a qué junta médica estatal se va a postular y qué dice esa junta por escrito que acepta."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "school-listing",
+            "heading": "Revise primero el registro de su facultad",
+            "paragraphs": [
+              "Antes de gastar nada, busque su facultad de medicina en el World Directory of Medical Schools y abra la pestaña de notas de patrocinio. ECFMG indica que, si no hay una nota de patrocinio de ECFMG en esa pestaña, usted no es elegible para la certificación. La nota también indica qué años de graduación cubre, y el suyo tiene que estar entre ellos.",
+              "Esta sola comprobación decide si el resto del camino está abierto para usted, y no cuesta nada. Hágala antes de comprar una evaluación, inscribirse a un examen o pagarle a alguien por orientación.",
+              "ECFMG también exige que usted haya obtenido créditos por al menos cuatro años lectivos en una facultad registrada con esa nota, y aplica restricciones a los créditos transferidos según una política aparte."
+            ],
+            "sourceRefs": [
+              "ecfmg-cert-reqs"
+            ]
+          },
+          {
+            "id": "exams-verification",
+            "heading": "Exámenes y verificación de su título",
+            "paragraphs": [
+              "ECFMG exige aprobar los exámenes USMLE Step 1 y Step 2 Clinical Knowledge. Los médicos formados fuera de EE. UU. se inscriben al USMLE a través de la Federation of State Medical Boards.",
+              "Existe además un requisito de habilidades clínicas y de comunicación, que se cumple satisfaciendo una vía de ECFMG, que incluye un puntaje válido del Occupational English Test de medicina, o teniendo un resultado aprobatorio del antiguo examen Step 2 Clinical Skills que siga siendo válido para la certificación. ECFMG aplica plazos y reglas adicionales a estos requisitos, publicados por separado.",
+              "Aparte de los exámenes, ECFMG verifica el título de cada solicitante con funcionarios de su facultad de medicina y solicita el certificado final de notas. Usted documenta haber completado todos los requisitos de su título final, y también puede exigirse verificación para certificados de créditos transferidos. ECFMG advierte que presentar documentos falsificados o alterados puede dar lugar a una determinación de conducta irregular."
+            ],
+            "sourceRefs": [
+              "ecfmg-cert-reqs"
+            ]
+          },
+          {
+            "id": "what-it-is-not",
+            "heading": "Qué es la certificación y qué no es",
+            "paragraphs": [
+              "La certificación de ECFMG es un estado de elegibilidad. La página de requisitos expone lo que usted debe cumplir para ser elegible; no promete una plaza de formación y no es una licencia para ejercer. Como describe el Departamento de Educación de EE. UU., las licencias son por lo general un asunto estatal, y una junta médica estatal decide si le otorga la licencia.",
+              "Si alguien le ofrece una ruta asegurada, un atajo para saltarse la nota de patrocinio o una plaza de residencia a cambio de un pago, deténgase y verifíquelo directamente con ECFMG."
+            ],
+            "sourceRefs": [
+              "ed-recognition",
+              "ecfmg-cert-reqs"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Antes de pagar: un plan breve",
+            "paragraphs": [
+              "Siga este orden. Cada paso le dice si vale la pena pagar el siguiente."
+            ],
+            "checklist": [
+              "Busque su facultad en el World Directory y abra la pestaña de notas de patrocinio.",
+              "Confirme que existe una nota de patrocinio y que cubre su año de graduación.",
+              "Lea completa la página vigente de requisitos de ECFMG antes de pagar nada.",
+              "Confirme con su facultad que puede responder a una solicitud de verificación y quién la gestiona.",
+              "Planifique los exámenes USMLE y el requisito de habilidades clínicas en el orden que fija ECFMG.",
+              "Identifique el estado donde piensa ejercer y lea los requisitos de esa junta médica.",
+              "Guarde cada respuesta escrita que reciba, con su fecha."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "engineering-license-united-states-foreign-degree",
+      "profession": "engineering",
+      "updated": "2026-11-25",
+      "sources": [
+        "ed-recognition",
+        "ncees-credentials",
+        "wes-required-docs"
+      ],
+      "related": [
+        "cpa-united-states-foreign-accounting-degree",
+        "credential-evaluation-for-us-jobs",
+        "foreign-degree-on-resume"
+      ],
+      "en": {
+        "title": "Engineering Licence in the United States with a Foreign Degree",
+        "seoTitle": "Engineering Licence in the U.S. with a Foreign Degree | VerifED Global",
+        "description": "How a foreign engineering degree is assessed in the U.S.: the NCEES education standard, which documents are required, and who grants the licence.",
+        "summary": "Most foreign-educated engineers are referred to NCEES by a state board, which compares their coursework to a published credit-hour standard. Ask your board first: you may not need an evaluation at all.",
+        "readTime": "7 min read",
+        "sections": [
+          {
+            "id": "who-decides",
+            "heading": "No single U.S. office licenses engineers",
+            "paragraphs": [
+              "The United States has no national licence for engineers. According to the U.S. Department of Education, professional licensing is generally handled at state level, and the board in the state where you plan to work is the authority that decides. That department does not evaluate foreign degrees, and it does not recommend any evaluation service.",
+              "NCEES, which runs the evaluation service most boards use, describes it as a service for state licensing boards and applicants, and says that most applicants are referred to it by a state licensing board. It tells applicants who are unsure to contact their board first.",
+              "So the first question is not which evaluation to buy. It is which state licensing board you will apply to, and what that board says it accepts in writing."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "may-not-need",
+            "heading": "You may not need an evaluation at all",
+            "paragraphs": [
+              "NCEES states plainly that you do not need an evaluation if your degree was accredited by the Engineering Accreditation Commission of ABET at the time you graduated. A small number of programmes outside the United States hold that accreditation, so this is worth checking before you assume otherwise.",
+              "The service is designed primarily for candidates who earned their degrees outside the United States and are pursuing licensure through one of the NCEES member boards. Evaluations are run on a non-accredited bachelor’s degree in engineering, and on bachelor’s degrees only when coupled with a master’s or doctorate in engineering."
+            ],
+            "sourceRefs": [
+              "ncees-credentials"
+            ]
+          },
+          {
+            "id": "the-standard",
+            "heading": "What your coursework is compared against",
+            "paragraphs": [
+              "An evaluation compares your college-level education to the NCEES Engineering Education Standard. For engineering, that standard asks for 32 semester credit hours of higher mathematics, basic sciences and additional sciences, with calculus required, and 48 semester credit hours of engineering science or engineering design. Computer programming may not count towards the mathematics or basic science hours, and engineering technology courses do not count towards the engineering hours.",
+              "The report sets out whether the standard is met and lists any deficiencies, which a board may act on as it sees fit. NCEES notes that internships, co-ops, practicums and continuing education earn no credit towards the standard, and that thesis, special topics and independent study are capped.",
+              "Two limits are worth holding onto. NCEES states that it does not determine substantial equivalence to an accredited programme, and a satisfactory result means only that you possess the education required to be considered by a board. The board still decides."
+            ],
+            "sourceRefs": [
+              "ncees-credentials"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documents and translations",
+            "paragraphs": [
+              "NCEES requires an official academic transcript, an official diploma or certificate of graduation, and official course descriptions from every university you attended, covering all college-level coursework and degrees. Your education is verified through a form NCEES sends to your programme, and documents must be verified before you can buy an evaluation.",
+              "Documents not in English require literal English translations completed by a certified translation service. Keep the original Spanish names of your qualifications alongside those translations; a literal translation is what is being asked for, not a renaming into U.S. terms.",
+              "NCEES publishes its fee and a typical turnaround for completed evaluations. Check the current figures on its own page before you plan around them."
+            ],
+            "sourceRefs": [
+              "ncees-credentials",
+              "wes-required-docs"
+            ],
+            "checklistTitle": "Records to locate",
+            "checklist": [
+              "Official transcripts from every university you attended",
+              "Your official diploma or certificate of graduation for each degree",
+              "Official course descriptions for all college-level coursework",
+              "Contact details for the department that can answer a verification form",
+              "A quote from a certified translation service for any non-English documents",
+              "Your professional registration at home, if the board asks for it"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Before you pay: a short plan",
+            "paragraphs": [
+              "Work in this order. Each step tells you whether the next one is worth paying for."
+            ],
+            "checklist": [
+              "Check whether your degree held ABET Engineering Accreditation Commission accreditation when you graduated.",
+              "Identify the state you want to be licensed in and read that board’s requirements.",
+              "Ask that board in writing whether it wants an NCEES evaluation and at what stage.",
+              "Compare your transcript against the published credit-hour standard before you pay.",
+              "Ask your university which office answers verification forms and sends official course descriptions.",
+              "Get a quote from a certified translation service for literal translations.",
+              "Keep every written answer you receive, with dates."
+            ]
+          }
+        ]
+      },
+      "es": {
+        "slug": "licencia-de-ingenieria-en-estados-unidos-titulo-extranjero",
+        "title": "Licencia de ingeniería en Estados Unidos con un título extranjero",
+        "seoTitle": "Licencia de ingeniería en EE. UU. con título extranjero | VerifED Global",
+        "description": "Cómo se evalúa en EE. UU. un título de ingeniería extranjero: el estándar educativo de NCEES, qué documentos se exigen y quién otorga la licencia.",
+        "summary": "A la mayoría de ingenieros formados fuera de EE. UU. los remite a NCEES una junta estatal, que compara sus materias con un estándar publicado de créditos. Pregunte primero a su junta: quizá no necesite evaluación.",
+        "readTime": "7 min de lectura",
+        "sections": [
+          {
+            "id": "who-decides",
+            "heading": "Ninguna oficina nacional de EE. UU. otorga licencias a ingenieros e ingenieras",
+            "paragraphs": [
+              "Estados Unidos no tiene una licencia nacional para ingenieros e ingenieras. Según el Departamento de Educación de EE. UU., las licencias profesionales se gestionan por lo general a nivel estatal, y la junta del estado donde usted piensa trabajar es la autoridad que decide. Ese departamento no evalúa títulos extranjeros ni recomienda ningún servicio de evaluación.",
+              "NCEES, que gestiona el servicio de evaluación que usan la mayoría de las juntas, lo describe como un servicio para las juntas estatales y las personas solicitantes, e indica que a la mayoría la remite una junta estatal. A quien tenga dudas le dice que contacte primero a su junta.",
+              "Por eso la primera pregunta no es qué evaluación comprar, sino a qué junta estatal de licencias se va a postular y qué dice esa junta por escrito que acepta."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "may-not-need",
+            "heading": "Puede que no necesite ninguna evaluación",
+            "paragraphs": [
+              "NCEES indica con claridad que usted no necesita una evaluación si su título estaba acreditado por la comisión de acreditación de ingeniería de ABET en el momento de graduarse. Un pequeño número de programas fuera de Estados Unidos tiene esa acreditación, así que conviene comprobarlo antes de suponer lo contrario.",
+              "El servicio está pensado sobre todo para quienes obtuvieron su título fuera de Estados Unidos y buscan la licencia ante una de las juntas miembro de NCEES. Las evaluaciones se hacen sobre un título de licenciatura en ingeniería no acreditado, y sobre licenciaturas solo cuando se combinan con una maestría o un doctorado en ingeniería."
+            ],
+            "sourceRefs": [
+              "ncees-credentials"
+            ]
+          },
+          {
+            "id": "the-standard",
+            "heading": "Con qué se comparan sus materias",
+            "paragraphs": [
+              "La evaluación compara su formación universitaria con el estándar educativo de ingeniería de NCEES. Para ingeniería, ese estándar pide 32 créditos semestrales de matemáticas superiores y ciencias básicas y adicionales, con cálculo obligatorio, y 48 créditos semestrales de ciencias de la ingeniería o diseño de ingeniería. La programación informática no puede contarse en las horas de matemáticas o ciencias básicas, y las materias de tecnología de la ingeniería no cuentan en las horas de ingeniería.",
+              "El informe indica si se cumple el estándar y enumera las deficiencias, sobre las que una junta puede actuar como considere apropiado. NCEES señala que las pasantías, las prácticas y la formación continua no otorgan crédito para el estándar, y que la tesis, los temas especiales y el estudio independiente tienen un tope.",
+              "Conviene retener dos límites. NCEES indica que no determina la equivalencia sustancial con un programa acreditado, y un resultado satisfactorio solo significa que usted tiene la formación necesaria para que una junta lo considere. La junta sigue decidiendo."
+            ],
+            "sourceRefs": [
+              "ncees-credentials"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documentos y traducciones",
+            "paragraphs": [
+              "NCEES exige un certificado académico oficial, un diploma o certificado de graduación oficial y descripciones oficiales de las materias de todas las universidades a las que asistió, cubriendo todas las materias y títulos de nivel universitario. Su formación se verifica mediante un formulario que NCEES envía a su programa, y los documentos deben verificarse antes de que usted pueda comprar la evaluación.",
+              "Los documentos que no estén en inglés requieren traducciones literales al inglés hechas por un servicio de traducción certificado. Conserve los nombres originales en español de sus titulaciones junto a esas traducciones; lo que se pide es una traducción literal, no un cambio de nombre a términos estadounidenses.",
+              "NCEES publica su tarifa y un plazo habitual para las evaluaciones terminadas. Consulte las cifras vigentes en su propia página antes de planificar en torno a ellas."
+            ],
+            "sourceRefs": [
+              "ncees-credentials",
+              "wes-required-docs"
+            ],
+            "checklistTitle": "Documentos que debe localizar",
+            "checklist": [
+              "Certificados académicos oficiales de todas las universidades a las que asistió",
+              "Su diploma o certificado de graduación oficial de cada título",
+              "Descripciones oficiales de todas las materias de nivel universitario",
+              "Datos de contacto del departamento que pueda responder un formulario de verificación",
+              "Una cotización de un servicio de traducción certificado para los documentos que no estén en inglés",
+              "Su matrícula profesional en su país, si la junta la pide"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Antes de pagar: un plan breve",
+            "paragraphs": [
+              "Siga este orden. Cada paso le dice si vale la pena pagar el siguiente."
+            ],
+            "checklist": [
+              "Compruebe si su título tenía acreditación de la comisión de ingeniería de ABET cuando se graduó.",
+              "Identifique el estado donde quiere la licencia y lea los requisitos de esa junta.",
+              "Pregúntele por escrito a esa junta si quiere una evaluación de NCEES y en qué momento.",
+              "Compare su certificado de notas con el estándar publicado de créditos antes de pagar.",
+              "Pregunte a su universidad qué oficina responde formularios de verificación y envía descripciones de materias.",
+              "Pida una cotización a un servicio de traducción certificado para traducciones literales.",
+              "Guarde cada respuesta escrita que reciba, con su fecha."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "cpa-united-states-foreign-accounting-degree",
+      "profession": "accounting",
+      "updated": "2026-11-25",
+      "sources": [
+        "ed-recognition",
+        "nasba-nies",
+        "wes-required-docs"
+      ],
+      "related": [
+        "teaching-certification-united-states-foreign-degree",
+        "credential-evaluation-for-us-jobs",
+        "foreign-degree-on-resume"
+      ],
+      "en": {
+        "title": "Becoming a CPA in the United States with a Foreign Accounting Degree",
+        "seoTitle": "CPA in the U.S. with a Foreign Accounting Degree | VerifED Global",
+        "description": "How foreign accounting education is evaluated for the U.S. CPA Exam: which board decides, who may evaluate your degree, and the documents and translations required.",
+        "summary": "CPA Exam eligibility is decided by an individual state board of accountancy, and each board approves which evaluation companies it accepts. Pick the board before you pick an evaluator.",
+        "readTime": "7 min read",
+        "sections": [
+          {
+            "id": "who-decides",
+            "heading": "No single U.S. office licenses accountants",
+            "paragraphs": [
+              "The United States has no national licence for accountants. According to the U.S. Department of Education, professional licensing is generally handled at state level, and the board in the state where you plan to work is the authority that decides. That department does not evaluate foreign degrees, and it does not recommend any evaluation service.",
+              "NASBA, which runs an evaluation service for internationally educated candidates, states that each Board of Accountancy must approve the international education evaluation companies it will accept for examination and licensure. Its own service only evaluates for the boards listed on its website.",
+              "So the first question is not which evaluation to buy. It is which state board of accountancy you will apply to, and what that board says it accepts in writing."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "board-first",
+            "heading": "Choose the jurisdiction before the evaluator",
+            "paragraphs": [
+              "Requirements are set per jurisdiction, so the order matters. Decide which state board you will apply through, then find out which evaluation companies that board approves. Approaching it the other way round risks paying for a report your board will not look at.",
+              "NASBA publishes a list of the jurisdictions its own service covers, and separately a shorter list of jurisdictions where it is the only approved provider. Those two lists are not identical, and its pages do not explain the difference, so confirm your own jurisdiction with the board rather than relying on a list.",
+              "It also notes that examination and licensure education requirements differ, and that these are separate evaluations. Clearing the exam requirement does not mean your education meets the licensure requirement."
+            ],
+            "sourceRefs": [
+              "nasba-nies"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documents, translations and deadlines",
+            "paragraphs": [
+              "NASBA’s service asks for a copy of a passport or government-issued identification, and documentation for each year of international post-secondary education. It states that completion of a higher degree is not acceptable as proof of prior study, so a master’s certificate will not stand in for your undergraduate records.",
+              "Official transcripts and degree certificates are expected by post in an unopened university-sealed envelope, or electronically when sent directly by the institution. Translations must be a complete set of official English translations, done by an ATA member, a university or the education ministry; it states that translations from private providers outside the United States will not be accepted. Syllabi or course descriptions may be requested for accounting and business courses.",
+              "There is a time limit: all application materials must arrive within 90 days of applying, and it states that failure to submit everything results in denial and forfeiture of the evaluation fee. Build the slowest step, your university posting sealed documents internationally, into that window before you apply."
+            ],
+            "sourceRefs": [
+              "nasba-nies",
+              "wes-required-docs"
+            ],
+            "checklistTitle": "Records to locate",
+            "checklist": [
+              "Passport or government-issued identification",
+              "Documentation covering each year of post-secondary education, not just your final degree",
+              "Official transcripts and degree certificates your university can send sealed or directly",
+              "Syllabi or course descriptions for accounting and business subjects",
+              "A translator who meets the accepted categories, arranged before you apply",
+              "Your professional accounting registration at home, if the board asks for it"
+            ]
+          },
+          {
+            "id": "limits",
+            "heading": "What an evaluation settles, and what it does not",
+            "paragraphs": [
+              "An evaluation report describes your education against a jurisdiction’s requirements. It is the input to a decision, not the decision. The board grants or refuses exam eligibility and licensure.",
+              "Watch for jurisdiction-specific exceptions rather than assuming a national rule. NASBA states, for instance, that it does not evaluate for New York licensure, and that candidates in at least one state need approval directly from that state board before applying. Rules like these change, so read the board’s current page.",
+              "The U.S. Department of Education notes that evaluation services are private organisations, not federally regulated, and that different services can reach different conclusions about the same education. That is another reason to let the board name the evaluator."
+            ],
+            "sourceRefs": [
+              "ed-recognition",
+              "nasba-nies"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Before you pay: a short plan",
+            "paragraphs": [
+              "Work in this order. Each step tells you whether the next one is worth paying for."
+            ],
+            "checklist": [
+              "Decide which state board of accountancy you will apply through.",
+              "Read that board’s own page on candidates educated outside the United States.",
+              "Confirm with the board which evaluation companies it accepts.",
+              "Check whether you need an examination evaluation, a licensure evaluation, or both.",
+              "Ask your university how it sends sealed or direct electronic transcripts abroad, and how long it takes.",
+              "Arrange translations that meet the accepted categories before you start the clock on any deadline.",
+              "Keep every written answer you receive, with dates."
+            ]
+          }
+        ]
+      },
+      "es": {
+        "slug": "ser-contador-cpa-en-estados-unidos-titulo-extranjero",
+        "title": "Ser contador CPA en Estados Unidos con un título extranjero",
+        "seoTitle": "CPA en EE. UU. con un título de contabilidad extranjero | VerifED Global",
+        "description": "Cómo se evalúa la formación contable extranjera para el examen CPA: qué junta decide, quién puede evaluar su título y qué documentos y traducciones se exigen.",
+        "summary": "La elegibilidad para el examen CPA la decide una junta estatal de contabilidad, y cada junta aprueba qué empresas evaluadoras acepta. Elija la junta antes de elegir al evaluador.",
+        "readTime": "7 min de lectura",
+        "sections": [
+          {
+            "id": "who-decides",
+            "heading": "Ninguna oficina nacional de EE. UU. otorga licencias a contadores y contadoras",
+            "paragraphs": [
+              "Estados Unidos no tiene una licencia nacional para contadores y contadoras. Según el Departamento de Educación de EE. UU., las licencias profesionales se gestionan por lo general a nivel estatal, y la junta del estado donde usted piensa trabajar es la autoridad que decide. Ese departamento no evalúa títulos extranjeros ni recomienda ningún servicio de evaluación.",
+              "NASBA, que gestiona un servicio de evaluación para candidatos formados en el extranjero, indica que cada junta de contabilidad debe aprobar las empresas de evaluación de educación internacional que aceptará para el examen y la licencia. Su propio servicio solo evalúa para las juntas que figuran en su sitio web.",
+              "Por eso la primera pregunta no es qué evaluación comprar, sino a qué junta estatal de contabilidad se va a postular y qué dice esa junta por escrito que acepta."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "board-first",
+            "heading": "Elija la jurisdicción antes que al evaluador",
+            "paragraphs": [
+              "Los requisitos se fijan por jurisdicción, así que el orden importa. Decida ante qué junta estatal se postulará y luego averigüe qué empresas evaluadoras aprueba esa junta. Hacerlo al revés arriesga pagar un informe que su junta no mirará.",
+              "NASBA publica una lista de las jurisdicciones que cubre su propio servicio y, por separado, una lista más corta de jurisdicciones donde es el único proveedor aprobado. Esas dos listas no son idénticas y sus páginas no explican la diferencia, así que confirme su jurisdicción con la junta en vez de fiarse de una lista.",
+              "También señala que los requisitos educativos del examen y de la licencia son distintos y que son evaluaciones separadas. Cumplir el requisito del examen no significa que su formación cumpla el de la licencia."
+            ],
+            "sourceRefs": [
+              "nasba-nies"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Documentos, traducciones y plazos",
+            "paragraphs": [
+              "El servicio de NASBA pide una copia del pasaporte o de una identificación oficial y documentación de cada año de educación superior en el extranjero. Indica que haber terminado un título superior no se acepta como prueba de los estudios previos, así que un certificado de maestría no sustituye los documentos de su licenciatura.",
+              "Los certificados académicos y los títulos se esperan por correo en un sobre sellado y sin abrir de la universidad, o por vía electrónica cuando los envía directamente la institución. Las traducciones deben ser un juego completo de traducciones oficiales al inglés, hechas por un miembro de la ATA, una universidad o el ministerio de educación; indica que no se aceptan traducciones de proveedores privados fuera de Estados Unidos. Pueden pedirse programas o descripciones de materias de contabilidad y negocios.",
+              "Hay un plazo: todos los materiales deben llegar dentro de los 90 días de la postulación, e indica que no presentar todo resulta en la denegación y la pérdida de la tarifa de evaluación. Calcule dentro de esa ventana el paso más lento, que es su universidad enviando documentos sellados al exterior, antes de postularse."
+            ],
+            "sourceRefs": [
+              "nasba-nies",
+              "wes-required-docs"
+            ],
+            "checklistTitle": "Documentos que debe localizar",
+            "checklist": [
+              "Pasaporte o identificación oficial",
+              "Documentación de cada año de educación superior, no solo de su título final",
+              "Certificados académicos y títulos que su universidad pueda enviar sellados o directamente",
+              "Programas o descripciones de materias de contabilidad y negocios",
+              "Un traductor que cumpla las categorías aceptadas, contratado antes de postularse",
+              "Su matrícula profesional de contabilidad en su país, si la junta la pide"
+            ]
+          },
+          {
+            "id": "limits",
+            "heading": "Qué resuelve una evaluación y qué no",
+            "paragraphs": [
+              "Un informe de evaluación describe su formación frente a los requisitos de una jurisdicción. Es el insumo de una decisión, no la decisión. La junta concede o niega la elegibilidad para el examen y la licencia.",
+              "Esté atento a las excepciones de cada jurisdicción en lugar de suponer una regla nacional. NASBA indica, por ejemplo, que no evalúa para la licencia de Nueva York y que en al menos un estado las personas candidatas necesitan la aprobación directa de esa junta antes de postularse. Reglas así cambian, de modo que lea la página vigente de la junta.",
+              "El Departamento de Educación de EE. UU. señala que los servicios de evaluación son organizaciones privadas, no reguladas a nivel federal, y que distintos servicios pueden llegar a conclusiones distintas sobre la misma formación. Es otra razón para dejar que la junta nombre al evaluador."
+            ],
+            "sourceRefs": [
+              "ed-recognition",
+              "nasba-nies"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Antes de pagar: un plan breve",
+            "paragraphs": [
+              "Siga este orden. Cada paso le dice si vale la pena pagar el siguiente."
+            ],
+            "checklist": [
+              "Decida ante qué junta estatal de contabilidad se postulará.",
+              "Lea la página de esa junta sobre personas con estudios fuera de Estados Unidos.",
+              "Confirme con la junta qué empresas evaluadoras acepta.",
+              "Compruebe si necesita una evaluación para el examen, otra para la licencia, o ambas.",
+              "Pregunte a su universidad cómo envía certificados sellados o electrónicos al exterior y cuánto tarda.",
+              "Gestione traducciones que cumplan las categorías aceptadas antes de que empiece a correr cualquier plazo.",
+              "Guarde cada respuesta escrita que reciba, con su fecha."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "teaching-certification-united-states-foreign-degree",
+      "profession": "teaching",
+      "updated": "2026-11-25",
+      "sources": [
+        "ed-recognition",
+        "nysed-foreign-cred",
+        "wes-required-docs"
+      ],
+      "related": [
+        "nursing-license-united-states-foreign-degree",
+        "credential-evaluation-for-us-jobs",
+        "foreign-degree-on-resume"
+      ],
+      "en": {
+        "title": "Teaching in the United States with a Foreign Education Degree",
+        "seoTitle": "Teaching in the U.S. with a Foreign Degree | VerifED Global",
+        "description": "How teachers educated abroad get certified in the U.S.: why it differs in every state, what one state asks for, and which documents to gather first.",
+        "summary": "There is no national teaching certificate in the United States. Each state certifies its own teachers, and some evaluate foreign credentials in-house rather than through an outside agency.",
+        "readTime": "6 min read",
+        "sections": [
+          {
+            "id": "who-decides",
+            "heading": "No single U.S. office licenses teachers",
+            "paragraphs": [
+              "The United States has no national licence for teachers. According to the U.S. Department of Education, professional licensing is generally handled at state level, and the board in the state where you plan to work is the authority that decides. That department does not evaluate foreign degrees, and it does not recommend any evaluation service.",
+              "Teaching differs from the other licensed professions in one practical way: there is no single national body that most states route foreign credentials through. Some states accept a report from an outside evaluation agency; others evaluate the documents themselves.",
+              "So the first question is not which evaluation to buy. It is which state education department you will apply to, and what that board says it accepts in writing."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "one-state-example",
+            "heading": "One state, as a worked example",
+            "paragraphs": [
+              "New York is useful to read even if you plan to teach elsewhere, because it shows what in-house evaluation looks like. Its Office of Teaching Initiatives states that it evaluates foreign credentials only for those seeking New York State teacher certification, and that requests for coursework evaluation for salary or personal reasons go to the institution or employer involved instead.",
+              "The documents it describes are demanding. It asks for original credentials, or United States notarised copies carrying an original signature and seal on each copied page, and notarised English translations of all credentials. It asks for marksheets, student books or transcripts for each year of study, showing the total instructional hours and all grades received, and for copies of any valid teacher certificates issued by other jurisdictions. Originals are sent by certified mail.",
+              "It also states that a United States Social Security number is required before a teaching certificate can be issued, and that citizenship or permanent residence applies to certain certificate types. The page carries a last-updated date years in the past, so treat it as an illustration of the shape of the process and confirm current rules with the state itself."
+            ],
+            "sourceRefs": [
+              "nysed-foreign-cred"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "What to gather, whichever state you choose",
+            "paragraphs": [
+              "The common thread across states is detail: year-by-year records rather than a single final certificate, and translations that a public authority will accept. Request those records now, because institutions abroad are often slow to issue them and some charge per document.",
+              "Keep the original names of your qualifications. A teaching degree awarded in your country is that degree, and the state will decide for itself what it compares to. Where an outside evaluator is accepted, WES, one commercial provider, states that required documents vary by country of study, that the issuing institution must send official records, and that documents must be translated into English."
+            ],
+            "sourceRefs": [
+              "wes-required-docs"
+            ],
+            "checklistTitle": "Records to locate",
+            "checklist": [
+              "Your teaching degree or diploma, under its original name",
+              "Year-by-year transcripts showing instructional hours and all grades",
+              "Any teaching licence or registration you hold, and proof it is current",
+              "Records of supervised teaching practice, if issued separately",
+              "Proof of a name change, if your documents show different names",
+              "Contact details for the office at your institution that issues certified records"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Before you pay: a short plan",
+            "paragraphs": [
+              "Work in this order. Each step tells you whether the next one is worth paying for."
+            ],
+            "checklist": [
+              "Choose the state you want to teach in before gathering anything.",
+              "Find that state education department’s page for teachers prepared outside the United States.",
+              "Establish whether that state evaluates credentials itself or names outside agencies.",
+              "Ask in writing which documents must be originals and which notarised copies are accepted.",
+              "Ask your institution for year-by-year records showing instructional hours, and what they cost.",
+              "Check the subject or grade level you want to teach: requirements often differ by certificate type.",
+              "Keep every written answer you receive, with dates."
+            ]
+          }
+        ]
+      },
+      "es": {
+        "slug": "certificacion-docente-en-estados-unidos-titulo-extranjero",
+        "title": "Enseñar en Estados Unidos con un título de docencia extranjero",
+        "seoTitle": "Enseñar en EE. UU. con un título extranjero | VerifED Global",
+        "description": "Cómo se certifican en EE. UU. los docentes formados en el extranjero: por qué cambia en cada estado, qué pide un estado concreto y qué documentos reunir.",
+        "summary": "En Estados Unidos no existe una certificación docente nacional. Cada estado certifica a sus propios docentes, y algunos evalúan las credenciales extranjeras por su cuenta en vez de usar una agencia externa.",
+        "readTime": "6 min de lectura",
+        "sections": [
+          {
+            "id": "who-decides",
+            "heading": "Ninguna oficina nacional de EE. UU. otorga licencias a docentes",
+            "paragraphs": [
+              "Estados Unidos no tiene una licencia nacional para docentes. Según el Departamento de Educación de EE. UU., las licencias profesionales se gestionan por lo general a nivel estatal, y la junta del estado donde usted piensa trabajar es la autoridad que decide. Ese departamento no evalúa títulos extranjeros ni recomienda ningún servicio de evaluación.",
+              "La docencia se diferencia de otras profesiones con licencia en un punto práctico: no hay un único organismo nacional por el que la mayoría de los estados canalicen las credenciales extranjeras. Algunos estados aceptan el informe de una agencia evaluadora externa; otros evalúan los documentos por su cuenta.",
+              "Por eso la primera pregunta no es qué evaluación comprar, sino a qué departamento estatal de educación se va a postular y qué dice esa junta por escrito que acepta."
+            ],
+            "sourceRefs": [
+              "ed-recognition"
+            ]
+          },
+          {
+            "id": "one-state-example",
+            "heading": "Un estado, como ejemplo concreto",
+            "paragraphs": [
+              "Conviene leer el caso de Nueva York aunque piense enseñar en otro lugar, porque muestra cómo es una evaluación hecha por el propio estado. Su oficina de iniciativas docentes indica que evalúa credenciales extranjeras solo para quienes buscan la certificación docente del estado de Nueva York, y que las solicitudes de evaluación de materias por motivos salariales o personales se dirigen a la institución o al empleador correspondiente.",
+              "Los documentos que describe son exigentes. Pide credenciales originales, o copias notarizadas en Estados Unidos con firma y sello originales en cada página copiada, y traducciones al inglés notarizadas de todas las credenciales. Pide certificados de notas de cada año de estudio, con el total de horas lectivas y todas las calificaciones obtenidas, y copias de cualquier certificado docente vigente emitido por otra jurisdicción. Los originales se envían por correo certificado.",
+              "También indica que se requiere un número de Seguro Social de EE. UU. antes de emitir el certificado docente y que la ciudadanía o la residencia permanente aplican a ciertos tipos de certificado. La página muestra una fecha de actualización de hace años, así que tómela como una ilustración de la forma del proceso y confirme las reglas vigentes con el propio estado."
+            ],
+            "sourceRefs": [
+              "nysed-foreign-cred"
+            ]
+          },
+          {
+            "id": "documents",
+            "heading": "Qué reunir, sea cual sea el estado",
+            "paragraphs": [
+              "El hilo común entre estados es el detalle: documentos año por año en lugar de un solo certificado final, y traducciones que una autoridad pública acepte. Pida esos documentos desde ya, porque las instituciones en el extranjero suelen tardar en emitirlos y algunas cobran por documento.",
+              "Conserve los nombres originales de sus titulaciones. Un título docente otorgado en su país es ese título, y el estado decidirá por sí mismo con qué lo compara. Donde se acepte un evaluador externo, WES, un proveedor comercial, indica que los documentos requeridos varían según el país de estudio, que la institución emisora debe enviar los documentos oficiales y que deben traducirse al inglés."
+            ],
+            "sourceRefs": [
+              "wes-required-docs"
+            ],
+            "checklistTitle": "Documentos que debe localizar",
+            "checklist": [
+              "Su título o diploma de docencia, con su nombre original",
+              "Certificados de notas de cada año, con horas lectivas y todas las calificaciones",
+              "Cualquier licencia o registro docente que tenga, y constancia de que está vigente",
+              "Constancias de práctica docente supervisada, si se emiten por separado",
+              "Constancia de cambio de nombre, si sus documentos muestran nombres distintos",
+              "Datos de contacto de la oficina de su institución que emite documentos certificados"
+            ]
+          },
+          {
+            "id": "before-you-pay",
+            "heading": "Antes de pagar: un plan breve",
+            "paragraphs": [
+              "Siga este orden. Cada paso le dice si vale la pena pagar el siguiente."
+            ],
+            "checklist": [
+              "Elija el estado donde quiere enseñar antes de reunir nada.",
+              "Busque la página de ese departamento estatal de educación para docentes formados fuera de EE. UU.",
+              "Determine si ese estado evalúa las credenciales por su cuenta o nombra agencias externas.",
+              "Pregunte por escrito qué documentos deben ser originales y qué copias notarizadas se aceptan.",
+              "Pida a su institución documentos año por año con las horas lectivas, y cuánto cuestan.",
+              "Revise la materia o el nivel que quiere enseñar: los requisitos suelen cambiar según el tipo de certificado.",
+              "Guarde cada respuesta escrita que reciba, con su fecha."
+            ]
+          }
+        ]
+      }
     }
   ],
   "ui": {
     "en": {
       "nav": "Guides",
       "indexTitle": "Guides for Internationally Educated Job Seekers",
-      "indexSeoTitle": "Foreign Degree Guides for U.S. Jobs, by Country | VerifED Global",
-      "indexDescription": "Free, sourced guides on credential evaluation, listing a foreign degree on a U.S. resume, and using degrees from Latin America in the U.S.",
-      "indexIntro": "Plain-language guides to help you make informed decisions before you spend money. Each guide cites its sources and states what it cannot tell you.",
+      "indexSeoTitle": "Foreign Degree Guides for U.S. Jobs and Licensing | VerifED Global",
+      "indexDescription": "Free, sourced guides on credential evaluation, U.S. licensing for nurses, doctors, engineers and teachers, and using a Latin American degree in the U.S.",
+      "indexIntro": "Plain-language guides to help you make informed decisions before you spend money. Each guide cites its sources and states what it cannot tell you. Guides are grouped by country of study and by profession.",
       "readGuide": "Read guide",
       "home": "Home",
       "onThisPage": "On this page",
@@ -1412,7 +2327,7 @@
       "ctaButton": "Go to account and guidance",
       "allGuides": "All guides",
       "homeEntry": "New here? Read our free guides first",
-      "homeEntryBody": "No account needed: when you may need a credential evaluation, how to list a foreign degree on a U.S. resume, and country guides for Mexico, Colombia, Venezuela, Argentina and Ecuador.",
+      "homeEntryBody": "No account needed: when you may need a credential evaluation, how to list a foreign degree on a U.S. resume, country guides for Latin America, and licensing guides for nurses, doctors, engineers, teachers and accountants.",
       "skip": "Skip to main content",
       "menu": "Menu",
       "closeMenu": "Close menu"
@@ -1421,8 +2336,8 @@
       "nav": "Guías",
       "indexTitle": "Guías para quienes buscan empleo con estudios en el extranjero",
       "indexSeoTitle": "Guías para validar títulos extranjeros en EE. UU. | VerifED Global",
-      "indexDescription": "Guías gratuitas y con fuentes: evaluación de credenciales, currículum y cómo usar en EE. UU. títulos de México, Colombia, Venezuela, Argentina y Ecuador.",
-      "indexIntro": "Guías en lenguaje claro para decidir con información antes de gastar dinero. Cada guía cita sus fuentes e indica lo que no puede decirle.",
+      "indexDescription": "Guías gratuitas y con fuentes: evaluación de credenciales, licencias de enfermería, medicina, ingeniería y docencia, y títulos de América Latina en EE. UU.",
+      "indexIntro": "Guías en lenguaje claro para decidir con información antes de gastar dinero. Cada guía cita sus fuentes e indica lo que no puede decirle. Hay guías por país de estudio y por profesión.",
       "readGuide": "Leer guía",
       "home": "Inicio",
       "onThisPage": "En esta página",
@@ -1436,7 +2351,7 @@
       "ctaButton": "Ir a cuenta y orientación",
       "allGuides": "Todas las guías",
       "homeEntry": "¿Es nuevo? Lea primero nuestras guías gratuitas",
-      "homeEntryBody": "Sin cuenta: cuándo puede necesitar una evaluación de credenciales, cómo incluir un título extranjero en un currículum de EE. UU. y guías por país para México, Colombia, Venezuela, Argentina y Ecuador.",
+      "homeEntryBody": "Sin cuenta: cuándo puede necesitar una evaluación de credenciales, cómo incluir un título extranjero en un currículum de EE. UU., guías por país de América Latina y guías de licencias para enfermería, medicina, ingeniería, docencia y contabilidad.",
       "skip": "Saltar al contenido principal",
       "menu": "Menú",
       "closeMenu": "Cerrar menú"
