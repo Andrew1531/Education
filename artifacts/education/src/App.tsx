@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, createContext, useContext, lazy, Suspense } from 'react';
 import { Link, Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { PageMetadata } from './PageMetadata';
+import { trackLogin, trackSignUp } from './analytics';
 import { useBrowserLocation } from 'wouter/use-browser-location';
 import { ES_PREFIX, canonicalGuideSlug, splitLocale, switchLanguagePath } from './localeRoutes';
 import { hashPassword, verifyAndMigratePassword } from './auth';
@@ -1315,9 +1316,11 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
             return;
           }
           saveSignupProfile();
+          trackSignUp(lang, country.trim() || undefined, purpose || undefined);
         } else {
           const r = await apiSignin(username.trim(), password);
           if (!r.ok) { setError(t('errCredentials')); return; }
+          trackLogin(lang);
           // Remember this user's saved answers on this device so the
           // evaluator comes prefilled — fill only fields not already set here.
           restoreEducationProfile(username, r.profile);
@@ -1355,6 +1358,7 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
         };
         saveUsers([...users, newUser]);
         saveSignupProfile();
+        trackSignUp(lang, country.trim() || undefined, purpose || undefined);
       } else {
         const user = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
         if (!user) {
@@ -1374,7 +1378,7 @@ function AuthView({ onLogin, storageError }: { onLogin: (username: string) => vo
         }
       }
 
-      if (!isSignUp) restoreEducationProfile(username);
+      if (!isSignUp) { restoreEducationProfile(username); trackLogin(lang); }
       localStorage.setItem(STORAGE_KEY, username);
       onLogin(username);
     } catch (err) {
